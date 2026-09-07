@@ -20,7 +20,7 @@ updated: 2026-09-07
 
 - [[son]] — expertise, preferred working style, 3 standards expected of agents.
 - [[mektec-desoft]] — OK2SHIP's client & vendor; GitLab/Rancher/Loki infra; the BA's RBAC terminology trap.
-- [[simon-platform]] — the current foundation model: simon-brain + product repos + ~/exp; the single-source-of-truth test.
+- [[simon-platform]] — the current foundation model: simon-brain + products/ + spikes/; the single-source-of-truth test.
 - [[ai-company]] — (historical) the company model 07–09/2026, why it was dropped, where assets went.
 
 ## Projects

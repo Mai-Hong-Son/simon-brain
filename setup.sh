@@ -8,7 +8,7 @@
 # The repo always lives at ~/Documents/simon-brain — no extra shortcuts are created.
 #
 # Git syncs the CONTENT (wiki/skills/agents); this script plugs in the WIRING git can't
-# carry: symlinks into ~/.claude/ so Claude Code loads them, and the ~/exp/ zone.
+# carry: symlinks into ~/.claude/ so Claude Code loads them, and the products/spikes folders.
 set -euo pipefail
 
 BRAIN="$(cd "$(dirname "$0")" && pwd)"

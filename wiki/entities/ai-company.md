@@ -41,7 +41,7 @@ A central repo (`ai-company`, bootstrapped 2026-07-13) playing "company":
 | Engineering rules (9 principles) | [[engineering-rules]] |
 | Standard stack + ADR discipline | [[default-stack]], AGENTS.md §3 |
 | Approval gates + debate | [[approval-gates]] |
-| Spike ritual | `~/exp/` (AGENTS.md §0 — experiment zone) |
+| Spike ritual | `~/Documents/spikes/` (AGENTS.md §0 — spike zone) |
 | Skills git-workflow / project-retro / project-init | `simon-brain/skills/` (rewritten generic) |
 | 6 native agents | Dropped — solo-agent model |
 | The ai-company repo | Archived, git history intact |
