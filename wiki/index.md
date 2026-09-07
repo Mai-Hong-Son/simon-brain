@@ -30,4 +30,5 @@ updated: 2026-09-07
 - [[ok2ship-anomaly]] — 🧪 spike, req #3: golden/PatchCore; curation, seeding, calibrated-threshold lessons.
 - [[ok2ship-report-parser]] — 🧪 spike, reqs #1/2/4/5: label-keyed parsing, drifting report format, never drop sheets.
 - [[void-guard-xval]] — 🧪 spike, X-ray void%: ROI-box denominator, cyan-outline approach, hybrid criterion; doubles as backend course.
+- [[wiki-test]] — full-stack test project exercising the project-init ritual.
 - [[native-skline-chart]] — native K-line RN library: 5 ADRs (Fabric-only, command fast path, native indicators, licensed port).

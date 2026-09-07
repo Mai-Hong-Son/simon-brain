@@ -11,3 +11,4 @@
 ## [2026-09-07] ingest | Migration Phase 4: thin global CLAUDE.md, 5 product repos de-coupled from the constitution include, ai-company/CLAUDE.md now a historical stub, claude-mem removed | @claude-code
 ## [2026-09-07] ingest | Migration Phase 5: 5 product repos moved to ~/Documents (with machine-local memory), ai-company merged to main + pushed, now a historical repo | @claude-code
 ## [2026-09-07] lint | Language migration: entire repo translated to English (repo = English, conversation with Sơn = Vietnamese) | @claude-code
+## [2026-09-07] ingest | project-init: wiki-test (full-stack, default stack) — seed page created | @claude-code
