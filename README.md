@@ -15,6 +15,8 @@ chứ không nằm chết trong lịch sử chat.
 simon-brain (repo này — NỀN TẢNG, sync git giữa nhiều máy)
 ├── AGENTS.md      # luật vận hành wiki — agent PHẢI đọc trước khi ghi
 ├── setup.sh       # dựng lại nền trên máy mới (symlink + products/ + spikes/)
+├── config/
+│   └── global-rules.md  # nội dung thật của ~/.claude/CLAUDE.md (symlink) — luật hành vi + @import
 ├── raw/sources/   # nguồn gốc Sơn nạp vào — BẤT BIẾN, agent chỉ đọc
 ├── wiki/          # tầng tri thức — agent viết, Sơn duyệt
 │   ├── index.md   #   hub gốc: catalog toàn wiki, mỗi trang một dòng

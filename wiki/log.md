@@ -15,3 +15,4 @@
 ## [2026-09-07] lint | project-init test passed (both branches) — wiki-test scaffold + seed page removed | @claude-code
 ## [2026-09-07] ingest | @import convention adopted (option B) after the stale-constitution incident — global imports engineering-rules, each product CLAUDE.md imports its wiki page | @claude-code
 ## [2026-09-07] ingest | Layout regrouped: serious products under ~/Documents/products/, spikes under ~/Documents/spikes/ (replaces ~/exp); 5 repos + memory keys moved; project-init updated | @claude-code
+## [2026-09-07] ingest | Global rules moved into the repo (config/global-rules.md, symlinked to ~/.claude/CLAUDE.md by setup.sh) — closes the new-machine gap in the @import convention | @claude-code
