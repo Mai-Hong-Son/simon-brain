@@ -1,32 +1,33 @@
 ---
-title: Stack mặc định
+title: Default stack
 type: concept
 status: stable
 updated: 2026-09-07
 tags: [stack, backend, frontend, mobile]
-sources: [ai-company/CLAUDE.md (Standard tech stack), native-skline-chart/docs/decisions/001-jest-over-vitest.md]
+sources: [ai-company/CLAUDE.md (standard tech stack), ~/Documents/native-skline-chart/docs/decisions/001-jest-over-vitest.md]
 ---
 
-# Stack mặc định
+# Default stack
 
-Chọn stack cho dự án mới: mặc định là bảng dưới. **Lệch mặc định → ADR trong repo sản phẩm
-TRƯỚC khi code** (AGENTS.md §3). Khởi tạo dự án luôn HỎI Sơn chọn, không tự quyết — quy trình ở skill `project-init`.
+Stack choice for new projects: the table below is the default. **Deviating → an ADR in the
+product repo BEFORE any code** (AGENTS.md §3). Project init always ASKS Sơn — never auto-pick;
+procedure lives in the `project-init` skill.
 
-| Tầng | Mặc định | Ghi chú |
+| Tier | Default | Notes |
 |---|---|---|
-| Backend | Python 3.11+ / FastAPI / Pydantic v2 | NestJS chỉ cho dự án thuần TS, không AI/data. Pydantic model cho mọi thứ qua boundary |
-| Web | React 18 + Vite + Tailwind | **Không router/state library cho tới khi thật cần** — useState/useReducer trước |
-| Mobile | React Native + TypeScript | Test runner là **Jest**, không vitest (RN preset, hệ sinh thái — ADR 001 của [[native-skline-chart]]) |
-| Tests | pytest (BE) / vitest (web) | Mọi feature kèm test ở dự án serious |
-| Đóng gói / CI | Docker + docker-compose (local) + CI lint+test mỗi PR | Không secret trong image/CI |
+| Backend | Python 3.11+ / FastAPI / Pydantic v2 | NestJS only for pure-TS projects with no AI/data. Pydantic models for everything crossing a boundary |
+| Web | React 18 + Vite + Tailwind | **No router/state library until genuinely needed** — useState/useReducer first |
+| Mobile | React Native + TypeScript | Test runner is **Jest**, not vitest (RN preset, ecosystem — ADR 001 of [[native-skline-chart]]) |
+| Tests | pytest (BE) / vitest (web) | Every feature ships with tests on serious projects |
+| Packaging / CI | Docker + docker-compose (local) + CI lint+test per PR | No secrets in images/CI |
 
-## Layout repo
+## Repo layout
 
-- 1 tầng (chỉ backend HOẶC chỉ frontend) → code phẳng ở gốc repo.
-- ≥2 tầng (full-stack) → mỗi tầng một thư mục con `backend/`, `frontend/`.
+- Single tier (backend-only OR frontend-only) → flat at the repo root.
+- ≥2 tiers (full-stack) → one subdirectory per tier: `backend/`, `frontend/`.
 
-## Gotcha đã trả giá
+## Gotchas paid for
 
-- **Hash mật khẩu: `pwdlib[argon2]`, KHÔNG dùng passlib** — passlib kẹt lỗi với bcrypt 4.x.
-- Token hash khác mật khẩu hash có chủ đích: argon2id cho password (chậm cố ý),
-  SHA-256 cho token (cần tra cứu nhanh, thường xuyên) — xem [[ok2ship-ai]].
+- **Password hashing: `pwdlib[argon2]`, NOT passlib** — passlib is stuck on a bcrypt 4.x bug.
+- Token hashing deliberately differs from password hashing: argon2id for passwords
+  (intentionally slow), SHA-256 for tokens (fast, frequent lookups) — see [[ok2ship-ai]].

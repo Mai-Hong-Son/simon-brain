@@ -4,33 +4,36 @@ type: project
 status: active
 updated: 2026-09-07
 tags: [ok2ship, spike, excel, parsing]
-sources: [~/Documents/ok2ship-report-parser/HANDOFF.md, memory hub ai-company]
+sources: [~/Documents/ok2ship-report-parser/HANDOFF.md, ai-company hub memory]
 ---
 
-# ok2ship-report-parser — spike req #1/#2/#4/#5
+# ok2ship-report-parser — spike for reqs #1/#2/#4/#5
 
-Spike 🧪 của [[ok2ship]]: đọc tin cậy data có cấu trúc (số, nhãn dòng, ngưỡng spec) từ file
-báo cáo QA Excel thật của nhà máy — nền cho OCR-vs-cell (#1), spec check (#2), deviation (#4),
-boxplot (#5). **Hiện trạng chi tiết: `HANDOFF.md` trong repo spike.** Chưa PROMOTE.
+🧪 spike of [[ok2ship]]: reliably read structured data (numbers, row labels, spec thresholds) out
+of real factory QA Excel reports — the foundation for OCR-vs-cell (#1), spec checks (#2),
+cross-report deviation (#4), boxplots (#5). **Current state: `HANDOFF.md` in the spike repo.**
+Not yet PROMOTED.
 
-## Quyết định đã khóa với Sơn
+## Decisions locked with Sơn
 
-- Tách hẳn khỏi [[ok2ship-anomaly]] — khác chất (bảng số vs ảnh), không merge scope.
-- **Parse theo NHÃN dòng, không bao giờ theo tọa độ ô cứng** (xem phát hiện bên dưới).
-- **Không bao giờ drop sheet im lặng** — sheet chưa có parser thì passthrough raw;
-  Sơn quyết cái gì bỏ, không phải tool.
-- Output ordered theo tab order thật; key `snake_case`; sheet chỉ chứa cái của chính nó
-  (không cross-sheet, không verdict — tầng check là bước sau, không nằm trong reader).
+- Fully separate from [[ok2ship-anomaly]] — different substance (numbers vs images), never merge scope.
+- **Parse by row LABEL, never by hardcoded cell coordinates** (see findings below).
+- **Never silently drop a sheet** — sheets without a parser pass through raw;
+  Sơn decides what gets dropped, not the tool.
+- Output ordered by real workbook tab order; `snake_case` keys; a sheet's output contains only
+  what that sheet itself holds (no cross-sheet checks, no verdicts — the check layer is a later
+  step, not part of a reader).
 
-## Phát hiện về format report thật (lý do của các luật trên)
+## Findings about the real report format (the reasons behind the rules above)
 
-- **Merge cell chỉ bọc NHÃN, không bọc số** — suy từ merge để định vị giá trị là sai.
-- **Cấu trúc trôi giữa các báo cáo**: số sheet không cố định (có model mang bộ "Shell B2B..."
-  song song), pin count đổi theo báo cáo — không được hardcode.
-- **Ô nhãn tiêu đề có thể bị hỏng** (bị đè giá trị thay vì chữ, nghi chỉnh tay) →
-  parser phải có bước tự kiểm, không tin mù dữ liệu vào.
-- Đọc **streaming** (`openpyxl read_only=True`) bỏ qua ảnh nhúng → mở file trăm MB trong tích tắc;
-  ảnh nằm layer riêng trong zip, trích qua drawing XML và map theo anchor.
+- **Merged cells wrap only LABELS, never values** — inferring value positions from merges is wrong.
+- **Structure drifts between reports**: sheet count is not fixed (some models carry a parallel
+  "Shell B2B..." set), pin count changes per report — nothing can be hardcoded.
+- **Header label cells can be corrupted** (overwritten with a value instead of text, likely manual
+  edits) → the parser needs a self-check step; never trust input blindly.
+- **Streaming reads** (`openpyxl read_only=True`) skip embedded images → files of hundreds of MB
+  open in a blink; images live in a separate zip layer, extracted via the drawing XML and mapped
+  by anchor.
 
-*(Bộ bài học Excel-parsing này là ứng viên thăng hạng concept khi module data của
-[[ok2ship-ai]] dùng thật — AGENTS.md §3.)*
+*(This Excel-parsing lesson set is a promotion candidate once [[ok2ship-ai]]'s data modules
+use it for real — AGENTS.md §3.)*

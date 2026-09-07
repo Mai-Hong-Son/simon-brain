@@ -7,27 +7,27 @@ updated: 2026-09-07
 
 # Index — simon-brain wiki
 
-> Catalog toàn wiki (AGENTS.md §4). Mỗi trang một dòng: `- [[slug]] — tóm tắt một câu`.
-> Cập nhật ở **mọi** ingest.
+> Catalog of the whole wiki (AGENTS.md §4). One line per page: `- [[slug]] — one-sentence summary`.
+> Updated on **every** ingest.
 
 ## Concepts
 
-- [[engineering-rules]] — 8 luật kỹ thuật bất di bất dịch áp cho mọi dự án + luật ngôn ngữ.
-- [[default-stack]] — stack mặc định từng tầng, layout repo, lệch → ADR trước khi code.
-- [[approval-gates]] — chọn quy mô quy trình theo kích thước, cổng duyệt của người, phản biện bằng context mới.
+- [[engineering-rules]] — 8 non-negotiable engineering rules for every project + the language rule.
+- [[default-stack]] — default stack per tier, repo layout, deviation → ADR before code.
+- [[approval-gates]] — size the process by size, human gates, adversarial review with a fresh context.
 
 ## Entities
 
-- [[son]] — chuyên môn, cách làm việc ưa thích, 3 chuẩn kỳ vọng ở agent.
-- [[mektec-desoft]] — khách hàng & vendor của OK2SHIP; hạ tầng GitLab/Rancher/Loki; bẫy thuật ngữ RBAC của BA.
-- [[simon-platform]] — mô hình nền tảng hiện hành: simon-brain + repo sản phẩm + ~/exp; phép thử phân nhà.
-- [[ai-company]] — (lịch sử) mô hình công ty 07–09/2026, vì sao bỏ, tài sản đi đâu.
+- [[son]] — expertise, preferred working style, 3 standards expected of agents.
+- [[mektec-desoft]] — OK2SHIP's client & vendor; GitLab/Rancher/Loki infra; the BA's RBAC terminology trap.
+- [[simon-platform]] — the current foundation model: simon-brain + product repos + ~/exp; the single-source-of-truth test.
+- [[ai-company]] — (historical) the company model 07–09/2026, why it was dropped, where assets went.
 
 ## Projects
 
-- [[ok2ship]] — hub chương trình: 5 yêu cầu BA → spike nào chứng minh gì → sản phẩm nào ăn kết quả.
-- [[ok2ship-ai]] — sản phẩm 🚀: topology 3 repo, quyết định đã khóa, bài học mockup-fidelity + tsc -b.
-- [[ok2ship-anomaly]] — spike 🧪 req #3: golden/PatchCore; bài học curation, seed, calibrated threshold.
-- [[ok2ship-report-parser]] — spike 🧪 req #1/2/4/5: parse theo nhãn, format report trôi, không drop sheet.
-- [[void-guard-xval]] — spike 🧪 đo void% X-ray: mẫu số = khung ROI, bám viền cyan, tiêu chí hybrid; kiêm bài học backend.
-- [[native-skline-chart]] — thư viện K-line RN native: 5 ADR (Fabric-only, command fast path, indicators native, license port).
+- [[ok2ship]] — program hub: the BA's 5 requirements → which spike proved what → what the product consumes.
+- [[ok2ship-ai]] — 🚀 product: three-repo topology, locked decisions, mockup-fidelity + tsc -b lessons.
+- [[ok2ship-anomaly]] — 🧪 spike, req #3: golden/PatchCore; curation, seeding, calibrated-threshold lessons.
+- [[ok2ship-report-parser]] — 🧪 spike, reqs #1/2/4/5: label-keyed parsing, drifting report format, never drop sheets.
+- [[void-guard-xval]] — 🧪 spike, X-ray void%: ROI-box denominator, cyan-outline approach, hybrid criterion; doubles as backend course.
+- [[native-skline-chart]] — native K-line RN library: 5 ADRs (Fabric-only, command fast path, native indicators, licensed port).

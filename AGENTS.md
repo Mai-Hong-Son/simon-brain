@@ -1,256 +1,282 @@
-# AGENTS.md — Schema vận hành wiki `simon-brain`
+# AGENTS.md — Operating schema for the `simon-brain` wiki
 
-Repo này là **bộ nhớ dài hạn** của Sơn + **institutional knowledge** của nền tảng simon-platform.
-Nhiều agent cùng đọc/ghi, sync qua git giữa nhiều máy.
+This repo is Sơn's **long-term memory** + the **institutional knowledge** of the simon-platform.
+Multiple agents read/write it, synced via git across machines.
 
-Mọi agent làm việc trong repo này PHẢI đọc file này trước khi ghi bất cứ thứ gì vào `wiki/`.
+Every agent working in this repo MUST read this file before writing anything into `wiki/`.
+
+**Language: everything committed to this repo is English** (pages, skills, commit messages).
+Everything addressed to Sơn is Vietnamese. Vietnamese may appear only when quoting original
+Vietnamese material (vendor wording, BA terminology, UI copy).
 
 ---
 
-## 0. Ba tầng
+## 0. Three layers
 
-| Tầng | Đường dẫn | Ai sở hữu | Quy tắc |
+| Layer | Path | Owner | Rule |
 |---|---|---|---|
-| Raw sources | `raw/sources/` | Sơn | **Bất biến.** Agent chỉ đọc, không bao giờ sửa/xoá/đổi tên. |
-| Wiki | `wiki/` | Agent (Sơn duyệt) | Agent viết toàn bộ. Sơn đọc, hỏi, duyệt. |
-| Schema | `AGENTS.md` (file này) | Sơn + agent cùng tiến hoá | Sửa file này chỉ khi Sơn duyệt rõ ràng. |
+| Raw sources | `raw/sources/` | Sơn | **Immutable.** Agents read, never modify/delete/rename. |
+| Wiki | `wiki/` | Agent (Sơn approves) | Agents write all of it. Sơn reads, asks, approves. |
+| Schema | `AGENTS.md` (this file) | Sơn + agent co-evolve | Change only with Sơn's explicit approval. |
 
-`agents/` và `skills/` là **config năng lực của nền tảng** (xem wiki `entities/simon-platform`), không phải wiki. Đừng ingest nội dung wiki vào đó và ngược lại.
+`agents/` and `skills/` are **capability config of the platform** (see wiki `entities/simon-platform`),
+not wiki content. Don't ingest wiki content there or vice versa.
 
-### Cấu trúc `wiki/`
+### `wiki/` structure
 
 ```
 wiki/
-  index.md        # hub gốc — catalog toàn wiki, mỏng
-  log.md          # nhật ký append-only, 1 dòng/việc
-  concepts/       # kiến thức tái dùng: pattern, kỹ thuật, bài học chung, mental model
-  entities/       # người, công ty, sản phẩm, tool, mô hình, khách hàng
-  projects/       # việc đang chạy: sản phẩm, chiến dịch, hệ thống, nghiên cứu dài hạn
+  index.md        # root hub — catalog of the whole wiki, thin
+  log.md          # append-only journal, 1 line per event
+  concepts/       # reusable knowledge: patterns, techniques, shared lessons, mental models
+  entities/       # people, companies, products, tools, models, clients
+  projects/       # ongoing work: products, campaigns, systems, long-running research
 ```
 
-Tên file: kebab-case, một chủ đề một trang: `wiki/concepts/prompt-caching.md`.
-Liên kết bằng wikilink `[[prompt-caching]]` (tương thích Obsidian). Link phóng khoáng — link tới trang chưa tồn tại là hợp lệ, nó đánh dấu trang cần viết sau.
+File names: kebab-case, one topic per page: `wiki/concepts/prompt-caching.md`.
+Link with wikilinks `[[prompt-caching]]` (Obsidian-compatible). Link liberally — a link to a
+page that doesn't exist yet is valid; it marks a page worth writing later.
 
-### Frontmatter bắt buộc cho mọi trang wiki
+### Required frontmatter on every wiki page
 
 ```yaml
 ---
 title: Prompt caching
 type: concept        # concept | entity | project | hub
 status: seed         # seed | active | stable
-updated: 2026-09-07  # ngày sửa lần cuối, tuyệt đối, không dùng "hôm nay"/"tuần trước"
+updated: 2026-09-07  # last-edited date, absolute — never "today"/"last week"
 tags: [llm, cost]
 sources: [raw/sources/anthropic-caching-docs.md]
 ---
 ```
 
-### Vùng thí nghiệm
+### Experiment zone
 
-Thí nghiệm sống trong `~/exp/` hoặc repo prefix `exp-`, **mặc định không ghi wiki**.
-Chỉ khi thí nghiệm cho ra bài học đáng giữ → chưng cất một dòng vào trang concept (vẫn qua cổng duyệt §7).
-Thí nghiệm chết → xoá, không lưu vết.
+Experiments live in `~/exp/` or repos prefixed `exp-`, and **don't write to the wiki by default**.
+Only when an experiment yields a lesson worth keeping → distill one line into a concept page
+(still through the §7 approval gate). Dead experiment → delete, leave no trace.
 
-### Nguồn bên thứ ba
+### Third-party sources
 
-Repo này chứa đồ tự viết hoặc đã sửa + manifest dựng lại nền (`setup.sh`).
-Không vendor nguyên bản đồ người khác trừ khi cố ý — khi đó ghi rõ fork từ đâu, version nào.
+This repo holds self-written or modified material + the rebuild manifest (`setup.sh`).
+Don't vendor other people's work verbatim unless deliberate — then record the fork origin and version.
 
 ---
 
-## 1. Quality gate — luật số một
+## 1. Quality gate — rule number one
 
-> **"Một tháng nữa điều này còn đúng và còn giúp ích không?"**
+> **"One month from now, is this still true and still useful?"**
 
-Trước MỖI dòng định ghi vào `wiki/`, tự hỏi câu trên. Không chắc **cả hai** vế → **không ghi**.
+Before EVERY line written into `wiki/`, ask that question. Not confident on **both** halves → **don't write**.
 
-| Ghi ✅ | Không ghi ❌ |
+| Write ✅ | Don't write ❌ |
 |---|---|
-| Kết luận đã chốt, kèm lý do | Ý tưởng đang cân nhắc, chưa chốt |
-| Ràng buộc/quyết định còn hiệu lực | Trạng thái tạm: "đang chờ API key" |
-| Bài học rút ra từ một lần sai | Diễn biến của lần sai đó |
-| Con số/sự kiện kèm nguồn + ngày | Con số nhớ mang máng, không nguồn |
-| Cách một hệ thống hoạt động | Log lệnh, output terminal, diff code |
-| Sở thích/nguyên tắc làm việc của Sơn | Lời khen, chào hỏi, meta hội thoại |
+| Settled conclusions, with reasons | Ideas still under consideration |
+| Constraints/decisions still in force | Transient state: "waiting for the API key" |
+| The lesson extracted from a failure | The play-by-play of that failure |
+| Numbers/facts with source + date | Half-remembered numbers, no source |
+| How a system works | Command logs, terminal output, code diffs |
+| Sơn's preferences and working principles | Praise, greetings, conversational meta |
 
-Thà wiki mỏng mà đúng còn hơn dày mà mục. Khi phân vân → **không ghi**, nêu ra ở phần đề xuất cuối session để Sơn quyết.
+A thin, correct wiki beats a thick, rotten one. When in doubt → **don't write**; raise it in the
+end-of-session proposal for Sơn to decide.
 
 ---
 
-## 2. Chỉ lưu kết luận bền vững — không lưu diễn biến session
+## 2. Store durable conclusions only — never session narrative
 
-Wiki là **trạng thái**, không phải **transcript**.
+The wiki is **state**, not a **transcript**.
 
-Cấm trong trang wiki (trừ `log.md`):
-- Từ ngữ tường thuật: "hôm nay", "vừa nãy", "trong session này", "chúng ta đã thử", "agent đã chạy".
-- Trình tự thời gian của một buổi làm việc: thử A → hỏng → thử B → được.
-- Nhắc tới chính hội thoại hay chính agent nào đã viết.
+Forbidden in wiki pages (except `log.md`):
+- Narrative wording: "today", "just now", "in this session", "we tried", "the agent ran".
+- The chronology of a working session: tried A → failed → tried B → worked.
+- References to the conversation itself or to which agent wrote the page.
 
-Cách viết đúng: **hỏng-thử-được → viết ra cái "được" + tại sao "hỏng"** như một luật ở thì hiện tại.
+The right form: **failed-tried-worked → write down the "worked" + why the "failed" failed**, as a
+present-tense rule.
 
-> ❌ "Hôm nay agent thử dùng `pip install` trong sandbox, bị chặn, sau đó chuyển sang `uv` thì chạy được."
-> ✅ "Trong sandbox này `pip install` bị chặn network. Dùng `uv pip install --offline` với cache cục bộ. — nguồn: [[dev-sandbox]], 2026-09-07"
+> ❌ "Today the agent tried `pip install` in the sandbox, got blocked, then switched to `uv` and it worked."
+> ✅ "In this sandbox `pip install` is network-blocked. Use `uv pip install --offline` with a local cache. — source: [[dev-sandbox]], 2026-09-07"
 
-`wiki/log.md` là **nơi duy nhất** được phép mang tính thời gian, và mỗi việc chỉ **một dòng**:
+`wiki/log.md` is the **only** place allowed to be chronological, one line per event:
 
 ```
 ## [2026-09-07] ingest | Karpathy — LLM Wiki | @claude-code
-## [2026-09-07] lint | 3 orphan, 1 mâu thuẫn ở [[pricing]] | @researcher
+## [2026-09-07] lint | 3 orphans, 1 contradiction in [[pricing]] | @researcher
 ```
 
-Format cố định `## [YYYY-MM-DD] <ingest|query|lint> | <chủ đề> | @<agent>` để grep được:
+Fixed format `## [YYYY-MM-DD] <ingest|query|lint> | <topic> | @<agent>` so it stays greppable:
 `grep "^## \[" wiki/log.md | tail -20`
 
-### Ghi hình dạng, không chép giá trị hiện tại
+### Record the shape, not the current value
 
-Wiki ghi **hình dạng** của sự việc, không chép **giá trị tức thời**: không version, số file,
-số test, SHA, URL commit trong trang wiki — các con số đó lỗi thời ngay lần push sau.
-Cần chi tiết hiện trạng → link sang repo, để repo tự nói.
+The wiki records the **shape** of things, never **instantaneous values**: no versions, file counts,
+test counts, SHAs, or commit URLs in wiki pages — those numbers go stale on the next push.
+Need current detail → link to the repo and let the repo speak.
 
-### Khi wiki và repo mâu thuẫn
+### When wiki and repo contradict
 
-Repo (code + docs) thắng về **hiện trạng**; wiki thắng về **lịch sử quyết định và lý do**.
-Gặp mâu thuẫn → không âm thầm chọn một bên: báo Sơn, đề xuất sửa bên sai
-(thường là wiki đã mục — cập nhật nó và ghi nhận ở lint).
+The repo (code + docs) wins on **current state**; the wiki wins on **decision history and rationale**.
+On a contradiction → never silently pick a side: report to Sơn, propose fixing the wrong one
+(usually the wiki has rotted — update it and note it at lint).
 
 ---
 
-## 3. Bài học đi đâu — project vs concept
+## 3. Where lessons go — project vs concept
 
-| Loại bài học | Ghi ở đâu |
+| Kind of lesson | Where it goes |
 |---|---|
-| Chỉ đúng trong bối cảnh **một dự án** (quirk của codebase, thoả thuận với một khách hàng, cấu hình riêng) | `wiki/projects/<duan>.md` |
-| **Tái dùng được** ở dự án khác (pattern, kỹ thuật, nguyên tắc, cách một tool hành xử) | `wiki/concepts/<khai-niem>.md` **và** link từ trang dự án sang |
+| True only in **one project's** context (codebase quirk, one client's agreement, local config) | `wiki/projects/<project>.md` |
+| **Reusable** across projects (pattern, technique, principle, how a tool behaves) | `wiki/concepts/<concept>.md` **plus** a link from the project page |
 
-Trang dự án giữ **một dòng** ngữ cảnh + link, không copy nội dung concept sang:
+The project page keeps **one line** of context + a link — never a copy of the concept:
 
 ```markdown
-### Bài học
-- Rate limit của vendor tính theo token/phút, không phải request/phút → xem [[api-rate-limiting]] để biết cách xử lý chung.
+### Lessons
+- The vendor's rate limit counts tokens/minute, not requests/minute → see [[api-rate-limiting]] for the general handling.
 ```
 
-**Luật thăng hạng:** một bài học xuất hiện ở **≥ 2 dự án** → tách ra thành trang `concepts/`, hai trang dự án chỉ còn link. Lint pass phải phát hiện việc này.
+**Promotion rule:** a lesson that shows up in **≥ 2 projects** → extract into a `concepts/` page;
+the project pages keep only links. Lint passes must detect this.
 
-**Luật giáng hạng:** một trang `concepts/` mà chỉ có đúng một dự án dùng và không có dấu hiệu tái dùng → gộp ngược về trang dự án, đề xuất xoá.
+**Demotion rule:** a `concepts/` page used by exactly one project with no sign of reuse →
+merge back into the project page, propose deletion.
 
-### Quyết định kiến trúc (ADR)
+### Architecture decisions (ADR)
 
-- Trang wiki của dự án ghi mỗi quyết định kiến trúc dạng **quyết định + lý do + phương án đã loại**.
-- ADR chi tiết gắn code (context/consequences đầy đủ) sống trong repo sản phẩm (`docs/decisions/`),
-  wiki trỏ sang — không chép đôi.
-- Stack lệch mặc định (xem `concepts/default-stack`) → phải có ADR trong repo sản phẩm **trước khi code**.
-
----
-
-## 4. Hub giữ mỏng
-
-Hub = `wiki/index.md`, và **bất kỳ trang nào có trang con** (ví dụ `projects/ok2ship.md` là hub của các trang con của nó).
-
-Luật hub:
-- Hub chỉ chứa **tổng quan + link**. Mỗi mục tối đa **2 dòng** rồi link xuống trang con.
-- Hub **≤ 100 dòng**. Vượt là tín hiệu phải tách.
-- Một mục trong hub phình quá **~10 dòng** → tách ra trang con, để lại 1 câu tóm tắt + `[[link]]`.
-- Chi tiết, số liệu, ví dụ, lịch sử → **luôn** nằm ở trang con, không nằm ở hub.
-- Hub không bao giờ là nơi chứa kiến thức gốc. Nếu xoá hub mà mất thông tin → nội dung đó đã đặt sai chỗ.
-
-`wiki/index.md` là catalog: nhóm theo `concepts / entities / projects`, mỗi trang một dòng `- [[slug]] — tóm tắt một câu`. Cập nhật ở **mọi** ingest.
+- The project's wiki page records each architecture decision as **decision + rationale + rejected alternatives**.
+- The detailed, code-attached ADR (full context/consequences) lives in the product repo
+  (`docs/decisions/`); the wiki points to it — no duplication.
+- Deviating from the default stack (see `concepts/default-stack`) → an ADR in the product repo
+  **before any code**.
 
 ---
 
-## 5. Ba workflow
+## 4. Hubs stay thin
 
-### 5.1 `ingest` — nạp nguồn mới
+A hub = `wiki/index.md`, plus **any page with child pages** (e.g. `projects/ok2ship.md` is the hub
+of its children).
 
-Kích hoạt: Sơn thả file vào `raw/sources/`, dán link, hoặc bảo "ingest cái này".
+Hub rules:
+- A hub holds **overview + links** only. Each item at most **2 lines**, then link down.
+- A hub is **≤ 100 lines**. Exceeding that is the signal to split.
+- An item growing past **~10 lines** → extract a child page, leave 1 summary sentence + `[[link]]`.
+- Details, figures, examples, history → **always** on child pages, never on the hub.
+- A hub is never the home of original knowledge. If deleting the hub loses information,
+  that content was in the wrong place.
 
-1. `git pull --rebase` trước khi đọc (xem §6).
-2. Đọc **toàn bộ** nguồn. Không tóm tắt từ tiêu đề.
-3. Đọc `wiki/index.md` để biết những trang nào đã tồn tại và có thể bị ảnh hưởng.
-4. **Trao đổi takeaway với Sơn trước khi ghi.** Nêu 3–7 điểm chính + danh sách trang dự định tạo/sửa.
-5. Sau khi Sơn duyệt: ghi/cập nhật các trang, đi qua quality gate §1 cho từng điểm.
-   - Thông tin mới **mâu thuẫn** thông tin cũ → **không xoá cái cũ**. Ghi cả hai kèm ngày + nguồn, đánh dấu `> ⚠️ Mâu thuẫn:` và nêu ra ở lint.
-   - Thông tin mới **bổ sung** → merge vào trang sẵn có, đừng tạo trang trùng chủ đề.
-6. Cập nhật `wiki/index.md`, thêm cross-link hai chiều.
-7. Append **một dòng** vào `wiki/log.md`.
-8. Commit (xem §6).
-
-Một nguồn tốt thường chạm 3–15 trang. Chạm 1 trang là dấu hiệu đọc chưa kỹ.
-
-### 5.2 `query` — hỏi wiki
-
-Kích hoạt: Sơn hỏi một câu về những gì đã biết.
-
-1. Đọc `wiki/index.md` trước → chọn trang liên quan → đọc trang đó → mới trả lời.
-2. Trả lời kèm **citation bằng wikilink** tới trang nguồn.
-3. Nếu wiki không đủ dữ kiện: **nói thẳng là không có**, đừng suy diễn rồi ghi ngược vào wiki. Đề xuất nguồn cần tìm.
-4. **Câu trả lời tốt phải được nộp ngược vào wiki.** Nếu câu trả lời là một tổng hợp/so sánh/phát hiện mới vượt qua quality gate §1 → đề xuất tạo trang mới cho nó ở cuối session. Đừng để nó chết trong chat.
-
-### 5.3 `lint` — khám sức khoẻ wiki
-
-Kích hoạt: Sơn bảo "lint", hoặc định kỳ sau mỗi ~10 lần ingest.
-
-Kiểm tra, xuất ra **báo cáo — không tự sửa**:
-- **Mâu thuẫn** giữa các trang, hoặc mốc `⚠️ Mâu thuẫn` còn treo.
-- **Trang mục** (stale): `updated` quá 90 ngày, hoặc claim đã bị nguồn mới hơn phủ định.
-- **Orphan**: trang không có link nào trỏ tới.
-- **Link gãy / link tới trang chưa tồn tại** → danh sách trang cần viết.
-- **Vi phạm §2**: trang chứa ngôn ngữ tường thuật session.
-- **Vi phạm §4**: hub > 100 dòng, hoặc mục trong hub > 10 dòng.
-- **Ứng viên thăng hạng §3**: bài học lặp ở ≥ 2 trang dự án.
-- **Trang trùng chủ đề** nên gộp.
-- **Lỗ hổng dữ liệu**: khái niệm được nhắc nhiều lần nhưng chưa có trang riêng.
-
-Kết thúc bằng đề xuất: câu hỏi nên đào tiếp, nguồn nên tìm. Chờ Sơn chọn rồi mới sửa.
+`wiki/index.md` is the catalog: grouped `concepts / entities / projects`, one line per page
+`- [[slug]] — one-sentence summary`. Updated on **every** ingest.
 
 ---
 
-## 6. Nhiều agent, nhiều máy — luật git
+## 5. Three workflows
 
-Nhiều agent có thể ghi cùng lúc trên nhiều máy. Bắt buộc:
+### 5.1 `ingest` — take in a new source
 
-1. **`git pull --rebase` ngay đầu session** và **ngay trước khi commit**. Không có ngoại lệ.
-2. **Commit nhỏ, một workflow một commit.** Message:
-   `wiki(ingest): Karpathy LLM Wiki — 4 trang` / `wiki(lint): gỡ 3 orphan` / `wiki(query): thêm so-sanh-vector-db`
-3. **Không bao giờ** `push --force`, `rebase -i`, `reset --hard` trên `main`, hay viết lại lịch sử. Lịch sử wiki là một phần của bộ nhớ.
-4. **Không commit `raw/`** nếu nguồn nặng/có bản quyền — hỏi Sơn trước.
-5. **Xử lý conflict:**
-   - `wiki/log.md`: append ở cuối file → conflict luôn giải bằng **giữ cả hai dòng**, sắp theo ngày.
-   - Trang nội dung: **giữ cả hai phiên bản**, đánh dấu `> ⚠️ Mâu thuẫn:` kèm nguồn + ngày của mỗi bên, để lint xử lý. **Tuyệt đối không chọn bên rồi xoá bên kia im lặng.**
-6. **Ký tên agent** ở mỗi dòng log (`@claude-code`, `@researcher`, ...) để truy được nguồn gốc thay đổi.
-7. Không hai agent cùng sửa một trang trong cùng một lượt. Nếu phải, chia theo trang, không chia theo đoạn.
+Trigger: Sơn drops a file into `raw/sources/`, pastes a link, or says "ingest this".
+
+1. `git pull --rebase` before reading (see §6).
+2. Read the **whole** source. Never summarize from the title.
+3. Read `wiki/index.md` to know which pages exist and might be affected.
+4. **Discuss takeaways with Sơn before writing.** Present 3–7 key points + the list of pages
+   to create/update.
+5. After Sơn approves: write/update the pages, running §1's quality gate on every point.
+   - New info **contradicts** old info → **never delete the old**. Record both with dates +
+     sources, mark `> ⚠️ Contradiction:` and raise it at lint.
+   - New info **extends** → merge into the existing page; don't create a duplicate topic.
+6. Update `wiki/index.md`, add cross-links both ways.
+7. Append **one line** to `wiki/log.md`.
+8. Commit (see §6).
+
+A good source typically touches 3–15 pages. Touching only 1 page suggests a shallow read.
+
+### 5.2 `query` — ask the wiki
+
+Trigger: Sơn asks a question about what's known.
+
+1. Read `wiki/index.md` first → pick relevant pages → read them → then answer.
+2. Answer with **wikilink citations** to the source pages.
+3. If the wiki lacks the facts: **say so plainly**; don't speculate and write the speculation
+   back into the wiki. Propose sources to find.
+4. **Good answers get filed back into the wiki.** If the answer is a synthesis/comparison/new
+   connection that passes §1's gate → propose a new page for it at the end of the session.
+   Don't let it die in chat history.
+
+### 5.3 `lint` — health-check the wiki
+
+Trigger: Sơn says "lint", or periodically after every ~10 ingests.
+
+Check and produce a **report — no self-applied fixes**:
+- **Contradictions** between pages, or unresolved `⚠️ Contradiction` markers.
+- **Stale pages**: `updated` older than 90 days, or claims superseded by newer sources.
+- **Orphans**: pages with no inbound links.
+- **Broken links / links to not-yet-written pages** → a list of pages worth writing.
+- **§2 violations**: pages containing session-narrative language.
+- **§4 violations**: hubs > 100 lines, or hub items > 10 lines.
+- **§3 promotion candidates**: lessons repeated across ≥ 2 project pages.
+- **Duplicate-topic pages** that should merge.
+- **Data gaps**: concepts mentioned repeatedly that lack their own page.
+
+End with proposals: questions worth digging into, sources worth finding. Wait for Sơn's pick
+before fixing anything.
 
 ---
 
-## 7. Cuối session — đề xuất và chờ duyệt
+## 6. Many agents, many machines — git rules
 
-**Agent không tự ghi vào `wiki/` khi chưa được duyệt.** Mặc định là đề xuất, không phải hành động.
+Multiple agents may write concurrently from multiple machines. Mandatory:
 
-Cuối mỗi session (hoặc khi Sơn bảo "chốt"), xuất đúng bảng này:
+1. **`git pull --rebase` at session start** and **again right before committing**. No exceptions.
+2. **Small commits, one workflow per commit.** Messages in English:
+   `wiki(ingest): Karpathy LLM Wiki — 4 pages` / `wiki(lint): fix 3 orphans` / `wiki(query): add vector-db-comparison`
+3. **Never** `push --force`, `rebase -i`, `reset --hard` on `main`, or rewrite history.
+   The wiki's history is part of the memory.
+4. **Don't commit `raw/`** when sources are heavy/copyrighted — ask Sơn first.
+5. **Conflict handling:**
+   - `wiki/log.md`: appends at the end → always resolve by **keeping both lines**, sorted by date.
+   - Content pages: **keep both versions**, mark `> ⚠️ Contradiction:` with each side's source +
+     date, and let lint sort it out. **Never silently pick one side and delete the other.**
+6. **Sign every log line** with the agent name (`@claude-code`, `@researcher`, ...) so changes
+   stay traceable.
+7. No two agents edit the same page in the same pass. If unavoidable, split by page,
+   never by section.
+
+---
+
+## 7. End of session — propose and wait for approval
+
+**Agents never write to `wiki/` without approval.** The default is proposing, not acting.
+
+At the end of each session (or when Sơn says "wrap up"), output exactly this table:
 
 ```
-## Đề xuất cập nhật wiki
+## Proposed wiki updates
 
-| # | Trang | Hành động | Nội dung (1 câu) | Quality gate |
-|---|-------|-----------|------------------|--------------|
-| 1 | concepts/prompt-caching.md | tạo | Cache TTL 1h, tiết kiệm ~90% input cost | ✅ còn đúng sau 1 tháng |
-| 2 | projects/ok2ship-ai.md | sửa | Thêm bài học rate-limit + link concept | ✅ |
-| 3 | index.md | sửa | Thêm 1 dòng cho trang mới | ✅ |
+| # | Page | Action | Content (1 sentence) | Quality gate |
+|---|------|--------|----------------------|--------------|
+| 1 | concepts/prompt-caching.md | create | 1h cache TTL saves ~90% input cost | ✅ still true in a month |
+| 2 | projects/ok2ship-ai.md | edit | Add rate-limit lesson + concept link | ✅ |
+| 3 | index.md | edit | Add 1 line for the new page | ✅ |
 
-Không đề xuất ghi (rớt quality gate): <liệt kê ngắn + lý do>
+Not proposed (failed the quality gate): <short list + reasons>
 ```
 
-Rồi **dừng lại và chờ**. Sơn trả lời bằng số (`1,3` / `all` / `không`). Chỉ ghi những mục được chọn, xong mới commit.
+Then **stop and wait**. Sơn answers with numbers (`1,3` / `all` / `none`). Write only the
+approved items, then commit.
 
-Ngoại lệ duy nhất: Sơn nói rõ "tự ingest, khỏi hỏi" — khi đó vẫn phải báo cáo lại danh sách trang đã chạm sau khi ghi xong.
+The single exception: Sơn explicitly says "ingest on your own, don't ask" — even then, report
+the list of touched pages after writing.
 
 ---
 
-## 8. Checklist rút gọn trước mỗi lần ghi
+## 8. Pre-write checklist
 
-- [ ] Đã `git pull --rebase`?
-- [ ] Qua quality gate: **một tháng nữa còn đúng và còn giúp ích không?**
-- [ ] Là kết luận bền vững, không phải diễn biến session?
-- [ ] Bài học đặt đúng chỗ: riêng dự án → trang dự án; tái dùng → trang concept + link?
-- [ ] Hub còn mỏng (chỉ tổng quan + link)?
-- [ ] Có frontmatter, `updated` là ngày tuyệt đối?
-- [ ] Đã cross-link hai chiều? Đã cập nhật `index.md`? Đã append 1 dòng `log.md`?
-- [ ] Sơn đã duyệt?
+- [ ] Ran `git pull --rebase`?
+- [ ] Passed the quality gate: **still true and still useful one month from now?**
+- [ ] A durable conclusion, not session narrative?
+- [ ] Lesson filed at the right level: project-only → project page; reusable → concept + link?
+- [ ] Hubs still thin (overview + links only)?
+- [ ] Frontmatter present, `updated` an absolute date?
+- [ ] Cross-linked both ways? `index.md` updated? One line appended to `log.md`?
+- [ ] Approved by Sơn?

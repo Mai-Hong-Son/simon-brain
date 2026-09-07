@@ -1,35 +1,37 @@
 ---
-title: Cổng duyệt & phản biện
+title: Approval gates & adversarial review
 type: concept
 status: stable
 updated: 2026-09-07
 tags: [process, review, quality]
-sources: [ai-company/CLAUDE.md (Workflow + Debate mechanism), ai-company/.claude/agents/orchestrator.md, qa-reviewer.md]
+sources: [ai-company/CLAUDE.md (workflow + debate mechanism), ai-company/.claude/agents (orchestrator, qa-reviewer)]
 ---
 
-# Cổng duyệt & phản biện
+# Approval gates & adversarial review
 
-Chưng cất từ cơ chế workflow + debate của [[ai-company]], giữ phần còn giá trị sau khi
-bỏ mô hình multi-agent (nay là solo agent — xem [[simon-platform]]).
+Distilled from [[ai-company]]'s workflow + debate mechanism, keeping what stays valuable after
+dropping the multi-agent model (now solo agent — see [[simon-platform]]).
 
-## Chọn quy mô quy trình theo KÍCH THƯỚC, không theo tham vọng
+## Size the process by SIZE, not ambition
 
-- ≤2 file, không đổi logic/data → làm nhẹ: xác nhận scope → sửa → báo cáo. Không dùng đường này
-  để lách một logic change qua review.
-- Đụng logic/data, một stack → có plan ngắn → duyệt plan → làm + test → duyệt merge.
-- Lớn / cross-stack → plan đầy đủ → duyệt plan → **duyệt danh sách test case trước khi viết test** → làm → duyệt merge.
-- Phân vân giữa hai mức → **chọn mức cao hơn** (size up).
+- ≤2 files, no logic/data change → lightweight: confirm scope → fix → report. Never use this
+  lane to smuggle a logic change past review.
+- Touches logic/data, single stack → short plan → plan approval → build + tests → merge approval.
+- Large / cross-stack → full plan → plan approval → **test-case list approved before writing
+  tests** → build → merge approval.
+- Torn between two levels → **size up**.
 
-## Cổng của con người — không bao giờ vượt
+## Human gates — never skipped
 
-- Không bắt đầu implement khi chưa qua cổng duyệt plan.
-- Plan luôn kết thúc bằng "chờ duyệt trước khi thực thi".
-- Nghiên cứu công nghệ → báo cáo khuyến nghị → Sơn duyệt việc adopt; lệch stack → ADR trước code.
+- Never start implementing before the plan gate.
+- Every plan ends with "awaiting approval before execution".
+- Tech research → report with a recommendation → Sơn approves adoption; stack deviation → ADR
+  before code.
 
-## Phản biện (adversarial review)
+## Adversarial review
 
-- Muốn thách thức một plan/diff thì lấy **một context CHƯA TỪNG THẤY code đó** (spawn agent mới /
-  `/code-review`) — tự phản biện trong cùng context là thiên kiến xác nhận, không phải review.
-- Tối đa **3 vòng** tranh luận, dừng sớm khi đồng thuận; không ngã ngũ → trình Sơn CẢ HAI lập trường.
-- Mỗi luận điểm kèm bằng chứng `file:line`; điểm không đứng vững thì nhượng bộ, không cãi cùn.
-- Phân biệt defect thật vs false positive trước khi báo.
+- To challenge a plan/diff, use **a context that has NEVER seen the code** (spawn a fresh agent /
+  `/code-review`) — self-review inside the same context is confirmation bias, not review.
+- At most **3 rounds** of debate; stop early on consensus; unresolved → present BOTH positions to Sơn.
+- Every claim carries `file:line` evidence; concede points that don't hold.
+- Separate real defects from false positives before reporting.

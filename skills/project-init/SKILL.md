@@ -1,68 +1,69 @@
 ---
 name: project-init
-description: Khởi tạo dự án mới trên nền simon-platform. Hỏi serious hay thí nghiệm, hỏi stack (mặc định theo wiki default-stack), lệch → ADR, dựng khung + tạo trang wiki dự án. Use when user starts a new product/project, says "tạo dự án mới", "new project", "khởi tạo", "spike", "thử khả thi".
+description: Initialize a new project on the simon-platform foundation. Asks serious vs experiment, asks for the stack (defaults from the wiki's default-stack), deviation → ADR, scaffolds the repo + creates the project's wiki page. Use when the user starts a new product/project, says "tạo dự án mới", "new project", "khởi tạo", "spike", "thử khả thi".
 ---
 
-# Project init — nghi thức khởi tạo dự án
+# Project init — the new-project ritual
 
-Không tự chọn thay Sơn — mọi bước HỎI đều bắt buộc. Mô hình nền: `wiki/entities/simon-platform`.
+Never choose for Sơn — every ASK step is mandatory. Foundation model: `wiki/entities/simon-platform`.
 
-## Bước 0 — HỎI: serious hay thí nghiệm?
+## Step 0 — ASK: serious or experiment?
 
-- **🚀 Serious (mặc định)** — dự án thật, theo đủ luật.
-- **🧪 Thí nghiệm** — thử khả thi. Sống trong `~/exp/<tên>` hoặc repo prefix `exp-`.
-  Nới: test không bắt buộc, commit thẳng, lệch stack không cần ADR, **không tạo trang wiki**
-  (AGENTS.md §0 — Vùng thí nghiệm). KHÔNG nới an toàn: secrets qua env, không data khách,
-  không commit `.env`. Kết thúc bằng phán quyết: PROMOTE (→ dời ra `~/Documents/<tên>`,
-  làm lại init như serious, lúc đó mới có trang wiki + ADR + test) hoặc XOÁ (không lưu vết).
+- **🚀 Serious (default)** — a real project, full rules apply.
+- **🧪 Experiment** — feasibility probe. Lives in `~/exp/<name>` or a repo prefixed `exp-`.
+  Relaxed: tests optional, commit straight, stack deviation needs no ADR, **no wiki page**
+  (AGENTS.md §0 — experiment zone). NEVER relaxed: secrets via env, no customer data,
+  never commit `.env`. Must end in a verdict: PROMOTE (→ move to `~/Documents/<name>`,
+  redo init as serious — only then wiki page + ADRs + tests) or DELETE (no trace).
 
-## Bước 1 — HỎI STACK (chỉ hỏi tầng dự án thực dùng)
+## Step 1 — ASK THE STACK (only tiers the project actually uses)
 
-Mặc định theo `wiki/concepts/default-stack` — nêu rõ để Sơn bấm Enter là chốt:
+Defaults come from `wiki/concepts/default-stack` — state them so Sơn can hit Enter to accept:
 Backend Python 3.11+/FastAPI/Pydantic v2 · Web React 18+Vite+Tailwind ·
 Mobile React Native+TypeScript · Tests pytest/vitest (RN → Jest).
 
-## Bước 2 — Lệch mặc định → ADR trước khi code *(bỏ qua nếu 🧪)*
+## Step 2 — Deviation from a default → ADR before code *(skip if 🧪)*
 
-Mỗi lựa chọn khác mặc định: tạo `docs/decisions/NNN-<slug>.md` trong repo dự án
-(Context · Decision · Rationale · Consequences — tiếng Anh). Chưa có ADR chưa code phần lệch.
+For each non-default choice: create `docs/decisions/NNN-<slug>.md` in the project repo
+(Context · Decision · Rationale · Consequences — English). No ADR, no code for the deviating part.
 
-## Bước 3 — Dựng khung
+## Step 3 — Scaffold
 
-1. Repo mới tại `~/Documents/<tên>` (🧪 thì `~/exp/<tên>`), git init.
-2. Viết `CLAUDE.md` của dự án: **chỉ chứa thuần kỹ thuật riêng** (stack đã chốt, layout,
-   lệnh build/test, luật riêng — chỉ được siết chặt hơn luật chung, không nới).
-   Không chép luật hành vi/bối cảnh vào đây — global `~/.claude/CLAUDE.md` + wiki đã lo.
-3. Layout: 1 tầng → phẳng ở gốc; ≥2 tầng → `backend/`, `frontend/` (xem default-stack).
-4. Khung code chi tiết dựng SAU khi cd vào dự án — không thuộc bước init.
+1. New repo at `~/Documents/<name>` (🧪 → `~/exp/<name>`), git init.
+2. Write the project's `CLAUDE.md`: **product-specific technical content only** (chosen stack,
+   layout, build/test commands, project rules — which may only be stricter than the shared
+   rules, never looser). No behavior rules or backstory here — global `~/.claude/CLAUDE.md`
+   + the wiki cover those.
+3. Layout: single tier → flat at root; ≥2 tiers → `backend/`, `frontend/` (see default-stack).
+4. The detailed code skeleton is built AFTER cd-ing into the project — not part of init.
 
-## Bước 4 — Tạo trang wiki dự án *(bỏ qua nếu 🧪)*
+## Step 4 — Create the project's wiki page *(skip if 🧪)*
 
-Tạo `~/Documents/simon-brain/wiki/projects/<tên>.md` theo template:
+Create `~/Documents/simon-brain/wiki/projects/<name>.md` from this template:
 
 ```markdown
 ---
-title: <tên>
+title: <name>
 type: project
 status: seed
-updated: <ngày>
+updated: <date>
 tags: []
 sources: [<repo path>]
 ---
 
-# <tên>
+# <name>
 
-<Mục tiêu 1-2 câu>. Loại: <backend/frontend/fullstack/mobile>. Stack: <đã chốt, link [[default-stack]] nếu mặc định>.
-Khởi tạo: <ngày>. Hiện trạng chi tiết: repo của dự án.
+<Goal in 1-2 sentences>. Type: <backend/frontend/fullstack/mobile>. Stack: <as locked; link [[default-stack]] if default>.
+Initialized: <date>. Current state: the project repo.
 
-## Quyết định & lý do
+## Decisions & rationale
 
-*(chưa có)*
+*(none yet)*
 ```
 
-Cập nhật `wiki/index.md`, append 1 dòng `wiki/log.md`, commit simon-brain theo AGENTS.md §6.
+Update `wiki/index.md`, append one line to `wiki/log.md`, commit simon-brain per AGENTS.md §6.
 
-## Bước 5 — Bàn giao
+## Step 5 — Handoff
 
-Tóm tắt: loại, stack đã chốt, ADR (nếu có), đường dẫn repo + trang wiki. Chờ Sơn duyệt
-trước khi lên plan feature đầu tiên.
+Summarize: type, locked stack, ADRs (if any), repo path + wiki page. Wait for Sơn's approval
+before planning the first feature.

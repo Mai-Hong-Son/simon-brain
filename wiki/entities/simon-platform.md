@@ -7,40 +7,40 @@ tags: [platform, architecture, meta]
 sources: [simon-brain-migration-brief.md (2026-09-07)]
 ---
 
-# Simon Platform — mô hình nền tảng
+# Simon Platform — the foundation model
 
-Mô hình vận hành hiện hành (từ 09/2026), thay thế mô hình [[ai-company]].
+The operating model in force since 09/2026, replacing the [[ai-company]] model.
 
-## Kiến trúc
+## Architecture
 
 ```
-SIMON-BRAIN = NỀN TẢNG (repo này — chạy ngầm dưới mọi session, mọi máy, sync git)
-├── wiki/      trí nhớ & tri thức chưng cất
-├── agents/    kho năng lực (capability pool — không phải "đội ngũ"; mặc định solo agent)
-├── skills/    quy trình đóng gói (symlink vào ~/.claude/skills qua setup.sh)
-├── AGENTS.md  luật vận hành wiki
-└── setup.sh   dựng lại nền trên máy mới
+SIMON-BRAIN = FOUNDATION (this repo — under every session, every machine, git-synced)
+├── wiki/      distilled memory & knowledge
+├── agents/    capability pool (not a "team"; solo agent by default)
+├── skills/    packaged procedures (symlinked into ~/.claude/skills via setup.sh)
+├── AGENTS.md  wiki operating rules
+└── setup.sh   rebuilds the foundation on a new machine
 
-REPO SẢN PHẨM (ok2ship-ai, native-skline-chart, ...)
-└── đứng trên nền tảng; chỉ chứa code + config kỹ thuật riêng của nó
+PRODUCT REPOS (ok2ship-ai, native-skline-chart, ...)
+└── stand on the foundation; hold only their own code + technical config
 
-~/exp/ = vùng thí nghiệm — mặc định KHÔNG ghi wiki, chết thì xoá
+~/exp/ = experiment zone — does NOT write to the wiki by default; dead experiments get deleted
 ```
 
-## Phép thử phân nhà (single source of truth)
+## The single-source-of-truth test
 
-| Loại thông tin | Nhà duy nhất |
+| Kind of information | Its one home |
 |---|---|
-| Luật hành vi agent + con trỏ tới wiki | `~/.claude/CLAUDE.md` (giữ mỏng) |
-| Quyết định + lý do, bài học, tổng hợp xuyên dự án | `wiki/` |
-| Hiện trạng code, lệnh build/test, convention kỹ thuật | repo sản phẩm |
-| Diễn biến đang làm dở | session (bốc hơi) / HANDOFF.md của repo |
+| Agent behavior rules + pointer to the wiki | `~/.claude/CLAUDE.md` (kept thin) |
+| Decisions + rationale, lessons, cross-project synthesis | `wiki/` |
+| Current code state, build/test commands, technical conventions | the product repo |
+| Work-in-progress narrative | the session (evaporates) / the repo's HANDOFF.md |
 
-Chống drift: wiki ghi **hình dạng**, không chép giá trị tức thời (AGENTS.md §2).
-Mâu thuẫn wiki↔repo: repo thắng hiện trạng, wiki thắng lịch sử quyết định.
+Anti-drift: the wiki records **shape**, never instantaneous values (AGENTS.md §2).
+Wiki↔repo contradiction: repo wins on current state, wiki wins on decision history.
 
-## Nguyên tắc agent
+## Agent principle
 
-Mặc định **solo agent** — một context làm trọn việc. Chỉ spawn agent phụ khi cần
-**cô lập context thật** (review phản biện cần mắt chưa thấy code — xem [[approval-gates]]),
-không spawn để đóng vai chức danh.
+Default is a **solo agent** — one context does the whole job. Spawn a subagent only for genuine
+**context isolation** (adversarial review needs eyes that haven't seen the code — see
+[[approval-gates]]), never for role-play.

@@ -4,38 +4,41 @@ type: entity
 status: stable
 updated: 2026-09-07
 tags: [user, preferences, standards]
-sources: [ai-company/.claude/agents/dev-frontend.md, dev-mobile.md, memory feedback 07-08/2026]
+sources: [ai-company/.claude/agents (dev-frontend, dev-mobile), feedback memory 07-08/2026]
 ---
 
 # Sơn (Mai Hồng Sơn)
 
-Chủ của hệ thống này. Mọi agent làm việc với Sơn cần biết các sự thật sau.
+Owner of this system. Every agent working with Sơn needs these facts.
 
-## Chuyên môn
+## Expertise
 
-- Senior React dev, **~10 năm kinh nghiệm React Native** — code JS/TS/RN sẽ bị review kỹ:
-  viết idiomatic, rõ ràng hơn khôn lỏi, **không over-engineer**.
-- Mọi hệ quả native-bridge / performance phải được flag rõ, không giấu trong diff.
-- Đang chủ động học sâu backend (FastAPI, DB, auth, hạ tầng) — xem cách làm việc bên dưới.
+- Senior React dev, **~10 years of React Native** — JS/TS/RN code gets a close review:
+  write idiomatically, clarity over cleverness, **no over-engineering**.
+- Every native-bridge / performance implication must be flagged explicitly, never buried in a diff.
+- Actively learning backend in depth (FastAPI, DB, auth, infra) — see working style below.
 
-## Cách làm việc ưa thích
+## Preferred working style
 
-- **Giải thích tư duy/khái niệm TRƯỚC khi code** — Sơn muốn hiểu luồng, không chỉ nhận kết quả.
-- Đọc **tiếng Việt** nhanh hơn: mọi trao đổi, báo cáo, plan → tiếng Việt.
-  Mọi thứ commit vào repo → tiếng Anh (xem [[engineering-rules]]).
-- Làm tuần tự bước nhỏ → dừng báo cáo → duyệt → bước tiếp.
+- **Explain the thinking/concepts BEFORE the code** — Sơn wants to understand the flow,
+  not just receive results.
+- Reads **Vietnamese** faster: all discussion, reports, plans → Vietnamese.
+  Everything committed to a repo → English (see [[engineering-rules]]).
+- Small sequential steps → stop and report → approval → next step.
 
-## Chuẩn làm việc kỳ vọng ở agent
+## Standards expected of agents
 
-Ba chuẩn này là feedback trực tiếp của Sơn sau các lần agent làm chưa tới (07/2026):
+Three standards from Sơn's direct feedback after agents fell short (07/2026):
 
-1. **Khảo sát công cụ trước khi chốt** — tài liệu chỉ định sẵn thư viện KHÔNG miễn việc tự khảo sát;
-   trước khi chốt tool cho bước quan trọng, liệt kê 2–3 phương án hiện đại + đánh đổi
-   (đủ họ: nặng/nhẹ/offline/online). Chủ động đề xuất, đừng để Sơn phải là người nhắc ra công cụ đúng.
-2. **Xác minh bằng tín hiệu chéo** — soi tay "ground truth" vẫn phải đối chiếu mọi tín hiệu độc lập
-   sẵn có; số lệch bất thường giữa 2 nguồn → soi lại CẢ HAI, kể cả nguồn "người".
-   Coi chừng priming: vừa đọc nhiều ca giống nhau dễ đọc nhầm ca khác thành giống.
-3. **Mô hình hóa vật thể, đừng chỉ tối ưu metric** — sau khi "đủ tốt" vẫn làm một lượt
-   "chuyên gia sẽ thêm gì?": liệt kê bất biến của đối tượng (hình dạng, vị trí, kích thước hợp lệ);
-   mỗi ca lỗi → hỏi "đây có phải một LUẬT per-đối-tượng?" trước khi vặn tham số toàn cục;
-   nâng cấp spec được giao từ nguyên lý, đừng thực thi nguyên văn.
+1. **Survey tools before committing** — a doc pre-naming a library does NOT excuse skipping your
+   own survey; before locking a tool for an important step, list 2–3 modern options + trade-offs
+   (the full family: heavy/light/offline/online). Propose proactively — never let Sơn be the one
+   to name the right tool.
+2. **Verify with cross-signals** — manually checking "ground truth" still requires checking every
+   independent signal available; a value that diverges between two sources → re-examine BOTH,
+   including the "human" one. Beware priming: after reading many similar cases it's easy to
+   misread a different one as similar.
+3. **Model the object, not just the metric** — after "good enough", still run one
+   "what would a domain expert add?" pass: list the object's invariants (valid shape, position,
+   size); for each failure case ask "is this a per-object RULE?" before tuning global parameters;
+   upgrade a given spec from first principles instead of executing it verbatim.

@@ -4,33 +4,33 @@ type: entity
 status: active
 updated: 2026-09-07
 tags: [client, vendor, ok2ship]
-sources: [~/Documents/ok2ship-ai/CLAUDE.md, ok2ship-ai/docs/decisions/002, 004]
+sources: [~/Documents/ok2ship-ai/CLAUDE.md, ~/Documents/ok2ship-ai/docs/decisions/002, 004]
 ---
 
 # Mektec & Desoft
 
-Khách hàng và đối tác của chương trình [[ok2ship]].
+Client and partner of the [[ok2ship]] program.
 
-## Mektec Vietnam — khách hàng
+## Mektec Vietnam — the client
 
-- Nhà máy sản xuất FPC, dùng hệ QA report (Excel + ảnh X-ray/cross-section).
-- **Data nhà máy là data khách hàng**: không rời môi trường được duyệt, không đụng AI free-tier,
-  không commit vào repo ([[engineering-rules]] #3).
+- FPC factory, runs a QA-report system (Excel + X-ray/cross-section images).
+- **Factory data is customer data**: never leaves approved environments, never touches free-tier
+  AI, never gets committed ([[engineering-rules]] #3).
 
-## Desoft — vendor đối tác
+## Desoft — the partner vendor
 
-- Vendor giao sản phẩm cùng, ra SRS/WBS mà [[ok2ship-ai]] bám theo.
-- Hạ tầng của họ: **GitLab** (repo deliverable nằm ở `gitlab.com/mektec/`) + **Rancher cluster**
-  `rancher-lake.desoft.vn` (namespace `ok2ship`), có sẵn **Loki + Grafana** làm logging tập trung —
-  lý do monitoring chọn Loki thay Sentry (ADR 004 của ok2ship-ai).
-- CI/CD GitLab build + deploy tự động khi push `main` (Le Bui dựng).
+- Vendor co-delivering the product; issues the SRS/WBS that [[ok2ship-ai]] follows.
+- Their infrastructure: **GitLab** (deliverable repos under `gitlab.com/mektec/`) + a **Rancher
+  cluster** `rancher-lake.desoft.vn` (namespace `ok2ship`) that already runs **Loki + Grafana**
+  for centralized logging — the reason monitoring chose Loki over Sentry (ok2ship-ai ADR 004).
+- GitLab CI/CD builds + deploys automatically on pushes to `main` (set up by Le Bui).
 
-## ⚠️ Bẫy thuật ngữ khi làm việc với BA
+## ⚠️ Terminology trap when talking to the BA
 
-BA dùng từ RBAC **ngược chuẩn ngành**: họ nói "role" = cái ngành gọi `permissions`,
-họ nói "role group" = cái ngành gọi `roles`. Schema dùng tên chuẩn ngành — **trước khi họp
-về schema phải tra bảng đối chiếu** trong `docs/design/user-management.md` của repo ok2ship-ai,
-kẻo hai bên nói chuyện trượt nhau.
+The BA uses RBAC terms **inverted from industry standard**: their "role" = what the industry
+calls `permissions`; their "role group" = industry `roles`. The schema uses standard terms —
+**before any schema meeting, consult the translation table** in ok2ship-ai's
+`docs/design/user-management.md`, or the two sides will talk past each other.
 
-Kênh yêu cầu: BA gửi file SRS/Excel qua Downloads; requirement có thể đổi sau khi đã chốt design
-(đã xảy ra với RBAC v1→v3) — thiết kế nên để đường lùi rẻ.
+Requirements channel: the BA sends SRS/Excel files via Downloads; requirements can change after
+a design is locked (happened with RBAC v1→v3) — designs should keep the retreat path cheap.

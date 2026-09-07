@@ -1,5 +1,5 @@
 ---
-title: ai-company (lịch sử)
+title: ai-company (historical)
 type: entity
 status: stable
 updated: 2026-09-07
@@ -7,42 +7,44 @@ tags: [history, architecture, meta]
 sources: [ai-company/CLAUDE.md, ai-company/.claude/]
 ---
 
-# ai-company — mô hình đã hấp thụ (07/2026 – 09/2026)
+# ai-company — absorbed model (07/2026 – 09/2026)
 
-Mô hình vận hành trước [[simon-platform]]. **Đã được hấp thụ vào simon-brain 09/2026** —
-trang này giữ lại vì lý do từng chọn rồi từng bỏ một mô hình chính là loại tri thức wiki sinh ra để giữ.
+The operating model before [[simon-platform]]. **Absorbed into simon-brain 09/2026** — this page
+stays because the reasons a model was once chosen and then dropped are exactly the kind of
+knowledge the wiki exists to keep.
 
-## Nó là gì
+## What it was
 
-Một repo trung tâm (`ai-company`, bootstrap 2026-07-13) đóng vai "công ty":
-- **Hiến pháp** (CLAUDE.md hub): luật kỹ thuật, workflow Group/Flow theo cỡ task, cơ chế debate,
-  nghi thức 🚀 Serious vs 🧪 Spike, luật ngôn ngữ Anh-repo/Việt-human.
-- **6 native agents** đóng vai đội ngũ: orchestrator, dev-backend, dev-frontend, dev-mobile, devops, qa-reviewer.
+A central repo (`ai-company`, bootstrapped 2026-07-13) playing "company":
+- **A constitution** (hub CLAUDE.md): engineering rules, task-size Group/Flow workflow, a debate
+  mechanism, the 🚀 Serious vs 🧪 Spike ritual, the English-repo/Vietnamese-to-human language rule.
+- **6 native agents** as a staff: orchestrator, dev-backend, dev-frontend, dev-mobile, devops, qa-reviewer.
 - **3 skills**: git-workflow, project-init, project-retro.
-- `products/` (gitignored) chứa các repo sản phẩm độc lập.
+- `products/` (gitignored) holding independent product repos.
 
-## Vì sao bỏ
+## Why it was dropped
 
-1. **Bộ máy điều phối nặng hơn thứ nó điều phối** — orchestrator 3.6KB điều phối 4 agent dev
-   tổng 2.3KB; mỗi "agent" thực chất là vài gạch đầu dòng về stack, không đáng một context riêng.
-2. **Subagent tồn tại để cô lập context, không phải để đóng vai** — model không cần được nhắc
-   "you are the Backend Engineer" mới viết được FastAPI tử tế.
-3. Nhiều luật chỉ tồn tại để vá vấn đề do chính việc tách agent đẻ ra
-   (vd "hai agent không sửa cùng file").
-4. Khi tầng nền (wiki + skills + luật) ra đời, khung "công ty" thành tầng trung gian thừa —
-   mọi vai của nó có nhà tốt hơn.
+1. **The coordination machinery outweighed what it coordinated** — a 3.6KB orchestrator directing
+   four dev agents totalling 2.3KB; each "agent" was a few bullet points about a stack, not worth
+   a separate context.
+2. **Subagents exist for context isolation, not role-play** — a model doesn't need to be told
+   "you are the Backend Engineer" to write decent FastAPI.
+3. Several rules existed only to patch problems the agent-splitting itself created
+   (e.g. "two agents must never edit the same file").
+4. Once the foundation layer (wiki + skills + rules) existed, the "company" frame became a
+   redundant middle layer — every role had a better home.
 
-## Cái gì được giữ, đi đâu
+## What was kept, and where it went
 
-| Tài sản | Nhà mới |
+| Asset | New home |
 |---|---|
-| Luật kỹ thuật (9 nguyên tắc) | [[engineering-rules]] |
-| Stack chuẩn + luật ADR | [[default-stack]], AGENTS.md §3 |
-| Cổng duyệt + debate | [[approval-gates]] |
-| Nghi thức spike | `~/exp/` (AGENTS.md §0 — Vùng thí nghiệm) |
-| Skills git-workflow / project-retro / project-init | `simon-brain/skills/` (viết lại generic) |
-| 6 native agents | Bỏ — mô hình solo agent |
-| Repo ai-company | Archive, giữ nguyên lịch sử git |
+| Engineering rules (9 principles) | [[engineering-rules]] |
+| Standard stack + ADR discipline | [[default-stack]], AGENTS.md §3 |
+| Approval gates + debate | [[approval-gates]] |
+| Spike ritual | `~/exp/` (AGENTS.md §0 — experiment zone) |
+| Skills git-workflow / project-retro / project-init | `simon-brain/skills/` (rewritten generic) |
+| 6 native agents | Dropped — solo-agent model |
+| The ai-company repo | Archived, git history intact |
 
-Sản phẩm từng sống trong `products/`: [[ok2ship-ai]], [[native-skline-chart]],
-các spike của [[ok2ship]] — đã dời ra `~/Documents/` khi archive.
+Products that lived under `products/`: [[ok2ship-ai]], [[native-skline-chart]], the
+[[ok2ship]] spikes — moved out to `~/Documents/` at archive time.

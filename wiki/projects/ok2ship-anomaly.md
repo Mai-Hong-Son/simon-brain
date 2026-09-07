@@ -4,31 +4,33 @@ type: project
 status: active
 updated: 2026-09-07
 tags: [ok2ship, spike, anomaly-detection, ml]
-sources: [~/Documents/ok2ship-anomaly/HANDOFF.md, memory hub ai-company]
+sources: [~/Documents/ok2ship-anomaly/HANDOFF.md, ai-company hub memory]
 ---
 
-# ok2ship-anomaly — spike req #3
+# ok2ship-anomaly — spike for req #3
 
-Spike 🧪 của [[ok2ship]]: phát hiện bất thường ảnh QA bằng so với mẫu chuẩn (golden), per-pin.
-**Hiện trạng chi tiết: `HANDOFF.md` trong repo spike.** Chưa PROMOTE.
+🧪 spike of [[ok2ship]]: detect anomalies in QA images by comparison against golden samples,
+per-pin. **Current state: `HANDOFF.md` in the spike repo.** Not yet PROMOTED.
 
-## Hướng đã chốt với Sơn
+## Direction locked with Sơn
 
-- **Golden/one-class** (không supervised-defect): cần ít ảnh mẫu, không cần dataset lỗi.
-- Công cụ: **Anomalib + PatchCore**, chạy offline (data khách không rời máy — [[engineering-rules]] #3).
-- Code viết để đổ ảnh thật vào `data/golden/` chạy lại được, không sửa code.
+- **Golden/one-class** (not supervised-defect): needs few reference images, no defect dataset.
+- Tooling: **Anomalib + PatchCore**, running offline (customer data stays on the machine —
+  [[engineering-rules]] #3).
+- Code is written so real images drop into `data/golden/` and rerun without code changes.
 
-## Kết luận kỹ thuật đã rút được
+## Technical conclusions so far
 
-- **Chất lượng curation golden set chi phối tất cả** — một ảnh overview lạc loại trong golden
-  làm overlap golden-vs-abnormal tệ đi hàng chục điểm; gỡ đúng 1 ảnh là tách hẳn.
-- **Phải seed randomness trước khi kết luận** — coreset của PatchCore chọn điểm khởi đầu ngẫu nhiên,
-  điểm số đầu bảng dao động >10 điểm giữa các run giống hệt nhau; mọi "gap" chưa seed chỉ là
-  một mẫu của đại lượng nhiễu.
-- **Ngưỡng hiển thị ≠ ngưỡng calibrated** — percentile chọn bằng mắt chỉ để vẽ contour;
-  làm gate OK/NG tự động thì bắt buộc calibrate; làm tool xếp hạng cho người soi thì cutoff lỏng chấp nhận được.
-- Test trung thực = ảnh bị judge phải **vắng mặt** khỏi memory bank lẫn val/test split.
-- Detection đã chạy được trên cả 2 component thật; localisation mới đúng trên 1 —
-  golden set nhỏ dưới ngưỡng tin cậy thì kết quả chỉ là smoke test.
+- **Golden-set curation quality dominates everything** — one stray overview image inside golden
+  degraded golden-vs-abnormal overlap by tens of points; removing that ONE file separated them.
+- **Seed the randomness before drawing conclusions** — PatchCore's coreset picks a random start;
+  the headline score swings >10 points between identical runs; every unseeded "gap" is one sample
+  of a noisy quantity.
+- **Display threshold ≠ calibrated threshold** — an eyeballed percentile is only for drawing
+  contours; an automatic OK/NG gate requires calibration; a human-assist ranking tool can live
+  with a loose cutoff.
+- An honest test = the judged image is **absent** from both the memory bank and the val/test split.
+- Detection works on both real components; localisation only on one so far — with a golden set
+  below the trust threshold, results are smoke tests, not evidence.
 
-*(Các bài học ML ở trên là ứng viên thăng hạng concept khi dự án ML khác dùng đến — AGENTS.md §3.)*
+*(The ML lessons above are promotion candidates once another ML project uses them — AGENTS.md §3.)*
