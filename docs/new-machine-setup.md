@@ -1,102 +1,49 @@
-# New-machine setup — Mac Studio migration
+# Skills to install on a new machine
 
-> **For the Claude agent on the new machine:** Sơn will point you at this file. Execute it
-> top-to-bottom, report after each numbered section, and ask before deleting anything not
-> explicitly listed here. Talk to Sơn in Vietnamese; keep everything you write to disk in English.
+> For the Claude agent on the new machine: Sơn will point you here. Install exactly this list,
+> nothing more. Talk to Sơn in Vietnamese.
 
-Context: Sơn is migrating from a MacBook to a Mac Studio. simon-brain is the foundation
-(see `README.md` and `wiki/entities/simon-platform.md`). Some material cannot travel through
-git (customer data, secrets, machine-local memory) and arrives via AirDrop instead.
-
----
-
-## 0. What must arrive via AirDrop (verify before anything else)
-
-Check each item exists; if anything is missing, STOP and tell Sơn before proceeding:
-
-| Item | Target path on this machine | Why not git |
-|---|---|---|
-| `simon-brain/` | `~/Documents/simon-brain` | Can also be cloned later, but AirDrop avoids the SSH chicken-and-egg |
-| `products/` (ok2ship-ai + nested backend/frontend, native-skline-chart) | `~/Documents/products` | native-skline-chart has NO remote; ok2ship data/.env ride along |
-| `spikes/` (ok2ship-anomaly, ok2ship-report-parser, void-guard-xval) | `~/Documents/spikes` | Spikes have NO remotes (deliberate); `data/`, `datasets/`, `output/` are customer data — never push them anywhere |
-| `~/.claude/` (whole folder) | `~/.claude` | Machine-local memory (`projects/*/memory`), session history, `settings.json`, keybindings |
-| `~/.agents/` (whole folder) | `~/.agents` | The RN/Swift/iOS skill pack — `~/.claude/skills` symlinks point here by absolute path |
-| `~/.ssh/` (or Sơn creates new keys) | `~/.ssh` | GitHub + GitLab access; without it no push/pull works |
-| Factory data folders from `~/Downloads` (`report-data-example`, `Ảnh mẫu bất thường`, `AI ok2ship`…) | `~/Downloads/` (same names) | Spike HANDOFFs reference these exact paths; customer data |
-| `native-kline-view/` | `~/Documents/native-kline-view` | Reference library that native-skline-chart's ADR 005 ports from |
-
-## 1. Base tooling
+## 1. Foundation first
 
 ```bash
-xcode-select --install                     # git, clang
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install gh uv node
-brew install --cask obsidian
-git config --global user.name  "Mai Hong Son"
-git config --global user.email "mhongson95@gmail.com"
-gh auth login                              # if ~/.ssh didn't arrive, create keys here and add to GitHub + GitLab
+cd ~/Documents/simon-brain && ./setup.sh
 ```
 
-Verify remotes are reachable: `ssh -T git@github.com` and `ssh -T git@gitlab.com`.
+Brings in `git-workflow`, `project-init`, `project-retro` (symlinks) + `~/.claude/CLAUDE.md`
+(global rules) + `~/Documents/{products,spikes}`. If `~/.claude/CLAUDE.md` already exists as a
+real file, delete it and re-run.
 
-## 2. Plug in the foundation
+## 2. Plugins (Claude Code marketplace)
 
-```bash
-cd ~/Documents/simon-brain && git pull --rebase && ./setup.sh
-```
+Add marketplace `anthropics/skills`, then install:
 
-Expected: symlinks for the 3 simon-brain skills, `~/.claude/CLAUDE.md -> config/global-rules.md`,
-and `~/Documents/{products,spikes}` present. Note: setup.sh will find `~/.claude/CLAUDE.md`
-already exists as a REAL file from the AirDropped `~/.claude` — delete that file
-(`rm ~/.claude/CLAUDE.md`) and re-run `./setup.sh` so the symlink wins.
+| Plugin | Why |
+|---|---|
+| `document-skills` | xlsx / docx / pptx / pdf handling |
+| `example-skills` | artifact & design toolkits |
 
-Verify: `readlink ~/.claude/CLAUDE.md` prints the config/global-rules.md path, and
-`head -3 ~/.claude/CLAUDE.md` shows content.
+## 3. Skill pack (install via the skills CLI — `npx skills`, from vercel-labs/skills)
 
-## 3. Curate the global skills (deletion — confirm the list with Sơn once, then apply)
+React Native / iOS / TS trade-craft + working discipline. Repo → skills:
 
-Decision already made with Sơn (2026-09-07): keep the trade-craft skills, drop the ones whose
-role simon-brain or Claude Code now covers.
+| Source repo | Skills |
+|---|---|
+| `dpearson2699/swift-ios-skills` | swift-language · swift-api-design-guidelines · swiftui-gestures · swiftui-uikit-interop · ios-simulator · debugging-instruments |
+| `callstackincubator/agent-skills` | react-native-best-practices · upgrading-react-native |
+| `vercel-labs/agent-skills` | vercel-react-native-skills (path: skills/react-native-skills) |
+| `wshobson/agents` | typescript-advanced-types |
+| `obra/superpowers` | systematic-debugging · verification-before-completion |
+| `rohitg00/pro-workflow` | **only** deslop · module-map · plan-interrogate |
 
-**KEEP — do not touch:**
-- simon-brain symlinks: `git-workflow`, `project-init`, `project-retro`
-- RN/iOS/Swift/TS pack (symlinks into `~/.agents/skills`): `react-native-best-practices`,
-  `upgrading-react-native`, `vercel-react-native-skills`, `ios-simulator`,
-  `debugging-instruments`, `swift-language`, `swift-api-design-guidelines`,
-  `swiftui-gestures`, `swiftui-uikit-interop`, `typescript-advanced-types`
-- Working discipline: `systematic-debugging`, `verification-before-completion`, `deslop`,
-  `module-map`, `plan-interrogate`
-- Plugins in settings.json: `document-skills`, `example-skills` (they re-download themselves)
+## 4. Deliberately NOT installed — don't "helpfully" add them
 
-**DELETE from `~/.claude/skills/`** (redundant with the wiki/AGENTS.md, the dissolved
-multi-agent model, or Claude Code built-ins):
+The rest of `rohitg00/pro-workflow` and `obra/superpowers` (orchestrate, agent-teams,
+session-handoff, learn-rule, smart-commit, subagent-driven-development,
+dispatching-parallel-agents, token-efficiency, …) and `claude-mem`: their roles are covered by
+the simon-brain wiki (AGENTS.md), the solo-agent model, or Claude Code built-ins.
+Decision recorded 2026-09-07.
 
-```
-learn-rule replay-learnings insights session-handoff wrap-up smart-commit
-orchestrate agent-teams batch-orchestration subagent-driven-development
-dispatching-parallel-agents pro-workflow parallel-worktrees permission-tuner
-compact-guard context-optimizer context-engineering token-efficiency
-thoroughness-scoring sprint-status cost-tracker auto-setup safe-mode
-llm-gate file-watcher mcp-audit bug-capture
-```
+## 5. Verify
 
-Also delete the loose agent files and their configs in `~/.claude/skills/`:
-`context-engineer.md cost-analyst.md debugger.md orchestrator.md permission-analyst.md
-planner.md reviewer.md scout.md` and every `.*.skillkit.json`.
-
-## 4. Verify the whole platform
-
-- [ ] `ls ~/.claude/skills` shows only the KEEP list (plus plugin-managed entries).
-- [ ] Open a session in `~/Documents/products/ok2ship-ai` and ask "dự án này là gì, luật nào áp dụng?"
-      — the answer must come from the auto-loaded wiki page + engineering rules WITHOUT reading
-      files first (proves the @import chain works).
-- [ ] `git -C ~/Documents/products/ok2ship-ai pull` works (SSH OK).
-- [ ] Spike data intact: `du -sh ~/Documents/spikes/ok2ship-anomaly/data` (~330MB expected).
-- [ ] Obsidian: follow README "Đọc wiki bằng Obsidian" — vault opens, graph shows the ok2ship cluster.
-- [ ] `.env` files present where expected (e.g. `spikes/void-guard-xval/.env`).
-
-## 5. Only after §4 is fully green
-
-Tell Sơn the platform is verified. **Sơn wipes the MacBook himself — never suggest or perform
-remote-wiping anything from here.** If any check failed, the MacBook is still the only copy of
-that item; say so loudly.
+`ls ~/.claude/skills` matches §1+§3; open a session in `~/Documents/products/ok2ship-ai` and it
+should know the project + rules without reading files (the @import chain).
