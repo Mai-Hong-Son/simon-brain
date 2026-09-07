@@ -31,3 +31,5 @@ data/ảnh báo cáo QA với spec, golden sample và lịch sử xuyên báo c�
 - [[ok2ship-anomaly]] — spike 🧪 cho req #3 (ảnh vs golden, one-class AI).
 - [[ok2ship-report-parser]] — spike 🧪 cho req #1/#2/#4/#5 (đọc data Excel report thật).
   Tách khỏi anomaly có chủ đích: khác chất hoàn toàn (bảng số vs ảnh).
+- [[void-guard-xval]] — spike 🧪 mảng "X-ray Solder Void": đo void% từ ảnh X-ray AXI,
+  chấm bằng khớp số máy. Sơn đang làm tiếp.

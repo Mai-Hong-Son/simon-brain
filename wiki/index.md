@@ -29,4 +29,5 @@ updated: 2026-09-07
 - [[ok2ship-ai]] — sản phẩm 🚀: topology 3 repo, quyết định đã khóa, bài học mockup-fidelity + tsc -b.
 - [[ok2ship-anomaly]] — spike 🧪 req #3: golden/PatchCore; bài học curation, seed, calibrated threshold.
 - [[ok2ship-report-parser]] — spike 🧪 req #1/2/4/5: parse theo nhãn, format report trôi, không drop sheet.
+- [[void-guard-xval]] — spike 🧪 đo void% X-ray: mẫu số = khung ROI, bám viền cyan, tiêu chí hybrid; kiêm bài học backend.
 - [[native-skline-chart]] — thư viện K-line RN native: 5 ADR (Fabric-only, command fast path, indicators native, license port).
