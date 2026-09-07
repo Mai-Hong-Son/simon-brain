@@ -12,12 +12,21 @@ updated: 2026-09-07
 
 ## Concepts
 
-*(chưa có trang)*
+- [[engineering-rules]] — 8 luật kỹ thuật bất di bất dịch áp cho mọi dự án + luật ngôn ngữ.
+- [[default-stack]] — stack mặc định từng tầng, layout repo, lệch → ADR trước khi code.
+- [[approval-gates]] — chọn quy mô quy trình theo kích thước, cổng duyệt của người, phản biện bằng context mới.
 
 ## Entities
 
-*(chưa có trang)*
+- [[son]] — chuyên môn, cách làm việc ưa thích, 3 chuẩn kỳ vọng ở agent.
+- [[mektec-desoft]] — khách hàng & vendor của OK2SHIP; hạ tầng GitLab/Rancher/Loki; bẫy thuật ngữ RBAC của BA.
+- [[simon-platform]] — mô hình nền tảng hiện hành: simon-brain + repo sản phẩm + ~/exp; phép thử phân nhà.
+- [[ai-company]] — (lịch sử) mô hình công ty 07–09/2026, vì sao bỏ, tài sản đi đâu.
 
 ## Projects
 
-*(chưa có trang)*
+- [[ok2ship]] — hub chương trình: 5 yêu cầu BA → spike nào chứng minh gì → sản phẩm nào ăn kết quả.
+- [[ok2ship-ai]] — sản phẩm 🚀: topology 3 repo, quyết định đã khóa, bài học mockup-fidelity + tsc -b.
+- [[ok2ship-anomaly]] — spike 🧪 req #3: golden/PatchCore; bài học curation, seed, calibrated threshold.
+- [[ok2ship-report-parser]] — spike 🧪 req #1/2/4/5: parse theo nhãn, format report trôi, không drop sheet.
+- [[native-skline-chart]] — thư viện K-line RN native: 5 ADR (Fabric-only, command fast path, indicators native, license port).

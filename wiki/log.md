@@ -4,3 +4,4 @@
 > Mỗi việc một dòng. Đọc nhanh: `grep "^## \[" wiki/log.md | tail -20`
 
 ## [2026-09-07] ingest | Khởi tạo wiki — AGENTS.md v1 + merge luật migration brief | @claude-code
+## [2026-09-07] ingest | Phase 1 migration: chưng cất ai-company + products vào wiki — 12 trang (3 concepts, 4 entities, 5 projects) | @claude-code
