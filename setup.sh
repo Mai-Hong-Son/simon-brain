@@ -5,6 +5,8 @@
 #   git clone <remote> ~/Documents/simon-brain
 #   cd ~/Documents/simon-brain && ./setup.sh
 #
+# Repo luôn nằm ở ~/Documents/simon-brain — không tạo lối tắt nào khác.
+#
 # Git sync phần NỘI DUNG (wiki/skills/agents); script này cắm phần DÂY ĐIỆN mà git
 # không mang theo được: symlink vào ~/.claude/ để Claude Code load, và vùng ~/exp/.
 set -euo pipefail
@@ -24,23 +26,20 @@ link() {
   echo "linked  $linkpath -> $target"
 }
 
-# 1. Lối tắt ~/simon-brain
-link "$BRAIN" "$HOME/simon-brain"
-
-# 2. Skills: symlink TỪNG item (không thay cả thư mục — ~/.claude/skills còn đồ khác)
+# 1. Skills: symlink TỪNG item (không thay cả thư mục — ~/.claude/skills còn đồ khác)
 mkdir -p "$HOME/.claude/skills" "$HOME/.claude/agents"
 for d in "$BRAIN"/skills/*/; do
   [ -d "$d" ] || continue
   link "${d%/}" "$HOME/.claude/skills/$(basename "$d")"
 done
 
-# 3. Agents: từng file .md
+# 2. Agents: từng file .md
 for f in "$BRAIN"/agents/*.md; do
   [ -e "$f" ] || continue
   link "$f" "$HOME/.claude/agents/$(basename "$f")"
 done
 
-# 4. Vùng thí nghiệm (AGENTS.md §0 — mặc định không ghi wiki)
+# 3. Vùng thí nghiệm (AGENTS.md §0 — mặc định không ghi wiki)
 mkdir -p "$HOME/exp"
 
 echo "Done. Nền simon-brain đã cắm vào ~/.claude/"
