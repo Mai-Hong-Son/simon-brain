@@ -13,3 +13,4 @@
 ## [2026-09-07] lint | Language migration: entire repo translated to English (repo = English, conversation with Sơn = Vietnamese) | @claude-code
 ## [2026-09-07] ingest | project-init: wiki-test (full-stack, default stack) — seed page created | @claude-code
 ## [2026-09-07] lint | project-init test passed (both branches) — wiki-test scaffold + seed page removed | @claude-code
+## [2026-09-07] ingest | @import convention adopted (option B) after the stale-constitution incident — global imports engineering-rules, each product CLAUDE.md imports its wiki page | @claude-code

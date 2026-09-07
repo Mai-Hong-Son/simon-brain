@@ -78,7 +78,9 @@ Git sync phần **nội dung**; setup.sh cắm phần **dây điện** mà git k
 Sau này thêm skill mới vào repo → chạy lại `./setup.sh` là link mới được cắm.
 
 Lưu ý repo phải nằm đúng `~/Documents/simon-brain` — các con trỏ trong
-`~/.claude/CLAUDE.md` và skills trỏ theo path này.
+`~/.claude/CLAUDE.md` và skills trỏ theo path này. **Clone simon-brain + chạy setup.sh TRƯỚC
+khi mở session trong các product repo** — CLAUDE.md của chúng `@import` trang wiki từ path này,
+chưa có repo thì session mở lên sẽ thiếu bối cảnh.
 
 ## Đọc wiki bằng gì
 

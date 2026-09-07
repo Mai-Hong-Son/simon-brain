@@ -33,7 +33,9 @@ For each non-default choice: create `docs/decisions/NNN-<slug>.md` in the projec
 2. Write the project's `CLAUDE.md`: **product-specific technical content only** (chosen stack,
    layout, build/test commands, project rules — which may only be stricter than the shared
    rules, never looser). No behavior rules or backstory here — global `~/.claude/CLAUDE.md`
-   + the wiki cover those.
+   + the wiki cover those. Right before the first heading, add the auto-load line
+   `@~/Documents/simon-brain/wiki/projects/<name>.md` (the page itself is created in Step 4) —
+   prose pointers don't inject context; only @import lines do (see `entities/simon-platform`).
 3. Layout: single tier → flat at root; ≥2 tiers → `backend/`, `frontend/` (see default-stack).
 4. The detailed code skeleton is built AFTER cd-ing into the project — not part of init.
 
