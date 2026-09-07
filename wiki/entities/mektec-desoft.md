@@ -4,7 +4,7 @@ type: entity
 status: active
 updated: 2026-09-07
 tags: [client, vendor, ok2ship]
-sources: [ok2ship-ai/CLAUDE.md, ok2ship-ai/docs/decisions/002, 004]
+sources: [~/Documents/ok2ship-ai/CLAUDE.md, ok2ship-ai/docs/decisions/002, 004]
 ---
 
 # Mektec & Desoft

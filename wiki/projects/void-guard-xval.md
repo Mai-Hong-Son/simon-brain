@@ -4,7 +4,7 @@ type: project
 status: active
 updated: 2026-09-07
 tags: [ok2ship, spike, cv, x-ray]
-sources: [_spikes/void-guard-xval/HANDOFF.md, docs/rui-ro-so-lieu.md]
+sources: [~/Documents/void-guard-xval/HANDOFF.md, docs/rui-ro-so-lieu.md]
 ---
 
 # void-guard-xval — spike đo void% X-ray

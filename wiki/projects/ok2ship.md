@@ -4,7 +4,7 @@ type: hub
 status: active
 updated: 2026-09-07
 tags: [ok2ship, program, qa]
-sources: [ok2ship-ai/CLAUDE.md, memory hub ai-company 08/2026]
+sources: [~/Documents/ok2ship-ai/CLAUDE.md, memory hub ai-company 08/2026]
 ---
 
 # OK2SHIP — hub chương trình

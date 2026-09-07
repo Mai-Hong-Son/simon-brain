@@ -4,7 +4,7 @@ type: project
 status: active
 updated: 2026-09-07
 tags: [ok2ship, spike, excel, parsing]
-sources: [_spikes/ok2ship-report-parser/HANDOFF.md, memory hub ai-company]
+sources: [~/Documents/ok2ship-report-parser/HANDOFF.md, memory hub ai-company]
 ---
 
 # ok2ship-report-parser — spike req #1/#2/#4/#5
