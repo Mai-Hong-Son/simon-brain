@@ -24,7 +24,7 @@ simon-brain (repo này — NỀN TẢNG, sync git giữa nhiều máy)
 │   ├── concepts/  #   kiến thức tái dùng: pattern, kỹ thuật, bài học chung
 │   ├── entities/  #   người, khách hàng, tool, mô hình
 │   └── projects/  #   dự án đang chạy: mỗi dự án một trang (+ hub chương trình)
-├── skills/        # quy trình đóng gói (git-workflow, project-init, project-retro)
+├── skills/        # quy trình đóng gói (git-workflow, module-map, project-init, project-retro)
 └── agents/        # kho năng lực — mặc định rỗng (mô hình solo agent)
 
 ~/Documents/products/<tên>            ~/Documents/spikes/<tên>

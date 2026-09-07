@@ -9,7 +9,7 @@
 cd ~/Documents/simon-brain && ./setup.sh
 ```
 
-Brings in `git-workflow`, `project-init`, `project-retro` (symlinks) + `~/.claude/CLAUDE.md`
+Brings in `git-workflow`, `module-map`, `project-init`, `project-retro` (symlinks) + `~/.claude/CLAUDE.md`
 (global rules) + `~/Documents/{products,spikes}`. If `~/.claude/CLAUDE.md` already exists as a
 real file, delete it and re-run.
 
@@ -24,7 +24,17 @@ Add marketplace `anthropics/skills`, then install:
 
 ## 3. Skill pack (install via the skills CLI — `npx skills`, from vercel-labs/skills)
 
-React Native / iOS / TS trade-craft + working discipline. Repo → skills:
+React Native / iOS / TS trade-craft + working discipline.
+
+**One command per skill.** `-s` takes a single name, and the agent is `claude-code`:
+
+```bash
+npx skills add <repo> -g -s <skill> -a claude-code -y
+```
+
+⚠️ `-s a,b` does **not** install two skills. The CLI matches nothing, prints the repo's whole
+skill list, and exits having installed zero — no error, and still a closing "Done!". A wrong
+`-a` is the friendlier twin: it does say `Invalid agents: …`. Count afterwards (§5), never skim.
 
 | Source repo | Skills |
 |---|---|
@@ -33,7 +43,16 @@ React Native / iOS / TS trade-craft + working discipline. Repo → skills:
 | `vercel-labs/agent-skills` | vercel-react-native-skills (path: skills/react-native-skills) |
 | `wshobson/agents` | typescript-advanced-types |
 | `obra/superpowers` | systematic-debugging · verification-before-completion |
-| `rohitg00/pro-workflow` | **only** deslop · module-map · plan-interrogate |
+| `rohitg00/pro-workflow` | **only** deslop · plan-interrogate |
+
+`module-map` used to sit in that last row. It now ships with simon-brain (`skills/module-map`,
+linked by §1): upstream's frontmatter is invalid YAML, so the CLI skips it — silently, one
+`⚠ Skipped` line buried in a hundred. See the Provenance note inside that file.
+
+**Doing ok2ship only?** ok2ship-ai is FastAPI + React/TS, so §3 narrows to
+`typescript-advanced-types`, `systematic-debugging`, `verification-before-completion`,
+`deslop`, `plan-interrogate` — five skills, `ls ~/.claude/skills | wc -l` → 9 with §1.
+The six swift-ios and three React Native ones wait until native-skline-chart starts.
 
 ## 4. Deliberately NOT installed — don't "helpfully" add them
 
@@ -45,5 +64,12 @@ Decision recorded 2026-09-07.
 
 ## 5. Verify
 
-`ls ~/.claude/skills` matches §1+§3; open a session in `~/Documents/products/ok2ship-ai` and it
-should know the project + rules without reading files (the @import chain).
+Count, don't skim — both known CLI failure modes end on a cheerful "Done!":
+
+```bash
+ls ~/.claude/skills | wc -l   # 4 from §1 + one per §3 skill installed (all of §3 → 18)
+ls ~/.claude/skills           # eyeball the names against §1 + §3
+```
+
+Then open a session in `~/Documents/products/ok2ship-ai`: it should know the project + rules
+without reading files (the @import chain).
