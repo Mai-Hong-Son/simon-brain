@@ -12,3 +12,4 @@
 ## [2026-09-07] ingest | Migration Phase 5: 5 product repos moved to ~/Documents (with machine-local memory), ai-company merged to main + pushed, now a historical repo | @claude-code
 ## [2026-09-07] lint | Language migration: entire repo translated to English (repo = English, conversation with Sơn = Vietnamese) | @claude-code
 ## [2026-09-07] ingest | project-init: wiki-test (full-stack, default stack) — seed page created | @claude-code
+## [2026-09-07] lint | project-init test passed (both branches) — wiki-test scaffold + seed page removed | @claude-code
