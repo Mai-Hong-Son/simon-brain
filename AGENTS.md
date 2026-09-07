@@ -44,6 +44,17 @@ sources: [raw/sources/anthropic-caching-docs.md]
 ---
 ```
 
+### Vùng thí nghiệm
+
+Thí nghiệm sống trong `~/exp/` hoặc repo prefix `exp-`, **mặc định không ghi wiki**.
+Chỉ khi thí nghiệm cho ra bài học đáng giữ → chưng cất một dòng vào trang concept (vẫn qua cổng duyệt §7).
+Thí nghiệm chết → xoá, không lưu vết.
+
+### Nguồn bên thứ ba
+
+Repo này chứa đồ tự viết hoặc đã sửa + manifest dựng lại nền (`setup.sh`).
+Không vendor nguyên bản đồ người khác trừ khi cố ý — khi đó ghi rõ fork từ đâu, version nào.
+
 ---
 
 ## 1. Quality gate — luật số một
@@ -89,6 +100,18 @@ Cách viết đúng: **hỏng-thử-được → viết ra cái "được" + t�
 Format cố định `## [YYYY-MM-DD] <ingest|query|lint> | <chủ đề> | @<agent>` để grep được:
 `grep "^## \[" wiki/log.md | tail -20`
 
+### Ghi hình dạng, không chép giá trị hiện tại
+
+Wiki ghi **hình dạng** của sự việc, không chép **giá trị tức thời**: không version, số file,
+số test, SHA, URL commit trong trang wiki — các con số đó lỗi thời ngay lần push sau.
+Cần chi tiết hiện trạng → link sang repo, để repo tự nói.
+
+### Khi wiki và repo mâu thuẫn
+
+Repo (code + docs) thắng về **hiện trạng**; wiki thắng về **lịch sử quyết định và lý do**.
+Gặp mâu thuẫn → không âm thầm chọn một bên: báo Sơn, đề xuất sửa bên sai
+(thường là wiki đã mục — cập nhật nó và ghi nhận ở lint).
+
 ---
 
 ## 3. Bài học đi đâu — project vs concept
@@ -108,6 +131,13 @@ Trang dự án giữ **một dòng** ngữ cảnh + link, không copy nội dung
 **Luật thăng hạng:** một bài học xuất hiện ở **≥ 2 dự án** → tách ra thành trang `concepts/`, hai trang dự án chỉ còn link. Lint pass phải phát hiện việc này.
 
 **Luật giáng hạng:** một trang `concepts/` mà chỉ có đúng một dự án dùng và không có dấu hiệu tái dùng → gộp ngược về trang dự án, đề xuất xoá.
+
+### Quyết định kiến trúc (ADR)
+
+- Trang wiki của dự án ghi mỗi quyết định kiến trúc dạng **quyết định + lý do + phương án đã loại**.
+- ADR chi tiết gắn code (context/consequences đầy đủ) sống trong repo sản phẩm (`docs/decisions/`),
+  wiki trỏ sang — không chép đôi.
+- Stack lệch mặc định (xem `concepts/default-stack`) → phải có ADR trong repo sản phẩm **trước khi code**.
 
 ---
 
