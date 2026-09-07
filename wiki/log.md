@@ -17,3 +17,4 @@
 ## [2026-09-07] ingest | Layout regrouped: serious products under ~/Documents/products/, spikes under ~/Documents/spikes/ (replaces ~/exp); 5 repos + memory keys moved; project-init updated | @claude-code
 ## [2026-09-07] ingest | Global rules moved into the repo (config/global-rules.md, symlinked to ~/.claude/CLAUDE.md by setup.sh) — closes the new-machine gap in the @import convention | @claude-code
 ## [2026-09-07] ingest | Mac Studio bootstrap: module-map vendored into skills/ (upstream YAML frontmatter invalid, CLI skips it silently); new-machine-setup §3/§5 fixed — one `skills add` per skill, agent is `claude-code`, verify by count | @claude-code
+## [2026-09-07] ingest | Mac Studio tier 2: node/uv/gh installed (Docker already there); every .venv + node_modules rebuilt from lockfiles — airdropped ones are machine-bound and unusable; all suites green (backend 256, frontend 126, void-guard 43), anomalib on MPS | @claude-code
