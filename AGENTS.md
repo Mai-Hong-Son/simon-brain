@@ -1,6 +1,6 @@
 # AGENTS.md — Schema vận hành wiki `simon-brain`
 
-Repo này là **bộ nhớ dài hạn** của Sơn + **institutional knowledge** của hệ ai-company.
+Repo này là **bộ nhớ dài hạn** của Sơn + **institutional knowledge** của nền tảng simon-platform.
 Nhiều agent cùng đọc/ghi, sync qua git giữa nhiều máy.
 
 Mọi agent làm việc trong repo này PHẢI đọc file này trước khi ghi bất cứ thứ gì vào `wiki/`.
@@ -15,7 +15,7 @@ Mọi agent làm việc trong repo này PHẢI đọc file này trước khi ghi
 | Wiki | `wiki/` | Agent (Sơn duyệt) | Agent viết toàn bộ. Sơn đọc, hỏi, duyệt. |
 | Schema | `AGENTS.md` (file này) | Sơn + agent cùng tiến hoá | Sửa file này chỉ khi Sơn duyệt rõ ràng. |
 
-`agents/` và `skills/` là **config của hệ ai-company**, không phải wiki. Đừng ingest nội dung wiki vào đó và ngược lại.
+`agents/` và `skills/` là **config năng lực của nền tảng** (xem wiki `entities/simon-platform`), không phải wiki. Đừng ingest nội dung wiki vào đó và ngược lại.
 
 ### Cấu trúc `wiki/`
 
@@ -143,7 +143,7 @@ Trang dự án giữ **một dòng** ngữ cảnh + link, không copy nội dung
 
 ## 4. Hub giữ mỏng
 
-Hub = `wiki/index.md`, và **bất kỳ trang nào có trang con** (ví dụ `projects/ai-company.md` là hub của các trang con của nó).
+Hub = `wiki/index.md`, và **bất kỳ trang nào có trang con** (ví dụ `projects/ok2ship.md` là hub của các trang con của nó).
 
 Luật hub:
 - Hub chỉ chứa **tổng quan + link**. Mỗi mục tối đa **2 dòng** rồi link xuống trang con.
@@ -232,7 +232,7 @@ Cuối mỗi session (hoặc khi Sơn bảo "chốt"), xuất đúng bảng này
 | # | Trang | Hành động | Nội dung (1 câu) | Quality gate |
 |---|-------|-----------|------------------|--------------|
 | 1 | concepts/prompt-caching.md | tạo | Cache TTL 1h, tiết kiệm ~90% input cost | ✅ còn đúng sau 1 tháng |
-| 2 | projects/ai-company.md | sửa | Thêm bài học rate-limit + link concept | ✅ |
+| 2 | projects/ok2ship-ai.md | sửa | Thêm bài học rate-limit + link concept | ✅ |
 | 3 | index.md | sửa | Thêm 1 dòng cho trang mới | ✅ |
 
 Không đề xuất ghi (rớt quality gate): <liệt kê ngắn + lý do>
