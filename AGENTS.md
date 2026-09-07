@@ -18,6 +18,7 @@ Vietnamese material (vendor wording, BA terminology, UI copy).
 | Raw sources | `raw/sources/` | Sơn | **Immutable.** Agents read, never modify/delete/rename. |
 | Wiki | `wiki/` | Agent (Sơn approves) | Agents write all of it. Sơn reads, asks, approves. |
 | Schema | `AGENTS.md` (this file) | Sơn + agent co-evolve | Change only with Sơn's explicit approval. |
+| Global rules | `config/global-rules.md` | Sơn + agent co-evolve | Symlinked to `~/.claude/CLAUDE.md` on every machine — change only with Sơn's explicit approval, same bar as this file. |
 
 `agents/` and `skills/` are **capability config of the platform** (see wiki `entities/simon-platform`),
 not wiki content. Don't ingest wiki content there or vice versa.

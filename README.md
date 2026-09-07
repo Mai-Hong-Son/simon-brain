@@ -84,11 +84,29 @@ Lưu ý repo phải nằm đúng `~/Documents/simon-brain` — các con trỏ tr
 khi mở session trong các product repo** — CLAUDE.md của chúng `@import` trang wiki từ path này,
 chưa có repo thì session mở lên sẽ thiếu bối cảnh.
 
-## Đọc wiki bằng gì
+## Đọc wiki bằng Obsidian
 
-- **Obsidian** (khuyên dùng): mở vault tại `wiki/` — wikilink `[[...]]` bấm được,
-  graph view thấy hình dạng tri thức, trang nào là hub, trang nào orphan.
-- Hoặc đọc thẳng markdown trên GitHub / editor — wiki chỉ là thư mục markdown thuần.
+Cài và mở (một lần cho mỗi máy):
+
+```bash
+brew install --cask obsidian      # hoặc tải từ https://obsidian.md
+open "obsidian://open?path=$HOME/Documents/simon-brain"
+```
+
+Nếu lệnh `open` không ăn: mở Obsidian → **Open folder as vault** → chọn cả thư mục
+`~/Documents/simon-brain` (đừng chọn riêng `wiki/`) → Trust. Config `.obsidian/` là
+per-máy, đã gitignore.
+
+Chỉnh 2 thứ trong Settings:
+1. **Files and links → Default location for new attachments** → `raw/assets`.
+2. Graph view (`Cmd+G`) → Filters → gõ `path:wiki` để chỉ xem mạng tri thức
+   (ẩn AGENTS/skills/README vốn là đồ vận hành, không link vào wiki).
+
+Phím chính: `Cmd+O` nhảy trang · `Cmd+G` graph · panel Backlinks xem ai trỏ tới trang.
+Extension trình duyệt **Obsidian Web Clipper** giúp lưu bài web thành markdown →
+bỏ vào `raw/sources/` rồi bảo agent "ingest cái này".
+
+Không dùng Obsidian vẫn đọc được — wiki chỉ là thư mục markdown thuần.
 
 ## Lịch sử
 
