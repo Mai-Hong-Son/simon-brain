@@ -4,7 +4,7 @@ type: concept
 status: stable
 updated: 2026-09-07
 tags: [stack, backend, frontend, mobile]
-sources: [ai-company/CLAUDE.md (standard tech stack), ~/Documents/native-skline-chart/docs/decisions/001-jest-over-vitest.md]
+sources: [ai-company/CLAUDE.md (standard tech stack), ~/Documents/products/native-skline-chart/docs/decisions/001-jest-over-vitest.md]
 ---
 
 # Default stack

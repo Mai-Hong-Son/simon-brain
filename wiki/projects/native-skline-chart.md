@@ -4,7 +4,7 @@ type: project
 status: active
 updated: 2026-09-07
 tags: [react-native, library, charts, mobile]
-sources: [~/Documents/native-skline-chart/CLAUDE.md, docs/decisions/001-005]
+sources: [~/Documents/products/native-skline-chart/CLAUDE.md, docs/decisions/001-005]
 ---
 
 # native-skline-chart — native K-line chart library

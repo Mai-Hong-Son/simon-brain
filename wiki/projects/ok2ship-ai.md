@@ -4,7 +4,7 @@ type: project
 status: active
 updated: 2026-09-07
 tags: [ok2ship, product, fastapi, react]
-sources: [~/Documents/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-004]
+sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-004]
 ---
 
 # ok2ship-ai — the OK2SHIP AI product

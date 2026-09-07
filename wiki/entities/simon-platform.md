@@ -21,10 +21,10 @@ SIMON-BRAIN = FOUNDATION (this repo — under every session, every machine, git-
 ├── AGENTS.md  wiki operating rules
 └── setup.sh   rebuilds the foundation on a new machine
 
-PRODUCT REPOS (ok2ship-ai, native-skline-chart, ...)
-└── stand on the foundation; hold only their own code + technical config
-
-~/exp/ = experiment zone — does NOT write to the wiki by default; dead experiments get deleted
+~/Documents/products/<name>  = serious products (ok2ship-ai, native-skline-chart, ...)
+~/Documents/spikes/<name>    = feasibility spikes — no wiki writes by default;
+                               end in PROMOTE (→ products/) or DELETE
+Both stand on the foundation and hold only their own code + technical config.
 ```
 
 ## The single-source-of-truth test

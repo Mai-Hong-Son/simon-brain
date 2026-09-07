@@ -50,11 +50,13 @@ sources: [raw/sources/anthropic-caching-docs.md]
 ---
 ```
 
-### Experiment zone
+### Spike zone
 
-Experiments live in `~/exp/` or repos prefixed `exp-`, and **don't write to the wiki by default**.
-Only when an experiment yields a lesson worth keeping → distill one line into a concept page
-(still through the §7 approval gate). Dead experiment → delete, leave no trace.
+Spikes (feasibility probes) live in `~/Documents/spikes/<name>`, and **don't write to the wiki
+by default**. Only when a spike yields a lesson worth keeping → distill it into the wiki
+(still through the §7 approval gate); a long-running spike with locked decisions may earn its
+own project page the same way. A spike must end in a verdict: PROMOTE (→ move to
+`~/Documents/products/<name>`, redo init as serious) or DELETE (no trace).
 
 ### Third-party sources
 

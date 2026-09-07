@@ -4,7 +4,7 @@ type: project
 status: active
 updated: 2026-09-07
 tags: [ok2ship, spike, anomaly-detection, ml]
-sources: [~/Documents/ok2ship-anomaly/HANDOFF.md, ai-company hub memory]
+sources: [~/Documents/spikes/ok2ship-anomaly/HANDOFF.md, ai-company hub memory]
 ---
 
 # ok2ship-anomaly — spike for req #3

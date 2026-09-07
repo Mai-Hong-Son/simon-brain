@@ -39,7 +39,7 @@ for f in "$BRAIN"/agents/*.md; do
   link "$f" "$HOME/.claude/agents/$(basename "$f")"
 done
 
-# 3. Experiment zone (AGENTS.md §0 — no wiki writes by default)
-mkdir -p "$HOME/exp"
+# 3. Project group folders (AGENTS.md §0 — spikes don't write to the wiki by default)
+mkdir -p "$HOME/Documents/products" "$HOME/Documents/spikes"
 
 echo "Done. The simon-brain foundation is plugged into ~/.claude/"

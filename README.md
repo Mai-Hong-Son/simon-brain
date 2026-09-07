@@ -25,8 +25,8 @@ simon-brain (repo này — NỀN TẢNG, sync git giữa nhiều máy)
 ├── skills/        # quy trình đóng gói (git-workflow, project-init, project-retro)
 └── agents/        # kho năng lực — mặc định rỗng (mô hình solo agent)
 
-REPO SẢN PHẨM (~/Documents/<tên>)     ~/exp/
-└── chỉ chứa code + config kỹ thuật   └── thí nghiệm — không ghi wiki, chết thì xoá
+~/Documents/products/<tên>            ~/Documents/spikes/<tên>
+└── sản phẩm 🚀 — đủ luật             └── spike 🧪 — không ghi wiki; PROMOTE hoặc DELETE
 ```
 
 Ba tầng của pattern LLM wiki:
@@ -72,7 +72,7 @@ cd ~/Documents/simon-brain
 1. Symlink **từng** skill trong `skills/` vào `~/.claude/skills/` — Claude Code load skill
    từ đó; symlink từng cái để sống chung với skill có sẵn của máy.
 2. Symlink từng file agent trong `agents/` vào `~/.claude/agents/` (hiện rỗng có chủ đích).
-3. Tạo vùng thí nghiệm `~/exp/`.
+3. Tạo hai thư mục nhóm dự án `~/Documents/products/` và `~/Documents/spikes/`.
 
 Git sync phần **nội dung**; setup.sh cắm phần **dây điện** mà git không mang theo được.
 Sau này thêm skill mới vào repo → chạy lại `./setup.sh` là link mới được cắm.

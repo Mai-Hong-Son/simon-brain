@@ -14,3 +14,4 @@
 ## [2026-09-07] ingest | project-init: wiki-test (full-stack, default stack) — seed page created | @claude-code
 ## [2026-09-07] lint | project-init test passed (both branches) — wiki-test scaffold + seed page removed | @claude-code
 ## [2026-09-07] ingest | @import convention adopted (option B) after the stale-constitution incident — global imports engineering-rules, each product CLAUDE.md imports its wiki page | @claude-code
+## [2026-09-07] ingest | Layout regrouped: serious products under ~/Documents/products/, spikes under ~/Documents/spikes/ (replaces ~/exp); 5 repos + memory keys moved; project-init updated | @claude-code
