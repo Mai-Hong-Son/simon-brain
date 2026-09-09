@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-09-07
+updated: 2026-09-09
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-004]
 ---
@@ -54,3 +54,16 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   actually catches errors.
 - Email belongs off the request path (BackgroundTasks) — synchronous SMTP once added whole
   seconds to every user create/edit.
+- **An immutable-snapshot row is only editable while it is still a draft** *(promotion candidate
+  once a second project hits it)*: a Template revision owns its scope and description, and the
+  version-history table shows one row per Rev with that row's current values. Editing a published
+  Rev in place therefore rewrites what it claims to have been, with no new row to show it happened
+  — and it bypasses checks that only run on the publish path (here, the one-Active-per-node rule
+  lives solely in `_set_revision_status`, so re-targeting an already-Active Rev never triggers it).
+  A draft has neither problem: nothing published, nothing active, nothing to conflict with. To
+  change a published Rev, create a new one. Enforced server-side, not just by hiding the control.
+- **A re-packaged mockup reads as a new one.** The BA's 2026-09-07 delivery looked redesigned but
+  was the 2026-09-02 mockup re-hosted (1.5 MB inlined → 66 KB + external CSS/JS). Comparing the
+  `id="..."` sets settles it in seconds — Template Management differed by 2 ids, both template
+  literals moved into the extracted JS, while Data Mapping differed by 45. Do this before
+  re-reading a delivery as changed requirements.

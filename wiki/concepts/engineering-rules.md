@@ -2,7 +2,7 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-09-07
+updated: 2026-09-09
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
 ---
@@ -31,7 +31,11 @@ Apply to **every** project, every session. Distilled from the ai-company constit
 8. **UI built against a mockup: verify the RENDER, don't just read the source** — render it with
    Playwright and extract real computed values (`getComputedStyle`, `getBoundingClientRect`);
    never approximate with framework defaults. A lesson paid for with 5 correction rounds —
-   full story at [[ok2ship-ai]].
+   full story at [[ok2ship-ai]]. **Measuring tells you where you differ; it does not tell you to
+   copy.** A mockup is a prototype and carries its own bugs — match its intent, not its defects,
+   and say in the code which is which. (Measured 2026-09-08: a mockup whose column minWidths sum
+   to 1232px inside a 1158px area clips its own last two row actions; another whose name cell
+   wraps uncapped overflows its own row. Both were matched in ratio, not in defect.)
 
 Language: **everything committed to a repo is English** (code, comments, commit messages,
 technical docs); **everything addressed to Sơn is Vietnamese**. See [[son]].
