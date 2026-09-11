@@ -26,7 +26,7 @@ updated: 2026-09-07
 ## Projects
 
 - [[ok2ship]] — program hub: the BA's 5 requirements → which spike proved what → what the product consumes.
-- [[ok2ship-ai]] — 🚀 product: three-repo topology, locked decisions, mockup-fidelity + tsc -b lessons.
+- [[ok2ship-ai]] — 🚀 product: three-repo topology, locked decisions, mockup-fidelity + tsc -b lessons, Data Mapping build gate.
 - [[ok2ship-anomaly]] — 🧪 spike, req #3: golden/PatchCore; curation, seeding, calibrated-threshold lessons.
 - [[ok2ship-report-parser]] — 🧪 spike, reqs #1/2/4/5: label-keyed parsing, drifting report format, never drop sheets.
 - [[void-guard-xval]] — 🧪 spike, X-ray void%: ROI-box denominator, cyan-outline approach, hybrid criterion; doubles as backend course.

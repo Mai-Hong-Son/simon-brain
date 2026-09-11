@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-09-09
+updated: 2026-09-11
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-004]
 ---
@@ -44,6 +44,12 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
 
 - Module 1 (User Management, WBS #5) **signed off 2026-08-29**, running in production on Desoft
   infrastructure, auto-deployed via GitLab CI/CD.
+- **Data Mapping (WBS #5.3) is surveyed but deliberately not built.** All 8 item groups of the
+  customer's QA checking guide were configured against the running mockup: its six check types
+  cover well under half of what the guide asks for, leaving ~15 missing check types and ~14
+  questions only the BA can answer. Building the screen first would let users save configurations
+  that can never execute. Full per-group findings live in the product repo's `docs/design/`;
+  the wiki keeps only this gate.
 - **The mockup-fidelity lesson** (origin of [[engineering-rules]] #8): 5 consecutive UI correction
   rounds all traced to reading the mockup's source instead of rendering + measuring — a long-line
   filter silently ate the logo, CSS declared `width:46%` but the real render shrink-to-fit due to
@@ -62,6 +68,13 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   lives solely in `_set_revision_status`, so re-targeting an already-Active Rev never triggers it).
   A draft has neither problem: nothing published, nothing active, nothing to conflict with. To
   change a published Rev, create a new one. Enforced server-side, not just by hiding the control.
+- **A tool's capabilities must be probed by driving its real UI, not read from its config tables**
+  *(promotion candidate once a second project hits it)*: reading a mockup's check-type definition
+  table produced four separate "this is impossible" verdicts, and filling in the real form
+  disproved every one — the definitions constrain the default rendering, not what the form
+  accepts. Distinct from [[engineering-rules]] #8, which is about visual fidelity: this one is
+  about capability. The cost of getting it wrong is asymmetric — a false "impossible" becomes a
+  change request to the vendor for something that already ships.
 - **A re-packaged mockup reads as a new one.** The BA's 2026-09-07 delivery looked redesigned but
   was the 2026-09-02 mockup re-hosted (1.5 MB inlined → 66 KB + external CSS/JS). Comparing the
   `id="..."` sets settles it in seconds — Template Management differed by 2 ids, both template
