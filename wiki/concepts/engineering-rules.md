@@ -2,7 +2,7 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-09-09
+updated: 2026-09-11
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
 ---
@@ -36,6 +36,3 @@ Apply to **every** project, every session. Distilled from the ai-company constit
    and say in the code which is which. (Measured 2026-09-08: a mockup whose column minWidths sum
    to 1232px inside a 1158px area clips its own last two row actions; another whose name cell
    wraps uncapped overflows its own row. Both were matched in ratio, not in defect.)
-
-Language: **everything committed to a repo is English** (code, comments, commit messages,
-technical docs); **everything addressed to Sơn is Vietnamese**. See [[son]].

@@ -2,7 +2,7 @@
 title: Sơn
 type: entity
 status: stable
-updated: 2026-09-07
+updated: 2026-09-11
 tags: [user, preferences, standards]
 sources: [ai-company/.claude/agents (dev-frontend, dev-mobile), feedback memory 07-08/2026]
 ---
@@ -23,7 +23,7 @@ Owner of this system. Every agent working with Sơn needs these facts.
 - **Explain the thinking/concepts BEFORE the code** — Sơn wants to understand the flow,
   not just receive results.
 - Reads **Vietnamese** faster: all discussion, reports, plans → Vietnamese.
-  Everything committed to a repo → English (see [[engineering-rules]]).
+  Everything committed to a repo → English (operative rule: `config/global-rules.md`, loaded into every session).
 - Small sequential steps → stop and report → approval → next step.
 
 ## Standards expected of agents

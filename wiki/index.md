@@ -2,7 +2,7 @@
 title: Index
 type: hub
 status: active
-updated: 2026-09-07
+updated: 2026-09-11
 ---
 
 # Index — simon-brain wiki
@@ -12,7 +12,7 @@ updated: 2026-09-07
 
 ## Concepts
 
-- [[engineering-rules]] — 8 non-negotiable engineering rules for every project + the language rule.
+- [[engineering-rules]] — 8 non-negotiable engineering rules for every project.
 - [[default-stack]] — default stack per tier, repo layout, deviation → ADR before code.
 - [[approval-gates]] — size the process by size, human gates, adversarial review with a fresh context.
 
