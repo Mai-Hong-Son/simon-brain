@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-09-11
+updated: 2026-09-15
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-004]
 ---
@@ -44,12 +44,19 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
 
 - Module 1 (User Management, WBS #5) **signed off 2026-08-29**, running in production on Desoft
   infrastructure, auto-deployed via GitLab CI/CD.
-- **Data Mapping (WBS #5.3) is surveyed but deliberately not built.** All 8 item groups of the
-  customer's QA checking guide were configured against the running mockup: its six check types
-  cover well under half of what the guide asks for, leaving ~15 missing check types and ~14
-  questions only the BA can answer. Building the screen first would let users save configurations
-  that can never execute. Full per-group findings live in the product repo's `docs/design/`;
-  the wiki keeps only this gate.
+- **Data Mapping (WBS #5.3) was gated, then built** — the gate is what made building it safe, so
+  both halves are worth keeping. The gate (2026-09): all 8 item groups of the customer's QA
+  checking guide were configured against the running mockup first, and the mockup's six check types
+  covered well under half of what the guide asks, so building the screen would have let users save
+  configurations that could never execute. It was lifted by closing that gap rather than by
+  ignoring it — each missing capability was added as an operator on an existing check type, not as
+  a new one (a spec value may be text, "Judgement = Pass"; or a set, "Fail mode ∈ {2, 5}"), which
+  is why the picker still has the same handful of check types.
+  **Sheets are opened one at a time, and only against evidence**: a sheet is configurable when the
+  checklist asks something of it that the screen can express AND the checklist's own "Hệ thống
+  check?" column says to check it — 33 of the V73 report's 47 sheets. Being open means it can be
+  CONFIGURED, not that the suggestion engine knows it; rules exist for the force-test and
+  cross-section families only, and the rest are configured by hand.
 - **The mockup-fidelity lesson** (origin of [[engineering-rules]] #8): 5 consecutive UI correction
   rounds all traced to reading the mockup's source instead of rendering + measuring — a long-line
   filter silently ate the logo, CSS declared `width:46%` but the real render shrink-to-fit due to
@@ -80,3 +87,34 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   `id="..."` sets settles it in seconds — Template Management differed by 2 ids, both template
   literals moved into the extracted JS, while Data Mapping differed by 45. Do this before
   re-reading a delivery as changed requirements.
+- **A delivered requirements document can carry two markers that disagree — ask which one governs
+  before building against either.** The BA's checklist spreadsheet has both red text and a
+  "Hệ thống check?" (Có/Không) column. Reading the red matched what had been asked verbally, so
+  three requirements were dropped on that basis; the column was the real marker, and only one of
+  the three was actually out. Cost: an implemented change, reverted. The tell was there beforehand
+  — the two markers disagreed on 2 of 3 rows, and on a neighbouring sheet the red marked a
+  different pair of requirements for identical wording. **Disagreement between two signals in the
+  same document is the signal**: stop and ask, rather than picking the one that confirms what you
+  already believe.
+- **Refresh-token reuse detection revokes EVERY session of that account, not just the one that
+  tripped it** — so a script logging in as a human's account will eventually log that human out,
+  from a different machine, with no visible cause. Hit twice in one day (audit log:
+  `auth.refresh_token_reuse_detected`) while driving the app with Playwright as `admin`, which is
+  also the account Sơn was using. The blast radius is correct — it is the right answer to a stolen
+  token — so the fix is never sharing an account between automation and a person, not softening the
+  rule.
+- **A chart in an Excel sheet may be a native chart, not a picture — and that changes what has to
+  be checked.** The V73 report's FAI/SPC family holds 300 native charts (50 per sheet across 6
+  sheets) and ZERO images; the drawing-XML image reader returns nothing for them. A native chart is
+  drawn from the cells, so "the chart must match the data" holds by construction — what is left to
+  verify is which range the series points at, readable from the chart XML. Six sheets that looked
+  like they needed image analysis need none. Check for `xl/charts/` before assuming a picture.
+- **An element with an animation that applies `transform` becomes the containing block for every
+  `fixed` descendant.** A dialog written as `fixed inset-0` inside a modal panel rendered 448×242 at
+  (496,379) — the panel's own box — instead of covering the 1440×1000 viewport (measured
+  2026-09-14). Any overlay opened over another overlay has to be its SIBLING, not its child. The
+  trap is that the transform comes from a zoom-in animation nobody thinks of as layout.
+- **"Reads as a number" must mean a plain decimal, never `float()` / `Number()`.** Both accept
+  scientific notation, so a "7E" product code (`7E-0012`) silently becomes the threshold 7e-12, and
+  both accept `nan`/`inf`. One regex, `^[+-]?(\d+(\.\d+)?|\.\d+)$`, shared by the API and the
+  form, keeps a typed value's meaning identical on both sides of the wire.
