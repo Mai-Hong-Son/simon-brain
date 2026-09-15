@@ -2,7 +2,7 @@
 title: Mektec & Desoft
 type: entity
 status: active
-updated: 2026-09-07
+updated: 2026-09-15
 tags: [client, vendor, ok2ship]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ~/Documents/products/ok2ship-ai/docs/decisions/002, 004]
 ---
@@ -24,6 +24,18 @@ Client and partner of the [[ok2ship]] program.
   cluster** `rancher-lake.desoft.vn` (namespace `ok2ship`) that already runs **Loki + Grafana**
   for centralized logging — the reason monitoring chose Loki over Sentry (ok2ship-ai ADR 004).
 - GitLab CI/CD builds + deploys automatically on pushes to `main` (set up by Le Bui).
+
+### Their Loki is multi-tenant, one tenant per namespace
+
+Grafana Alloy tags every log line with `tenant = namespace` (`stage.tenant` in the `alloy`
+ConfigMap) and Loki runs with `auth_enabled: true`, so each namespace is a **separate tenant**.
+Grafana's Loki datasources carry a fixed `X-Scope-OrgID` listing the tenants an org may read. A
+namespace created after that list was written is **invisible in Grafana while its logs arrive in
+Loki normally** — the tell is a Label browser where other namespaces appear and yours does not,
+with the collector config showing no namespace filter at all. Adding a namespace means adding it
+to that list (in the `grafana` Helm release's values, since the ConfigMap is Helm-managed) and
+restarting Grafana. Requesting it beats editing by hand: one ConfigMap serves every org on the
+cluster, and a hand edit is erased by the next `helm upgrade`.
 
 ## ⚠️ Terminology trap when talking to the BA
 

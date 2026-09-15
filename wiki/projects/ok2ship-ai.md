@@ -52,11 +52,11 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   ignoring it — each missing capability was added as an operator on an existing check type, not as
   a new one (a spec value may be text, "Judgement = Pass"; or a set, "Fail mode ∈ {2, 5}"), which
   is why the picker still has the same handful of check types.
-  **Sheets are opened one at a time, and only against evidence**: a sheet is configurable when the
-  checklist asks something of it that the screen can express AND the checklist's own "Hệ thống
-  check?" column says to check it — 33 of the V73 report's 47 sheets. Being open means it can be
-  CONFIGURED, not that the suggestion engine knows it; rules exist for the force-test and
-  cross-section families only, and the rest are configured by hand.
+  **Every sheet of the report is now configurable.** Opening them was staged — first the two Peel
+  test sheets, then those the checklist's own "Hệ thống check?" column marks, then all of them —
+  because each stage needed evidence that the screen could express what the checklist asks. Being
+  open means a sheet can be CONFIGURED, not that the suggestion engine knows it; rules exist for
+  the force-test and cross-section families only, and the rest are configured by hand.
 - **The mockup-fidelity lesson** (origin of [[engineering-rules]] #8): 5 consecutive UI correction
   rounds all traced to reading the mockup's source instead of rendering + measuring — a long-line
   filter silently ate the logo, CSS declared `width:46%` but the real render shrink-to-fit due to
@@ -114,6 +114,42 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   (496,379) — the panel's own box — instead of covering the 1440×1000 viewport (measured
   2026-09-14). Any overlay opened over another overlay has to be its SIBLING, not its child. The
   trap is that the transform comes from a zoom-in animation nobody thinks of as layout.
+- **A body that takes minutes to arrive is authenticated when it FINISHES arriving, not when it
+  starts** *(promotion candidate once a second project hits it)*: FastAPI reads a whole form/file
+  body before it resolves dependencies, so `Depends(get_current_user)` runs against the clock at
+  the END of the upload. With a deliberately short access token, every upload slower than the TTL
+  fails with a token that was valid when the user pressed Save — and a client that retries then
+  sends the entire file a second time (measured: 496 MB at 3 MB/s = 158 s against a 120 s TTL; the
+  same file at full speed passes). The fix is to judge the token when the request ARRIVES — the
+  request-context middleware already decodes it there for logging — and let the dependency honour
+  that verdict for the same token string. Nothing is relaxed: a token dead or forged on arrival is
+  still rejected, and force-logout keeps its bound because no NEW request opens with a dead token.
+  Raising the TTL only moves the threshold; it does not remove it.
+- **Reversing one direction of an optimisation creates the symmetric bug** *(promotion candidate
+  once a second project hits it)*: a preview that fetched a whole zone in one request re-downloaded
+  every picture whenever one anchor changed, so it was changed to one request per anchor — which
+  made opening a field of 80 anchors fire 80 requests, ~8 s of pure per-request overhead against a
+  server that has the file open and cached either way. Neither shape is right alone. The answer
+  keeps both: cache per anchor, and coalesce whatever is requested in one burst into a single call.
+  Before flipping a batching decision, state what the OTHER direction then costs.
+- **A picture's position in a spreadsheet does not tell you which samples it describes.** On the
+  V73 cross-section sheets, `D53:E53` and `D43:E43` are anchored over the same two columns, yet the
+  first prints the numbers of two samples and the second only of one — the second sample's photo
+  is the one on the row below, anchored over the same pair. Pairing by geometry alone mis-assigns
+  every photo of such a row to its neighbour's data. Read the numbers off the pictures before
+  trusting a layout, and when a layout cannot be read that way, report a gap instead of guessing:
+  a configuration saved on a wrong pairing is worse than one a human has to type.
+- **OCR on a Mac needs no install**: Apple's Vision framework via a ~20-line `swiftc` program reads
+  text off an image entirely on the machine. That satisfies [[engineering-rules]] #3 for customer
+  images (nothing leaves the approved environment) without a PaddleOCR/Tesseract install, and it is
+  the practical way to check what a report's own photos actually print. Delete the extracted images
+  as soon as they have been read.
+- **Group generated proposals the way the source document groups things, not the way the algorithm
+  does.** Cross-section photo fields keyed purely by the shape of the pairing merged two unrelated
+  groups — the sheet's "Vertical" blocks and its "female and male" ones — into one field, because
+  both happened to map 12 cells per photo. Keying by the sheet's own group heading (column B of a
+  Barcode row) both names each proposal the way QA reads the report and keeps unrelated blocks
+  apart. Shape still subdivides a group, since one group can hold two kinds of photo.
 - **"Reads as a number" must mean a plain decimal, never `float()` / `Number()`.** Both accept
   scientific notation, so a "7E" product code (`7E-0012`) silently becomes the threshold 7e-12, and
   both accept `nan`/`inf`. One regex, `^[+-]?(\d+(\.\d+)?|\.\d+)$`, shared by the API and the
