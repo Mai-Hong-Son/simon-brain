@@ -2,7 +2,7 @@
 title: Index
 type: hub
 status: active
-updated: 2026-09-11
+updated: 2026-09-16
 ---
 
 # Index — simon-brain wiki
@@ -31,3 +31,4 @@ updated: 2026-09-11
 - [[ok2ship-report-parser]] — 🧪 spike, reqs #1/2/4/5: label-keyed parsing, drifting report format, never drop sheets.
 - [[void-guard-xval]] — 🧪 spike, X-ray void%: ROI-box denominator, cyan-outline approach, hybrid criterion; doubles as backend course.
 - [[native-skline-chart]] — native K-line RN library: 5 ADRs (Fabric-only, command fast path, native indicators, licensed port).
+- [[vn30f-bot]] — 🚀 product: VN30 futures bot on SSI FastConnect; no-sandbox constraint, no-web-framework ADR, verified contract spec.
