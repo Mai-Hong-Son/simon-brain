@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-09-15
+updated: 2026-09-16
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-004]
 ---
@@ -114,6 +114,16 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   (496,379) — the panel's own box — instead of covering the 1440×1000 viewport (measured
   2026-09-14). Any overlay opened over another overlay has to be its SIBLING, not its child. The
   trap is that the transform comes from a zoom-in animation nobody thinks of as layout.
+- **Ant sizes line-height by one ratio, Tailwind hard-codes one per step — so rebuilding an Ant
+  mockup in Tailwind puts EVERY line of text 1-3px off** while family, size and colour all match.
+  Ant applies a single 22/14 multiplier at every size (11px → 17.29, 13px → 20.43, 20px → 31.43);
+  Tailwind's `text-sm` carries a fixed 20px, `text-xl` a fixed 28px. Nothing looks wrong enough to
+  name, which is why it came back as "nhiều chỗ font chưa chuẩn" with no specific example, and
+  chasing it element by element never converges because each step is off by a different amount.
+  The fix belongs at the token layer — override `--text-*--line-height` to the one ratio (127 uses
+  corrected at once, explicit `leading-*` still wins) and set font-size + line-height on `body` so
+  anything that declares no size stops falling back to the browser's 16px/`normal`. See
+  [[engineering-rules]] #8 on measuring for the model difference rather than the values.
 - **A body that takes minutes to arrive is authenticated when it FINISHES arriving, not when it
   starts** *(promotion candidate once a second project hits it)*: FastAPI reads a whole form/file
   body before it resolves dependencies, so `Depends(get_current_user)` runs against the clock at

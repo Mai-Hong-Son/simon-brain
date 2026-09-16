@@ -22,3 +22,4 @@
 ## [2026-09-11] ingest | Data Mapping (WBS #5.3) surveyed across all 8 QA item groups by configuring the running mockup — recorded as a build gate (missing check types + open BA questions) plus one lesson: probe a tool's capabilities by driving its real UI, never by reading its config tables | @claude-code
 ## [2026-09-11] lint | Language rule given one home: dropped from engineering-rules, which global-rules already states and @imports (it was loaded twice per session); son.md keeps the preference + reason and points to the operative rule | @claude-code
 ## [2026-09-15] ingest | ok2ship-ai — auth on slow uploads, preview batching, photo pairing by OCR; mektec-desoft — Loki multi-tenancy | @claude-code
+## [2026-09-16] ingest | ok2ship-ai — Ant vs Tailwind line-height model; engineering-rules #8 extended | @claude-code
