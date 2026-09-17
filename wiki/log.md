@@ -24,3 +24,4 @@
 ## [2026-09-15] ingest | ok2ship-ai — auth on slow uploads, preview batching, photo pairing by OCR; mektec-desoft — Loki multi-tenancy | @claude-code
 ## [2026-09-16] ingest | ok2ship-ai — Ant vs Tailwind line-height model; engineering-rules #8 extended | @claude-code
 ## [2026-09-16] ingest | vn30f-bot initialized (🚀 serious): VN30 futures bot on SSI FastConnect — ADR 001 drops FastAPI (event-driven single-instance process); FastConnect is PROD-only so the project must own its simulated broker; contract spec verified against SSI's sheet (third THURSDAY, not the third Tuesday a search summary reported) | @claude-code
+## [2026-09-17] ingest | ok2ship-ai — photo-vs-data check live (ADR 007: pins/slots, row order derived from the field's own numbers, 480 numbers 0 mismatches); opencv same-files packaging trap + a build guard that never once passed; tests that avoid a path do not protect it; liveness judged on a shared clock | @claude-code

@@ -2,9 +2,9 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-09-16
+updated: 2026-09-17
 tags: [ok2ship, product, fastapi, react]
-sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-004]
+sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-007]
 ---
 
 # ok2ship-ai — the OK2SHIP AI product
@@ -57,6 +57,14 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   because each stage needed evidence that the screen could express what the checklist asks. Being
   open means a sheet can be CONFIGURED, not that the suggestion engine knows it; rules exist for
   the force-test and cross-section families only, and the rest are configured by hand.
+- **Checking a photo against the data beside it runs in production (WBS #5.4 part B, ADR 007,
+  2026-09-17).** A cross-section photo carries its measurements printed on it; the cells beside it
+  hold the same numbers typed by the lab, and the check is whether they agree. RapidOCR, entirely
+  on our own machines — customer images may never reach a hosted service. Measured end to end on
+  the real V73 report: **4 of 4 image fields pass, 480 numbers, zero mismatches.** Two pieces are
+  deliberately shelved with their reasons written down: a screen for looking at the photo behind a
+  verdict, and a worker of its own (`docs/design/report-check-worker.md` — measured: 2,665 pictures
+  in the whole report, ~89 minutes at the pod's CPU limit, and memory is *not* the constraint).
 - **The mockup-fidelity lesson** (origin of [[engineering-rules]] #8): 5 consecutive UI correction
   rounds all traced to reading the mockup's source instead of rendering + measuring — a long-line
   filter silently ate the logo, CSS declared `width:46%` but the real render shrink-to-fit due to
@@ -164,3 +172,46 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   scientific notation, so a "7E" product code (`7E-0012`) silently becomes the threshold 7e-12, and
   both accept `nan`/`inf`. One regex, `^[+-]?(\d+(\.\d+)?|\.\d+)$`, shared by the API and the
   form, keeps a typed value's meaning identical on both sides of the wire.
+- **Two distributions that install the SAME files cannot be sorted out by uninstalling one
+  afterwards** *(promotion candidate once another Python project hits it)*: RapidOCR requires
+  `opencv-python`, the desktop build, which needs libxcb and dies on a slim image; the headless
+  build ships the same `cv2`. The Dockerfile installed both and removed the desktop one — and
+  measured 2026-09-17, `uv pip uninstall opencv-python` left `import cv2` broken with headless
+  still "installed", because whichever landed second owns the shared files. The fix belongs at
+  RESOLUTION time (`[tool.uv] override-dependencies` with a marker that is never true), so the
+  wrong one is never written at all and there is nothing to undo.
+  **The same commit carried the second half of the lesson: a build-time guard has to be watched
+  PASSING, not merely written.** Its check, `RUN uv pip uninstall … && python -c "import cv2"`,
+  used the bare `python` — the system interpreter, which has no cv2 whatever the venv holds — so it
+  failed *every* build and had never once succeeded. Written as "fail at build rather than in
+  production", it blocked precisely what it was meant to protect, and nobody noticed because it
+  landed in the same commit as the dependency it guarded.
+- **Tests arranged to AVOID a code path do not protect it** *(promotion candidate once a second
+  project hits it)*: a background task opens its own DB session, so every test injected a session
+  factory — deliberately, so a test could never write into the dev database. A missing
+  `import SessionLocal` therefore sat green through 564 tests and failed on the first real run:
+  the default branch, the only one production takes, was the one arrangement no test exercised.
+  The fixture that makes a test safe can be the thing that makes it blind. Pinned by pointing the
+  module's own `SessionLocal` at the test database and taking the default branch on purpose.
+- **Judge "is this still alive" where the clock is SHARED, not in the browser tab** *(promotion
+  candidate once a second project hits it)*: a check moved to a background task, and the screen
+  decided a run had stopped by counting three minutes itself. Measured on dev 2026-09-17 — a deploy
+  replaced the pod mid-run, the row still said `running`, and the button that would have rescued it
+  was disabled *because* the run still looked live; every reload restarted the countdown, so the
+  more the user tried, the further away the rescue got. Moving the verdict to the server made
+  "the screen says it stopped" and "the API will let me start another" the same question. Two
+  thresholds in two places always drift, and the user is the one told to press a button that then
+  refuses.
+- **Deriving a mapping from the data itself is a CHECK, not a circular argument — when the winner
+  is unanimous and the runner-up is zero.** Which number on a photo answers which spreadsheet row
+  cannot be read off the picture: the arrows are drawn where the feature physically sits, so one
+  block's sheet order was 3-2-1-4 down the image. Rather than adding a config field nobody would
+  know how to fill in, the engine scores every possible order against ALL the field's photos and
+  adopts one only if it wins outright. Measured on the real report: the winner matched **every**
+  photo of **every** one of seven fields, the runner-up matched **none**; injected faults were
+  still caught (one wrong digit; two rows swapped on one sample; two rows swapped on every sample
+  of one pin). What it cannot see is a swap repeated identically on every sample AND both pins —
+  indistinguishable from the block simply being laid out that way — so the derived order is logged
+  on every run and shown on screen when it is unusual. **A derivation earns the word "check" from
+  the margin it wins by; record the margin, and name what it still cannot see.**
+
