@@ -2,7 +2,7 @@
 title: vn30f-bot
 type: project
 status: active
-updated: 2026-09-18
+updated: 2026-09-22
 tags: [trading, derivatives, python, ssi, dashboard]
 sources: [~/Documents/products/vn30f-bot, https://guide.ssi.com.vn/ssi-products, https://github.com/SSI-Securities-Corporation/python-fctrading, https://github.com/SSI-Securities-Corporation/python-fcdata]
 ---
@@ -10,11 +10,14 @@ sources: [~/Documents/products/vn30f-bot, https://guide.ssi.com.vn/ssi-products,
 # vn30f-bot
 
 Automated trading bot for **VN30 index futures** on HNX's derivatives market, through the **SSI
-FastConnect API**. **Built for a client:** the client sets the requirements, Sơn implements and runs
-them. Development trades Sơn's own SSI account on Sơn's machine; whenever the account in use is the
-client's, its credentials and balances are customer data ([[engineering-rules]] #3). Two tiers now:
-the bot — a long-lived process with no web framework — and a **read-only web dashboard**
-(FastAPI + React). Stack: Python 3.12 + Pydantic v2 + pytest, plus the default web tier — see
+FastConnect API**. **Built for a client who owns and operates it:** the client's account, keys, daily
+OTP and rented server; Sơn builds the software, sets the server up, then hands root back and keeps no
+access. Support works on exported data — the owner sends a bundle, Sơn replays it locally — and
+releases are pulled by the client's host and installed only after the owner approves them. Sơn
+develops on his own SSI account and never on a client's. On a delivered system the account data is
+customer data ([[engineering-rules]] #3). Three surfaces: the bot — a long-lived process with no web
+framework — a **read-only dashboard** for watching, and a small **operator console** for the nine
+things an owner may do. Stack: Python 3.12 + Pydantic v2 + pytest, plus the default web tier — see
 [[default-stack]]. Initialized: 2026-09-16.
 
 ## Decisions & rationale
@@ -26,16 +29,30 @@ the bot — a long-lived process with no web framework — and a **read-only web
   dashboard exactly as this ADR anticipated: a separate process that reads the state store.
 - **The dashboard is read-only and blind to the credentials.** Its API has no endpoint that changes
   trading state, its process holds no SSI key and never imports a broker adapter, so a compromised
-  dashboard still cannot place an order. Two roles: the client sees market data only, Sơn also sees
-  the operational and request logs — enforced by the API, since hiding a panel in the UI is not
-  access control. Rejected: an order ticket in the operator view, convenient while watching the
-  ladder but a write path in the web tier for the one action that spends money. Manual orders go
-  through an operator CLI that hands them to the bot, so a single process holds the credentials and
-  the position.
-- **2FA is OTP, entered once per trading day.** FastConnect keeps the code for the life of the write
-  token (8 hours), which outlasts a trading session, so one human entry each morning covers the day.
-  Rejected: PIN — SSI's guide says PIN support is ending, and a PIN sitting in a server's
-  environment means a compromised host can trade.
+  dashboard still cannot place an order. Two roles: a viewer sees market data only, the operator also
+  sees orders, positions and logs — enforced by the API, since hiding a panel in the UI is not access
+  control. Rejected: an order ticket in the viewing screen, convenient while watching the ladder but a
+  write path in the web tier for the one action that spends money.
+- **The write surface is a separate operator console** (ADR 006), because the owner does not use a
+  terminal and the dashboard's read-only proof is worth keeping. It is its own process on its own
+  origin, speaks to the bot over the same control socket the development CLI uses, and exposes a
+  fixed list of nine commands — enter the OTP, start, stop, halt, flatten, set parameters, set
+  limits, approve an update, set credentials. **The guards are asymmetric on purpose:** halting needs
+  no confirmation and limits can be lowered at any time, while raising a limit waits for the market to
+  close and asks for the password again. The bot validates every command and answers accepted or
+  refused with a reason, so a console bug cannot become a trading bug. There is no manual order entry:
+  the bot trades, and an owner who wants to trade by hand uses SSI's own app. Login is password plus a
+  one-time code from a phone, with a device remembered for thirty days. Rejected: write routes bolted
+  onto the dashboard; a Telegram bot as the control surface, since the OTP and the keys would pass
+  through a third-party chat service and a hijacked account would control the bot — Telegram stays
+  acceptable for outbound alerts carrying no secrets.
+- **2FA is OTP on any delivered system, entered once per trading day.** FastConnect keeps the code
+  for the life of the write token (8 hours), which outlasts a trading session, so one human entry each
+  morning covers the day. **PIN is allowed only while developing on Sơn's own account**, and only with
+  the small self-imposed limits in force and on a host with a login password and an encrypted disk: it
+  buys unattended restarts during development, and SSI has announced PIN support is ending. The code
+  source is a port with two adapters, so the switch is one line of configuration. Rejected: PIN on a
+  delivered system — it sits in the environment, so a compromised host can trade.
 - **Accountability by construction: a request log.** Every order event carries the config version it
   ran under, every config version references the request that authorized it, and a request record
   holds who asked, through which channel, the evidence (screenshot file name + SHA-256), any risk
@@ -48,6 +65,16 @@ the bot — a long-lived process with no web framework — and a **read-only web
   day, orders per day; hitting the loss or order-count limit halts trading for the rest of the day.
   They are separate from SSI's own limits, which are read at runtime, and their numbers live in
   config rather than in code.
+- **The simulated broker fills pessimistically and states its assumptions** (ADR 007). Since there is
+  no sandbox, every number about this strategy comes out of that simulator, so its errors are pointed
+  in one direction: later and worse than reality. A resting order joins **behind** the volume already
+  displayed at its price, and that queue shrinks only when trades print there — cancellations ahead of
+  us are invisible in an aggregated feed, so they are not credited. Marketable orders are matched
+  against the book as it stands after a configurable latency, and the exchange's own refusals are
+  modelled so rejection handling is exercised before production. Every result is reported with the
+  assumptions that produced it, and gross sits next to net, because at a 0.6-point target the fee
+  schedule decides the sign. Rejected: filling on touch, which turns a passive exit into fiction;
+  probabilistic fills, which hide the assumption inside a coin flip.
 
 ## Constraints that shape the build
 
@@ -60,6 +87,16 @@ the bot — a long-lived process with no web framework — and a **read-only web
   PIN support will end. An OTP cannot be minted by a program, but the "save code" option makes one
   human entry cover the token's 8 hours. Consequence: nothing may assume unattended startup — a bot
   that restarts mid-session needs a person.
+- **The derivative's instrument code is the KRX-style one**, not the dated `VN30Fyymm` of SSI's own
+  contract sheet: the October 2026 contract trades as `41I1GA000`, while `VN30F1M` is a rolling alias
+  meaning "nearest month" and shifts to the next contract after expiry. Verified 2026-09-21 on Sơn's
+  own iBoard order ticket, which also prints the expiry 15/10/2026 — the third Thursday, confirming
+  the contract sheet's expiry rule. Consequence: orders carry the dated code, recordings are keyed by
+  it, and a bot must ask which contract is the front month rather than hard-code one.
+- **A recording cannot be recreated**, since nobody sells VN30F order-book history. The data
+  directory is therefore resolved from the project itself rather than from whichever directory a
+  command was run in, and never lives in `/tmp`, which the machine empties on reboot. The client's own
+  documents stay in a separate folder outside the repository.
 - **Credentials are shown once** at creation on SSI iBoard: ConsumerID, ConsumerSecret, PrivateKey.
   The PrivateKey is a base64-encoded XML `<RSAKeyValue>`, not PEM. Money-moving requests carry an
   `X-Signature` header holding the RSA-SHA256 signature of the exact JSON body, hex-encoded.
@@ -93,6 +130,13 @@ the bot — a long-lived process with no web framework — and a **read-only web
   was written down. The decision survives on other grounds; the reason did not. Read the vendor's
   changelog and current source before recording why a dependency is out — a stale reason is worse
   than none, because it stops anyone from re-examining the choice.
+- **A test that has never failed has not been shown to work.** Every safety rule here — the tick
+  tolerance, the money-per-tick constant, FIFO position accounting, the queue model, the daily
+  limits, the read-only web tier — was broken on purpose once, to watch a test go red, then restored.
+  Four of those breaks were caught by exactly one test, which is also how you learn which rule is
+  thinly covered. One trap when doing this in Python: clear `__pycache__` first, because a patch of
+  the same byte length applied within the same second leaves the old bytecode in place and the suite
+  passes on code that is no longer there.
 - **An under-documented vendor API is documented by its SDK — and that SDK has to be audited before
   it is trusted.** SSI's guide omits the signing header, the private key's format and the SignalR
   hub names; all three are plain in the official SDK source. That same source shows the signer
