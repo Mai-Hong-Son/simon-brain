@@ -115,6 +115,21 @@ How the pieces fit together, where each kind of file lives, and how it starts it
 
 ## Lessons
 
+- **On a feed this fast, never count updates — count seconds, or count episodes.** VN30F sends
+  about forty book snapshots a second, so anything measured in "updates" is out by two orders of
+  magnitude: a lull detector found 17,468 lulls in one session, a stall condition called half a
+  second a stall, and an opportunity counter reported 1,042 chances where there were 122. The same
+  mistake three times in one day, each time because the unit looked harmless.
+- **A fixed target plus a time limit and no stop always produces the same shape:** winners spread
+  across the clock, losers stacked at the cap. Moving the cap moves the pile — the previous team's
+  sat at 300 seconds, ours at 120. It is arithmetic, not misfortune, and it is why a stop-loss is
+  the one parameter that can change the outcome.
+- **A stop tighter than the round-trip friction is not a stop.** Spread plus the impact of one's own
+  size is 0.3–0.5 point at 19 contracts here, so a 0.3-point stop fires on entry rather than on a
+  move: the win rate collapsed to 2% while the trade count rose tenfold.
+- **Below the cost, winning trades still lose.** A take-profit ladder stepping down to +0.2 filled
+  every time and returned less than the round trip cost. Both teams' data show the same line.
+
 - **A plausible summary of the right document is still not the document.** A web-search summary of
   the VN30 futures contract specification reported the last trading day as the third *Tuesday*;
   SSI's own published contract sheet says the third *Thursday*. Every expiry date, rollover and
