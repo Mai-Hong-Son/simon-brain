@@ -20,6 +20,8 @@ framework — a **read-only dashboard** for watching, and a small **operator con
 things an owner may do. Stack: Python 3.12 + Pydantic v2 + pytest, plus the default web tier — see
 [[default-stack]]. Initialized: 2026-09-16.
 
+How the pieces fit together, where each kind of file lives, and how it starts itself: [[vn30f-bot-architecture]].
+
 ## Decisions & rationale
 
 - **No web framework for the bot** (ADR 001). The bot is event-driven and single-instance: work
