@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-09-17
+updated: 2026-09-26
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-007]
 ---
@@ -65,6 +65,13 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   deliberately shelved with their reasons written down: a screen for looking at the photo behind a
   verdict, and a worker of its own (`docs/design/report-check-worker.md` — measured: 2,665 pictures
   in the whole report, ~89 minutes at the pod's CPU limit, and memory is *not* the constraint).
+- **The BA's drawer looked like it edited three identifier fields, and did not** — its `<input>`
+  elements for Mã tài liệu / Rev / ECO# all carry `disabled`. Reading the tags and not the
+  attribute produced a written finding that the reference screen edits them, and decision #8's
+  "set once at Rev-save time" was relaxed on that basis before Sơn caught it on the render
+  (2026-09-26, reverted the same day, with tests that pin the refusal rather than merely the
+  absence of the field — an absent Pydantic field still lets an unknown key through unnoticed).
+  The general form is in [[engineering-rules]] #8: a control's presence is not its state.
 - **The mockup-fidelity lesson** (origin of [[engineering-rules]] #8): 5 consecutive UI correction
   rounds all traced to reading the mockup's source instead of rendering + measuring — a long-line
   filter silently ate the logo, CSS declared `width:46%` but the real render shrink-to-fit due to

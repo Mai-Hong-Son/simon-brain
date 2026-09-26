@@ -2,7 +2,7 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-09-16
+updated: 2026-09-26
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
 ---
@@ -36,6 +36,17 @@ Apply to **every** project, every session. Distilled from the ai-company constit
    and say in the code which is which. (Measured 2026-09-08: a mockup whose column minWidths sum
    to 1232px inside a 1158px area clips its own last two row actions; another whose name cell
    wraps uncapped overflows its own row. Both were matched in ratio, not in defect.)
+   **A control's presence is not its state — read the attribute, not the tag.** A mockup's edit
+   form rendered real `<input>` elements for three identifier fields, and all three carried
+   `disabled`; reading "there are inputs here" produced the finding that the reference screen
+   edits them, and on the strength of that finding an immutability rule was relaxed in the
+   product (measured 2026-09-26; caught by Sơn on the render and reverted the same day). The same
+   trap sits on `readonly`, `aria-disabled`, `pointer-events:none`, a click handler that returns
+   early, and a control hidden behind a permission. What a screen *offers* is a computed property
+   of the element, so extract it (`el.disabled`, `getComputedStyle(el).cursor`) exactly as you
+   would a colour — never infer it from the markup shape. Dangerous specifically because it
+   points the wrong way: it invents a capability the reference does not have, and the product
+   then loosens a rule to match something nobody asked for.
    **Measure to find where the two systems differ in MODEL, not only in value.** Many small
    identical-looking mismatches are one model difference wearing a hundred faces — fixing them one
    by one never converges, because each instance is off by a different amount. When several
