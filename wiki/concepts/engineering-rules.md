@@ -2,7 +2,7 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-09-26
+updated: 2026-09-28
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
 ---
@@ -52,5 +52,24 @@ Apply to **every** project, every session. Distilled from the ai-company constit
    by one never converges, because each instance is off by a different amount. When several
    elements are all slightly wrong in the same way, stop measuring instances and go find the rule
    that generates them.
+   **That model difference often lives in the reference's SHARED STYLESHEET, not in the screen —
+   so diff its tokens between deliveries, and read its comments for the WHY measurement cannot
+   give.** Measured 2026-09-28: the reference dropped its Google Fonts import and pointed both its
+   UI and its "mono" variable at one system stack, so every control in our build was a little wide,
+   each by a different amount, with family, size and colour all apparently matching. One button
+   went 125.3px → 121.4px — their exact number — from a one-line change and nothing else. The
+   reason was in their CSS comment and nowhere in the pixels: the factory's internal network may
+   block the font CDN, and a webfont that loads on one machine and falls back on the next makes one
+   product look like two. A re-delivery can move the design system under every screen at once;
+   comparing only the page you are working on will never show it.
+   **Rendering the page does not reveal what a LIBRARY's own config declares or fetches.** The same
+   build also asked a grid component for `fontFamily: {googleFont: 'Inter'}`. Writing up the fix,
+   the claim "so it fetches a second copy from the CDN" was read off the config and shipped in a
+   commit message — the exact mistake this rule exists to prevent, made while fixing this rule.
+   Putting the setting back and driving the page showed no request and no injected `<link>`: that
+   library needs an explicit opt-in to load one. What it really did was DECLARE a family nothing
+   loads any more, so the grid alone would render in the browser's fallback. Measure the claim you
+   are about to write down, including the ones about third-party behaviour — a library's docs and
+   its behaviour in your build are two different sources.
 
 

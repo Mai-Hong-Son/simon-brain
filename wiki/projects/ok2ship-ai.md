@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-09-26
+updated: 2026-09-28
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-007]
 ---
@@ -102,6 +102,17 @@ Nothing auto-syncs between them; each is pushed separately, only when asked.
   `id="..."` sets settles it in seconds — Template Management differed by 2 ids, both template
   literals moved into the extracted JS, while Data Mapping differed by 45. Do this before
   re-reading a delivery as changed requirements.
+- **The mockup is a drawing, not the scope.** The BA's Data Mapping ships a whole check type,
+  `rowLookup` ("Đối chiếu theo dòng (tra cứu động)") — its own editor panel, live preview and
+  server implementation — that no row of the governing SOP asks for. It is not a mistake of theirs:
+  it would check the Assy Yield sheet, where each row of "Top Yield Hitters" carries its own
+  Station, looked up in "Yield by process" for `Input − Σ(H:L)`, and `Defects Qty ÷ that` must
+  equal the Defect Rate already printed beside it (verified against the real V73, 9 of 9 rows
+  exact; the sheet's own note states the rule in English). But the checklist marks all three rows
+  it would answer "Không" — QA does that one by hand. It sat on the open-questions list twice
+  before anyone compared the two artefacts. **The checklist decides WHAT is checked; the mockup
+  decides only how it looks** — when they disagree about scope, the mockup is the one that is
+  wrong, and the ask back to the BA is to remove the drawing.
 - **A delivered requirements document can carry two markers that disagree — ask which one governs
   before building against either.** The BA's checklist spreadsheet has both red text and a
   "Hệ thống check?" (Có/Không) column. Reading the red matched what had been asked verbally, so

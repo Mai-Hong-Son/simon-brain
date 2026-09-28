@@ -2,7 +2,7 @@
 title: Sơn
 type: entity
 status: stable
-updated: 2026-09-11
+updated: 2026-09-28
 tags: [user, preferences, standards]
 sources: [ai-company/.claude/agents (dev-frontend, dev-mobile), feedback memory 07-08/2026]
 ---
@@ -25,6 +25,16 @@ Owner of this system. Every agent working with Sơn needs these facts.
 - Reads **Vietnamese** faster: all discussion, reports, plans → Vietnamese.
   Everything committed to a repo → English (operative rule: `config/global-rules.md`, loaded into every session).
 - Small sequential steps → stop and report → approval → next step.
+- **He tests on the machine's own dev server, which reads the working tree — so switching branch
+  changes what he is looking at, without telling him.** Measured 2026-09-28: he photographed a
+  screen asking why the new design was not there, because the checkout had moved to a branch that
+  did not carry it; a whole test round of his was wasted. Say which branch `localhost` is on every
+  time it changes, merge the branches he needs to see into one and check it out for him, and leave
+  the tree on `main` when the work is done.
+- **One merge request per repo for a batch of work**, not a chain that has to be merged in order.
+  He already carries a backlog of stale MRs; every extra one is manual work for him. Split by
+  commit inside the MR instead, and if branches must build on each other, rebase them into a
+  linear chain yourself rather than handing him the conflicts.
 
 ## Standards expected of agents
 
