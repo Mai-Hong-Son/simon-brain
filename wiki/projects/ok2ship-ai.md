@@ -21,7 +21,10 @@ client deliverables on [[mektec-desoft]]'s GitLab; planning docs are internal, o
 2. `backend/` — FastAPI (mektec GitLab).
 3. `frontend/` — React (mektec GitLab).
 
-Nothing auto-syncs between them; each is pushed separately, only when asked.
+Nothing auto-syncs between them; each is pushed separately, only when asked. MR state is readable
+with `glab mr list` (a `read_api` token lives in the macOS keyring since 2026-09-28) — read it
+there, never from branches still sitting on the remote, which say nothing about whether an MR is
+open, merged or closed (see [[approval-gates]]).
 
 ## Locked decisions (summary — full detail in the repo's `docs/design/user-management.md`)
 

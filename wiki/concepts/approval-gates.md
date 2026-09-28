@@ -2,7 +2,7 @@
 title: Approval gates & adversarial review
 type: concept
 status: stable
-updated: 2026-09-07
+updated: 2026-09-28
 tags: [process, review, quality]
 sources: [ai-company/CLAUDE.md (workflow + debate mechanism), ai-company/.claude/agents (orchestrator, qa-reviewer)]
 ---
@@ -35,3 +35,21 @@ dropping the multi-agent model (now solo agent — see [[simon-platform]]).
 - At most **3 rounds** of debate; stop early on consensus; unresolved → present BOTH positions to Sơn.
 - Every claim carries `file:line` evidence; concede points that don't hold.
 - Separate real defects from false positives before reporting.
+
+## The gate has an outcome — check that the work LANDED, by content
+
+A merge request can end merged **or closed**, and a batch cleanup closes both kinds. Verify the
+code is in the target branch; never infer it from the MR list or from branches left on the remote.
+
+- **"No open MRs" is not "everything merged."** Measured 2026-09-28: a consolidation closed the
+  superseded MRs and took one that was not superseded with them. Six fixes were missing from `main`
+  for half a day and nobody noticed — the checks being used were "are there open MRs?" (zero) and
+  "does the branch still exist?" (yes), and neither one answers the question.
+- **Ask by content:** `git cherry origin/main origin/<branch>` marks each commit `-` when its
+  PATCH is already in the target and `+` when it is not. It survives cherry-picks and rebases,
+  which `git merge-base --is-ancestor` does not — consolidate a branch by cherry-picking and the
+  ancestor test reports "unmerged" for work that is fully present. Confirm a headline file exists
+  in the target (`git cat-file -e origin/main:path`) before calling anything lost or landed.
+- **Read the forge, not its leftovers.** Branch on the remote ≠ MR open. With `glab`/`gh`
+  available, `glab mr list` answers directly; without it, say the state is unverified rather than
+  inferring it — a wrong "you still have to close these" is how the one MR that mattered got closed.
