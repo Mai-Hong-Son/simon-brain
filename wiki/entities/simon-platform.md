@@ -2,7 +2,7 @@
 title: Simon Platform
 type: entity
 status: active
-updated: 2026-09-07
+updated: 2026-09-28
 tags: [platform, architecture, meta]
 sources: [simon-brain-migration-brief.md (2026-09-07)]
 ---
@@ -26,6 +26,14 @@ SIMON-BRAIN = FOUNDATION (this repo — under every session, every machine, git-
                                end in PROMOTE (→ products/) or DELETE
 Both stand on the foundation and hold only their own code + technical config.
 ```
+
+**`~/Documents` is a TCC-protected folder, so scheduled automation in any product hits this.** A
+macOS `launchd` agent cannot read inside it — no window to ask permission with, so it is denied
+rather than prompted — and the job exits 126 on its own script without ever having run. It bit
+[[vn30f-bot]], whose recorder had been installed, listed by `launchctl`, and never once worked.
+Moving the launcher out does not help, because the interpreter still has to read the source. Decide
+it up front for anything that must run unattended: either grant Full Disk Access to what the agent
+executes, or keep that project outside `~/Documents`.
 
 ## The single-source-of-truth test
 

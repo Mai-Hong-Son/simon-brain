@@ -2,7 +2,7 @@
 title: vn30f-bot architecture
 type: project
 status: active
-updated: 2026-09-25
+updated: 2026-09-28
 tags: [trading, architecture, fastconnect, operations]
 sources: [products/vn30f-bot/docs/decisions]
 ---
@@ -66,6 +66,29 @@ person.
 One operational trap: a run started by hand holds the single-writer lock, and a scheduled run then
 refuses to start. The lock is correct — two writers would corrupt the day's ordering — so the
 refusal is made loud rather than removed.
+
+**And the bigger one: on macOS a `launchd` agent cannot read `~/Documents`.** TCC, the privacy layer,
+grants a folder to applications a person approves; a background agent has no window to ask with, so
+it is simply denied. The first morning the schedule actually fired, it exited 126 with
+`Operation not permitted` on its own script, and nothing was recorded. Measured permission by
+permission, from an agent whose script sat outside the protected folder:
+
+| From a launchd agent | |
+|---|---|
+| execute a script outside `~/Documents` | ✅ |
+| **read the project directory** | ❌ |
+| **read a file inside it** | ❌ |
+| write into a data directory inside it | ✅ |
+| read `~/.config` | ✅ |
+
+So moving the launcher out does not help — the interpreter still has to read the source. The only
+fixes are a Full Disk Access grant for whatever the agent executes, or keeping the project outside
+the protected folder; see [[simon-platform]], since the `products/` convention puts every project
+inside one. Two general shapes worth carrying: **a schedule that has never fired has not been shown
+to work** — this one was installed, listed by `launchctl`, and had never once run, which the first
+session's own start time (an hour late, by hand) would have revealed — and **a health check should
+say "nothing today", not nothing at all**, because a silent scheduler and a quiet market look the
+same from the outside.
 
 ## Invariants worth keeping
 

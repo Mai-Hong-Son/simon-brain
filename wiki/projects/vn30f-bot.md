@@ -2,7 +2,7 @@
 title: vn30f-bot
 type: project
 status: active
-updated: 2026-09-22
+updated: 2026-09-28
 tags: [trading, derivatives, python, ssi, dashboard]
 sources: [~/Documents/products/vn30f-bot, https://guide.ssi.com.vn/ssi-products, https://github.com/SSI-Securities-Corporation/python-fctrading, https://github.com/SSI-Securities-Corporation/python-fcdata]
 ---
@@ -67,6 +67,19 @@ How the pieces fit together, where each kind of file lives, and how it starts it
   day, orders per day; hitting the loss or order-count limit halts trading for the rest of the day.
   They are separate from SSI's own limits, which are read at runtime, and their numbers live in
   config rather than in code.
+- **The entry is a score plus a confirmation, not a set of conditions** (ADR 008). The client's
+  document reads as a list of things that are either true or false, and built that way it entered 93%
+  of its own signals — a condition cannot rank two moments that both meet it, so it can only be
+  loosened or tightened. Each of their ideas is now a **0–1 component of a score out of 100**, and
+  nothing is bought on the score alone: the price must first move a tick in our favour, and at that
+  moment the matched column is read again. The second step is taken wholesale from the previous
+  implementation of this product, whose own screen worked that way and which entered 7–17% of its
+  signals; measured against a recorded day, the confirmation is what earns the improvement, not the
+  waiting — moments whose price moved our way but whose aggressor had gone quiet were
+  indistinguishable from no filter at all. Weights start equal on purpose, since fitting them on one
+  session's hundred-odd trades would fit the session. Rejected: hard conditions, for the reason
+  above; and deeper climb thresholds, which measurement showed select **worse**-than-average moments
+  because by then the move has already been paid for.
 - **The simulated broker fills pessimistically and states its assumptions** (ADR 007). Since there is
   no sandbox, every number about this strategy comes out of that simulator, so its errors are pointed
   in one direction: later and worse than reality. A resting order joins **behind** the volume already
@@ -126,9 +139,36 @@ How the pieces fit together, where each kind of file lives, and how it starts it
   the one parameter that can change the outcome.
 - **A stop tighter than the round-trip friction is not a stop.** Spread plus the impact of one's own
   size is 0.3–0.5 point at 19 contracts here, so a 0.3-point stop fires on entry rather than on a
-  move: the win rate collapsed to 2% while the trade count rose tenfold.
+  move: the win rate collapsed to 2% while the trade count rose tenfold. The other half of the same
+  finding: swept at one contract, where a stop gets its fairest hearing, **every level tighter than
+  the target was monotonically worse than no stop at all** — at a 0.6-point target anything close
+  enough to protect the trade sits inside the noise. Only a stop wide enough to catch collapses
+  rather than noise paid for itself, and that turned out to be 2.5–3× the target, which is nothing
+  like the number that seems natural.
 - **Below the cost, winning trades still lose.** A take-profit ladder stepping down to +0.2 filled
   every time and returned less than the round trip cost. Both teams' data show the same line.
+- **Win rate is the wrong instrument, and it points the wrong way.** It mixes the entry with the exit
+  ladder, the queue model and the fee, so a better filter and a better ladder are indistinguishable
+  in it. Judge a filter by **separation** instead — the forward price move of the moments it keeps
+  against the moments it rejects, measured from what the size actually costs to buy and sell — and
+  print *both* columns, because a filter that keeps only good moments by keeping almost none looks
+  identical to a good one when you see only what it kept. **Build that instrument before the thing it
+  measures.** The demonstration: the configuration that improved the session sixfold had a win rate
+  of 53% where the one it replaced had 68%.
+- **A unit-free formula fed unit-carrying input saturates silently.** A continuity accumulator
+  designed to compare against the displayed book was handed raw contract counts; its total reached
+  88,669 against a depth of 12–138, so its score component read 1.00 at 100% of signal moments, its
+  mirror on the other side never fired once, and the giveback rule that was supposed to break the run
+  could never reach 35% of a peak that grew all day. **A component that never varies is a broken
+  measurement, not a weak signal** — and because it shifts every result by the same amount, nothing
+  downstream looks wrong. Print the distribution of every input before fitting anything to it.
+- **An instrument that reads "healthy" while blind is worse than one that reads broken.** Subscribing
+  to this feed replays each channel's last message, which on the first subscribe of a morning is the
+  *previous* session's closing print. Taken as the volume baseline it made the whole day's trades
+  read as out of order, and — the part that mattered — left gap detection unable to fire for the
+  entire session while reporting zero gaps. Any counter that resets on a boundary the vendor does not
+  announce has to be scoped to that boundary explicitly. The recording itself was never at risk,
+  because the raw log is written before anything is computed from it.
 
 - **A plausible summary of the right document is still not the document.** A web-search summary of
   the VN30 futures contract specification reported the last trading day as the third *Tuesday*;
