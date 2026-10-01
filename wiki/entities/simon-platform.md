@@ -62,10 +62,10 @@ Wiki↔repo contradiction: repo wins on current state, wiki wins on decision his
 
 Prose pointers load nothing — only `@<path>` lines in a CLAUDE.md inject file content at session
 start. Measured twice. 2026-09-07: a product session worked a full day under a dissolved
-constitution because nothing auto-loaded the wiki. 2026-10-01: across 20 product sessions, the
-pages that were merely named ([[son]], [[approval-gates]], [[mektec-desoft]]) had each been opened
-in at most 3, mostly to write to them — and a review gate added to [[approval-gates]] was skipped
-the same afternoon by a session that never had the page.
+constitution because nothing auto-loaded the wiki. 2026-10-01: of the 16 product sessions before
+that day, the pages that were merely named ([[son]], [[approval-gates]], [[mektec-desoft]]) had
+each been opened in 2, and those were sessions writing to them. Count sessions, not transcript
+files — a sub-agent leaves a file of its own.
 
 So every page declares its reader in frontmatter (`read_when`, AGENTS.md §0), and
 `scripts/wiki-lint.sh` checks the declaration against the thing that would do the loading:

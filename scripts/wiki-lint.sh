@@ -118,8 +118,8 @@ report "$bad_log" "log.md lines not in the fixed format"
 
 # ---------------------------------------------------------------- 13. readers (AGENTS.md §0: a page declares who reads it, and the declaration must be TRUE)
 # A page nothing loads is a page nobody reads: measured 2026-10-01, pages that were only named in
-# prose had been opened in at most 3 of 20 product sessions. So `read_when` is checked against the
-# thing that would do the loading, not taken on trust.
+# prose had each been opened in 2 of the 16 product sessions before that day. So `read_when` is
+# checked against the thing that would do the loading, not taken on trust.
 GLOBAL="$BRAIN/config/global-rules.md"
 links_to() { grep -q "\[\[$2\]\]\|\[\[$2|" "$1"; }   # links_to <file> <slug>
 out=(); unverified=(); loaded=()
