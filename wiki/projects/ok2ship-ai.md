@@ -200,7 +200,8 @@ keyring), never from branches left on the remote ([[approval-gates]]).
   and one cell took down the whole report list (2026-09-16); an old run's missing `failed_total`
   printed "20/0 cặp lệch" (2026-09-18). Use `== null` / `?.`, never let one row take the others
   with it, and shape a response so an older frontend still shows the right thing (ADR 010's
-  `summary`).
+  `summary`). To tell skew from bad data in one step, read what is actually deployed:
+  `/api/openapi.json` on the dev site listed 48 paths that day against the repo's 50.
 - **React crashes when something else edits the DOM** *(promotion candidate)*: a browser
   translator or an extension moves a text node, React then removes it from a parent it no longer
   has, and the ErrorBoundary takes the page — the BA hit it on every Template create

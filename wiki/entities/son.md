@@ -30,7 +30,8 @@ Owner of this system. Every agent working with Sơn needs these facts.
   changes what he is looking at, without telling him** (2026-09-28: a whole test round of his
   spent on a branch that did not carry the change). Say which branch `localhost` is on every time
   it changes, merge what he needs to see into one branch and check it out for him, and leave the
-  tree on `main` when the work is done.
+  tree on `main` when the work is done. Work that needs another branch goes in a `git worktree`
+  outside the tree he tests on, so his dev server never reloads under him.
 - **One merge request per repo for a batch of work**, not a chain that has to be merged in order
   — every extra MR is manual work for him. Split by commit inside the MR; if branches must build
   on each other, rebase them into a linear chain yourself rather than handing him the conflicts.

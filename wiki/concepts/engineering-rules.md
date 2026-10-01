@@ -22,6 +22,11 @@ rule and one line of why; the measured case behind each rule is on the project p
    missed, replace it with a test. (Cases: [[ok2ship-ai]] — a guard that failed every build, a
    green suite around the one path production takes; [[vn30f-bot]] — safety rules broken on
    purpose to find the test that catches each, a gap detector reporting zero while unable to fire.)
+   **The claims you check least are the ones that support what you are proposing — check those
+   first.** An anecdote that makes your own case arrives already believed. (2026-10-01, one
+   session arguing for a change wrote four statements down unmeasured — the order of two events,
+   a session count, why two sessions had opened a page, how a tool had run. Three were wrong and
+   one could not be shown; an independent review caught the first two.)
 2. **Secrets via env vars** — never hardcoded, never in images/CI files; `.env` is never committed.
 3. **Customer data never leaves approved environments** — and never touches a free-tier AI service.
 4. **Float comparisons use a tolerance, never `==`** — every comparison site carries a one-line

@@ -51,6 +51,11 @@ into the PR description (`Review: N findings · M fixed · K dismissed (why)`) �
 to Sơn. Sơn reviews what survived a review, never a first draft. "No findings" with no review run
 is a skipped gate; a review that found nothing says so explicitly.
 
+**A diff-only pass cannot check a statement of fact.** When the PR's content IS claims — docs, a
+handoff, an ADR — brief a fresh agent to check each claim against its source, not only to read
+the diff. (2026-10-01, [[ok2ship-ai]]: `/code-review` at low effort read a two-file docs diff and
+found nothing; a fresh agent told to verify the claims found one false statement and three nits.)
+
 ## Adversarial review
 
 - To challenge a plan/diff, use **a context that has NEVER seen the code** (spawn a fresh agent /

@@ -83,6 +83,10 @@ So every page declares its reader in frontmatter (`read_when`, AGENTS.md §0), a
 `AGENTS.md` stays prose-referenced, because the skills that write to the wiki name it at the step
 that needs it. A page with no reader is merged into one that has, or deleted.
 
+After changing an import, prove it loads: start a fresh non-interactive session (`claude -p`) in
+the directory concerned and have it quote a line of the imported page. The session that made the
+change cannot see it — imports are read at session start.
+
 Rejected: "thin pointers, read on demand" for rules — it relies on the session remembering to
 read, and both measurements say it does not. Rejected: splitting a page into a rule file and a
 detail file — the detail file has no reader. Absolute imports are safe because setup.sh fixes the
