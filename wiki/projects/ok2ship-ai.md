@@ -2,9 +2,9 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-09-28
+updated: 2026-10-01
 tags: [ok2ship, product, fastapi, react]
-sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-007]
+sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-010]
 ---
 
 # ok2ship-ai — the OK2SHIP AI product
@@ -42,6 +42,15 @@ open, merged or closed (see [[approval-gates]]).
 - Monitoring: **the cluster's Loki, not Sentry** (ADR 004 superseding 003 the same day — the
   cluster already runs Loki+Grafana inside the customer-data boundary, which changed the whole
   PII problem).
+- **A run has a scope (ADR 010, 2026-09-29)**: "Chạy kiểm tra" checks the hạng mục that is open,
+  "Chạy tất cả" the whole report. What that broke was READING, not running: every reader took "the
+  report's verdicts" to mean "the latest run's rows", true only while a run covered everything.
+  One rule now, `service.Coverage`: per sheet, the newest run of THAT sheet if newer than the
+  newest whole-report run, else the whole run; nothing older than the newest whole run counts (a
+  whole run is a fresh start). No row is copied or rewritten; `summary` in every API answer is the
+  REPORT's tally so an older frontend shows the right number unchanged. Rejected: latest-run-only
+  (checking sheet B wiped sheet A, and the list went green over a failure elsewhere), copying rows
+  into the new run (rows under a snapshot that did not produce them), overwrite in place (ADR 006).
 
 ## Milestones & lessons
 
@@ -235,4 +244,30 @@ open, merged or closed (see [[approval-gates]]).
   indistinguishable from the block simply being laid out that way — so the derived order is logged
   on every run and shown on screen when it is unusual. **A derivation earns the word "check" from
   the margin it wins by; record the margin, and name what it still cannot see.**
-
+- **A design doc's status line is written when the module STARTS, and nobody comes back to it when
+  the module ships.** Five design docs opened with "planned, not built" / "NOT FINAL, do not treat as
+  done" / a module tree of three packages, over code that had run in production for weeks. Found
+  only because a bundle for a new developer forced a read as a stranger (2026-10-01); fixed with a
+  dated "Status as of …" note under each title, the design text left as the record of why.
+  *(promotion candidate once a second project hits it)*
+- **A merged fix is not an applied fix when CI does not touch that manifest.** The Postgres probe
+  fix (`pg_isready -U '$(POSTGRES_USER)'`, a FATAL line every 10 s) merged 2026-09-16 and was still
+  firing on 2026-09-29, because `deploy/01-postgres.yaml` is applied by hand and nobody had. Seen
+  from Claude through `mcp-grafana` against the cluster's Loki, which is now wired (`brew install
+  mcp-grafana`; the service-account token sees every namespace — query only `ok2ship`).
+- **Two readers of one workbook must agree on screen.** The run used the strict `covers` (a picture
+  must sit inside the declared cells) and said "không tìm thấy ảnh"; the viewer beside it used
+  "nearest picture" and showed the photo, naming `D25:E25` under a zone declared `D25`. The rule
+  was right; the sentence was wrong. A verdict names the real reason — "spills out of the declared
+  range" (backend !55) — never a generic "not found" that the next panel contradicts.
+- **Unmounting a wizard step throws away an uncontrolled component's state, and a list fetched once
+  at open is stale by the step that reads it.** "Quay lại" wiped the chosen Project/Model (the
+  scope picker owns its selects), and the Active-Template list never refreshed, so someone who
+  activated a Template in another tab could only close the wizard — and re-upload 473 MB. Hide the
+  step instead of unmounting it; refetch on entering the step that consumes the list (frontend
+  !68). *(promotion candidate)*
+- **VLM reading modes stay stored-but-not-honoured, by decision (2026-09-29).** `hybrid`/`ai` are
+  valid to save and the engine answers `manual`. Before any ADR: measure whether a local vision
+  model reads what OCR cannot — in 14 days of Loki, `low_confidence` fired 0 times while
+  `count_mismatch` fired 125 and `low_resolution` summarised 203-px thumbnails, so "AI when OCR is
+  unsure" would never trigger as defined; and Desoft must answer whether the cluster has a GPU.

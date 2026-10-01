@@ -2,7 +2,7 @@
 title: Mektec & Desoft
 type: entity
 status: active
-updated: 2026-09-15
+updated: 2026-10-01
 tags: [client, vendor, ok2ship]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ~/Documents/products/ok2ship-ai/docs/decisions/002, 004]
 ---
@@ -36,6 +36,21 @@ with the collector config showing no namespace filter at all. Adding a namespace
 to that list (in the `grafana` Helm release's values, since the ConfigMap is Helm-managed) and
 restarting Grafana. Requesting it beats editing by hand: one ConfigMap serves every org on the
 cluster, and a hand edit is erased by the next `helm upgrade`.
+
+### Getting at the cluster from a laptop
+
+- **Rancher's "Download KubeConfig" embeds a stale internal CA** (`dynamiclistener-ca`, from the
+  2025-10 install) while `rancher-lake.desoft.vn` now serves a Let's Encrypt certificate, so
+  `kubectl` fails with `x509: certificate signed by unknown authority`. Delete the
+  `certificate-authority-data` line and kubectl trusts the system store, which has Let's Encrypt —
+  nothing is skipped, and CI is unaffected (it uses its own ServiceAccount kubeconfig). Every new
+  developer who downloads the file will hit this (measured 2026-10-01).
+- Postgres is reachable only through the cluster: `kubectl -n ok2ship port-forward
+  ok2ship-postgres-0 5434:5432`, credentials in the `ok2ship-postgres` Secret — read-only in the
+  client, since that account is the app's own superuser and a hand edit leaves no `audit_log`.
+- **GitLab merge requests are created by push options, and a push-option value must be ONE line**
+  — git refuses a value with a newline, and a retry without the description creates the MR with no
+  body; the local `glab` token is `read_api` only, so a description cannot be added afterwards.
 
 ## ⚠️ Terminology trap when talking to the BA
 
