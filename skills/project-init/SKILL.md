@@ -51,6 +51,7 @@ status: seed
 updated: <date>
 tags: []
 sources: [<repo path>]
+read_when: project:<name>
 ---
 
 # <name>

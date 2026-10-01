@@ -5,6 +5,7 @@ status: active
 updated: 2026-09-07
 tags: [ok2ship, spike, cv, x-ray]
 sources: [~/Documents/spikes/void-guard-xval/HANDOFF.md, docs/rui-ro-so-lieu.md]
+read_when: project:void-guard-xval
 ---
 
 # void-guard-xval — X-ray void% measurement spike

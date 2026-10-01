@@ -42,6 +42,9 @@ Read, in this order:
 - §1: still true **and** still useful one month from now? Fail either half → out.
 - §2: can it be written as a present-tense rule with its reason? If it only reads as "we tried A,
   then B", extract the rule or drop it.
+- §3, reader first: who needs this, at what moment? It must land on a page whose `read_when` is
+  true (§0) — a rule for every session goes into a page marked `always`, never into a new page
+  nobody loads.
 - §3: true only in this project → `wiki/projects/<name>.md`; already seen in ≥2 projects →
   `wiki/concepts/<slug>.md` plus a one-line link from each project page; looks general but seen
   once → project page, tagged *promotion candidate*.

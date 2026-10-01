@@ -5,6 +5,7 @@ status: active
 updated: 2026-09-28
 tags: [trading, derivatives, python, ssi, dashboard]
 sources: [~/Documents/products/vn30f-bot, https://guide.ssi.com.vn/ssi-products, https://github.com/SSI-Securities-Corporation/python-fctrading, https://github.com/SSI-Securities-Corporation/python-fcdata]
+read_when: project:vn30f-bot
 ---
 
 # vn30f-bot

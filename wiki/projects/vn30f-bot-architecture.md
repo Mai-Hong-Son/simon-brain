@@ -5,6 +5,7 @@ status: active
 updated: 2026-09-28
 tags: [trading, architecture, fastconnect, operations]
 sources: [products/vn30f-bot/docs/decisions]
+read_when: on-demand — how the processes, layers, storage and scheduler fit together, before changing any of them
 ---
 
 How [[vn30f-bot]] is put together, and the one rule that shapes all of it: **the thing that spends

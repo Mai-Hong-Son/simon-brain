@@ -2,14 +2,25 @@
 title: Simon Platform
 type: entity
 status: active
-updated: 2026-09-28
+updated: 2026-10-01
 tags: [platform, architecture, meta]
 sources: [simon-brain-migration-brief.md (2026-09-07)]
+read_when: skill:project-init
 ---
 
 # Simon Platform — the foundation model
 
-The operating model in force since 09/2026, replacing the [[ai-company]] model.
+The operating model in force since 09/2026.
+
+It replaced `ai-company` (07–09/2026): a central repo playing "company", with a constitution, six
+role-named agents (orchestrator, backend, frontend, mobile, devops, QA) and three skills. Dropped
+because the coordination outweighed what it coordinated — an orchestrator larger than the four
+dev agents it directed; because a subagent is for context isolation, not role-play — a model does
+not need to be told it is the Backend Engineer; because several rules existed only to patch
+problems the splitting created; and because once wiki + skills + rules existed, the "company" was
+a redundant middle layer. What survived moved here: the rules ([[engineering-rules]]), the stack
+([[default-stack]]), the gates ([[approval-gates]]), the skills. The six agents did not. The repo
+is archived with its history.
 
 ## Architecture
 
@@ -47,22 +58,35 @@ executes, or keep that project outside `~/Documents`.
 Anti-drift: the wiki records **shape**, never instantaneous values (AGENTS.md §2).
 Wiki↔repo contradiction: repo wins on current state, wiki wins on decision history.
 
-## Context loading — the @import convention
+## Context loading — a page is read only if something loads it
 
 Prose pointers load nothing — only `@<path>` lines in a CLAUDE.md inject file content at session
-start. Adopted 2026-09-07 after an incident: a product session worked a full day under the
-dissolved [[ai-company]] constitution because nothing auto-loaded the wiki. The convention:
+start. Measured twice. 2026-09-07: a product session worked a full day under a dissolved
+constitution because nothing auto-loaded the wiki. 2026-10-01: across 20 product sessions, the
+pages that were merely named ([[son]], [[approval-gates]], [[mektec-desoft]]) had each been opened
+in at most 3, mostly to write to them — and a review gate added to [[approval-gates]] was skipped
+the same afternoon by a session that never had the page.
 
-- Global `~/.claude/CLAUDE.md` imports `wiki/concepts/engineering-rules.md` — shared rules,
-  one edit serves every repo.
-- Each product repo's CLAUDE.md imports its own `wiki/projects/<name>.md` — project context,
-  auto-loaded only where it's needed (`project-init` scaffolds this line).
-- `AGENTS.md` and [[approval-gates]] stay prose-referenced — needed only when writing to the
-  wiki or reviewing, not worth permanent context.
+So every page declares its reader in frontmatter (`read_when`, AGENTS.md §0), and
+`scripts/wiki-lint.sh` checks the declaration against the thing that would do the loading:
 
-Rejected alternative: "thin pointers, read on demand" — relies on the session remembering to
-read; the incident proved it doesn't. Accepted cost: ~90 extra context lines per session.
-Absolute imports are safe because setup.sh fixes the repo path at `~/Documents/simon-brain`.
+- `always` — imported by the global rules: [[engineering-rules]], [[son]], [[approval-gates]].
+  Rules plus one line of why; every word here is paid by every session, and lint prints the total.
+- `project:<name>` — imported by that project's CLAUDE.md: its own project page (`project-init`
+  scaffolds the line), plus whatever every session of that project needs ([[mektec-desoft]] for
+  ok2ship-ai).
+- `skill:<name>` — read at a step of that skill ([[default-stack]] and this page at project-init).
+- `on-demand — <question>` — reached through a link from a page that IS loaded, and that link
+  states the question. The weakest channel: use it for depth a loaded page already summarises,
+  never for a rule.
+
+`AGENTS.md` stays prose-referenced, because the skills that write to the wiki name it at the step
+that needs it. A page with no reader is merged into one that has, or deleted.
+
+Rejected: "thin pointers, read on demand" for rules — it relies on the session remembering to
+read, and both measurements say it does not. Rejected: splitting a page into a rule file and a
+detail file — the detail file has no reader. Absolute imports are safe because setup.sh fixes the
+repo path at `~/Documents/simon-brain`.
 
 ## Agent principle
 

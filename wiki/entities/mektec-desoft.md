@@ -5,6 +5,7 @@ status: active
 updated: 2026-10-01
 tags: [client, vendor, ok2ship]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ~/Documents/products/ok2ship-ai/docs/decisions/002, 004]
+read_when: project:ok2ship-ai
 ---
 
 # Mektec & Desoft

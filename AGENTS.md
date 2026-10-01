@@ -48,8 +48,29 @@ status: seed         # seed | active | stable
 updated: 2026-09-07  # last-edited date, absolute — never "today"/"last week"
 tags: [llm, cost]
 sources: [raw/sources/anthropic-caching-docs.md]
+read_when: skill:project-init   # who reads this page, and when — see below
 ---
 ```
+
+### Every page names its reader (`read_when`)
+
+A page that nothing loads is a page nobody reads: a prose pointer ("see `wiki/concepts/x.md`")
+injects nothing, and a session does not go looking (measured — see `entities/simon-platform`). So
+a page exists only if it can say who reads it, and `scripts/wiki-lint.sh` checks that the answer
+is true:
+
+| `read_when` | Meaning | What must exist |
+|---|---|---|
+| `always` | every session, every project | an `@import` of the page in `config/global-rules.md` |
+| `project:<name>` | every session of that project | an `@import` in that project's `CLAUDE.md` |
+| `skill:<name>` | a step of that skill | the skill's `SKILL.md` names the page |
+| `on-demand — <question>` | when that question comes up | a link from a page that IS loaded, stating the question |
+
+`always` is the expensive tier — every word is paid by every session — so it holds **rules plus
+one line of why**; the measured story behind a rule lives on the project page where it happened.
+`on-demand` is the weak tier: use it for depth a loaded page already summarises, never for a rule.
+A page that cannot name a reader is merged into one that can, or deleted (git keeps the history).
+`index.md` and `log.md` are exempt — the write workflows and lint read them.
 
 ### Spike zone
 
@@ -126,6 +147,12 @@ On a contradiction → never silently pick a side: report to Sơn, propose fixin
 ---
 
 ## 3. Where lessons go — project vs concept
+
+**Name the reader first: who needs this, and at what moment?** Every session → a page marked
+`always` (`engineering-rules` for how to build, `son` for how to work with Sơn, `approval-gates`
+for process). Whoever works on project X → X's project page. Whoever runs a ritual → the page
+that ritual's skill reads. No reader you can name → don't write it. Creating a new page is the
+last resort, and it needs a `read_when` that lint can verify (§0).
 
 | Kind of lesson | Where it goes |
 |---|---|
@@ -214,6 +241,8 @@ Check and produce a **report — no self-applied fixes**:
 - **Contradictions** between pages, or unresolved `⚠️ Contradiction` markers.
 - **Stale pages**: `updated` older than 90 days, or claims superseded by newer sources.
 - **Orphans**: pages with no inbound links.
+- **Pages without a reader**: `read_when` missing, or naming an `@import`, a skill or a link
+  that does not exist (§0). Also reported: the word count of the `always` tier.
 - **Broken links / links to not-yet-written pages** → a list of pages worth writing.
 - **§2 violations**: pages containing session-narrative language.
 - **§4 violations**: hubs > 100 lines, or hub items > 10 lines.
@@ -279,6 +308,7 @@ the list of touched pages after writing.
 - [ ] Passed the quality gate: **still true and still useful one month from now?**
 - [ ] A durable conclusion, not session narrative?
 - [ ] Lesson filed at the right level: project-only → project page; reusable → concept + link?
+- [ ] Reader named: the page it lands on has a `read_when` that is true (§0)?
 - [ ] Hubs still thin (overview + links only)?
 - [ ] Frontmatter present, `updated` an absolute date?
 - [ ] Cross-linked both ways? `index.md` updated? One line appended to `log.md`?

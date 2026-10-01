@@ -40,7 +40,8 @@ for f in "$BRAIN"/agents/*.md; do
 done
 
 # 3. Global rules: ~/.claude/CLAUDE.md is a symlink to the git-synced file, so behavior
-#    rules and the @import of engineering-rules reach every machine automatically.
+#    rules and its @imports (engineering-rules, son, approval-gates) reach every machine
+#    automatically.
 link "$BRAIN/config/global-rules.md" "$HOME/.claude/CLAUDE.md"
 
 # 4. Project group folders (AGENTS.md §0 — spikes don't write to the wiki by default)

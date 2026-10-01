@@ -14,7 +14,9 @@ repo's `AGENTS.md`.
    the product repo, and the milestone's git log.
 2. Identify: (a) mistakes that cost time, (b) procedures/patterns repeated ≥2 times,
    (c) decisions worth recording.
-3. Layer each lesson per AGENTS.md §3:
+3. Layer each lesson per AGENTS.md §3 — **name the reader first** (who needs it, at what moment):
+   a lesson lands on a page whose `read_when` is true (§0), and a rule for every session goes into
+   a page marked `always`, not into a new page nobody loads:
    - True only for this project → propose writing to `wiki/projects/<project>.md`.
    - Reusable AND already seen in ≥2 projects → propose a `wiki/concepts/` page + a link from
      the project page.

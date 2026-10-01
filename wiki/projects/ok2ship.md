@@ -5,6 +5,7 @@ status: active
 updated: 2026-09-07
 tags: [ok2ship, program, qa]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ai-company hub memory 08/2026]
+read_when: on-demand — which spike already proved a requirement, before starting a new AI or data module
 ---
 
 # OK2SHIP — program hub
