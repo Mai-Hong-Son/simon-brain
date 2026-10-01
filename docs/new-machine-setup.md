@@ -41,17 +41,14 @@ skill list, and exits having installed zero — no error, and still a closing "D
 | `dpearson2699/swift-ios-skills` | swift-language · swift-api-design-guidelines · swiftui-gestures · swiftui-uikit-interop · ios-simulator · debugging-instruments |
 | `callstackincubator/agent-skills` | react-native-best-practices · upgrading-react-native |
 | `vercel-labs/agent-skills` | vercel-react-native-skills (path: skills/react-native-skills) |
-| `wshobson/agents` | typescript-advanced-types |
-| `obra/superpowers` | systematic-debugging · verification-before-completion |
-| `rohitg00/pro-workflow` | **only** deslop · plan-interrogate |
+| `obra/superpowers` | **only** systematic-debugging — then delete its upstream test fixtures (`CREATION-LOG.md`, `test-pressure-*.md`, `test-academic.md`); keep `SKILL.md` and the files it references |
 
 `module-map` used to sit in that last row. It now ships with simon-brain (`skills/module-map`,
 linked by §1): upstream's frontmatter is invalid YAML, so the CLI skips it — silently, one
 `⚠ Skipped` line buried in a hundred. See the Provenance note inside that file.
 
 **Doing ok2ship only?** ok2ship-ai is FastAPI + React/TS, so §3 narrows to
-`typescript-advanced-types`, `systematic-debugging`, `verification-before-completion`,
-`deslop`, `plan-interrogate` — five skills, `ls ~/.claude/skills | wc -l` → 9 with §1.
+`systematic-debugging` — one skill, `ls ~/.claude/skills | wc -l` → 5 with §1.
 The six swift-ios and three React Native ones wait until native-skline-chart starts.
 
 ## 4. Deliberately NOT installed — don't "helpfully" add them
@@ -62,12 +59,19 @@ dispatching-parallel-agents, token-efficiency, …) and `claude-mem`: their role
 the simon-brain wiki (AGENTS.md), the solo-agent model, or Claude Code built-ins.
 Decision recorded 2026-09-07.
 
+Removed 2026-10-01 after three weeks with zero invocations (counted in the session transcripts):
+`typescript-advanced-types` (a tutorial the model already knows), `deslop` (built-in `/simplify`
+covers it), `verification-before-completion` (the harness now demands evidence before completion
+claims; its 5-step gate moves into the `wrap-up` skill), `plan-interrogate` (plan mode covers it;
+its one-question-at-a-time method moves into `concepts/approval-gates`). A skill whose
+description is generic advice ("use when you hit a bug") is never invoked — only named rituals are.
+
 ## 5. Verify
 
 Count, don't skim — both known CLI failure modes end on a cheerful "Done!":
 
 ```bash
-ls ~/.claude/skills | wc -l   # 4 from §1 + one per §3 skill installed (all of §3 → 18)
+ls ~/.claude/skills | wc -l   # 4 from §1 + one per §3 skill installed (all of §3 → 14)
 ls ~/.claude/skills           # eyeball the names against §1 + §3
 ```
 
