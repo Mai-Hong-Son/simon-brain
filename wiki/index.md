@@ -14,7 +14,7 @@ updated: 2026-09-28
 
 - [[engineering-rules]] — 8 non-negotiable engineering rules for every project.
 - [[default-stack]] — default stack per tier, repo layout, deviation → ADR before code.
-- [[approval-gates]] — size the process by size, human gates, adversarial review with a fresh context.
+- [[approval-gates]] — size the process by size, human gates, git/PR conventions, review before Sơn from a fresh context, check that work landed by content.
 
 ## Entities
 

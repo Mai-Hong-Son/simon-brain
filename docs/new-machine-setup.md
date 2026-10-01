@@ -9,7 +9,7 @@
 cd ~/Documents/simon-brain && ./setup.sh
 ```
 
-Brings in `git-workflow`, `module-map`, `project-init`, `project-retro`, `wrap-up`, `wiki-lint` (symlinks) + `~/.claude/CLAUDE.md`
+Brings in `project-init`, `project-retro`, `wrap-up`, `wiki-lint`, `module-map` (symlinks) + `~/.claude/CLAUDE.md`
 (global rules) + `~/Documents/{products,spikes}`. If `~/.claude/CLAUDE.md` already exists as a
 real file, delete it and re-run.
 
@@ -48,7 +48,7 @@ linked by §1): upstream's frontmatter is invalid YAML, so the CLI skips it — 
 `⚠ Skipped` line buried in a hundred. See the Provenance note inside that file.
 
 **Doing ok2ship only?** ok2ship-ai is FastAPI + React/TS, so §3 narrows to
-`systematic-debugging` — one skill, `ls ~/.claude/skills | wc -l` → 7 with §1.
+`systematic-debugging` — one skill, `ls ~/.claude/skills | wc -l` → 6 with §1.
 The six swift-ios and three React Native ones wait until native-skline-chart starts.
 
 ## 4. Deliberately NOT installed — don't "helpfully" add them
@@ -65,13 +65,17 @@ covers it), `verification-before-completion` (the harness now demands evidence b
 claims; its 5-step gate moves into the `wrap-up` skill), `plan-interrogate` (plan mode covers it;
 its one-question-at-a-time method moves into `concepts/approval-gates`). A skill whose
 description is generic advice ("use when you hit a bug") is never invoked — only named rituals are.
+`git-workflow` went the same day for the opposite reason: ~390 commits in three weeks followed
+its conventions with the skill opened once, because they are Claude Code's defaults; the rules
+that are not defaults (branching, commit-on-green, review before Sơn) now live in
+`concepts/approval-gates`, where every agent — not only Claude Code — is pointed.
 
 ## 5. Verify
 
 Count, don't skim — both known CLI failure modes end on a cheerful "Done!":
 
 ```bash
-ls ~/.claude/skills | wc -l   # 6 from §1 + one per §3 skill installed (all of §3 → 16)
+ls ~/.claude/skills | wc -l   # 5 from §1 + one per §3 skill installed (all of §3 → 15)
 ls ~/.claude/skills           # eyeball the names against §1 + §3
 ```
 

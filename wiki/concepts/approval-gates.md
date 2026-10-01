@@ -31,6 +31,24 @@ dropping the multi-agent model (now solo agent — see [[simon-platform]]).
   sentence of reasoning — a question without a stance offloads the design onto Sơn. Read the
   codebase and prior decisions before asking; never roll past an unresolved dependency.
 
+## Git and PR conventions (every project)
+
+- Branch per concern on serious projects: `feature/<slug>`, `fix/<slug>`, `perf/`, `chore/`,
+  `docs/` — never straight to `main`. Spikes may commit straight.
+- Commit only on green: run the suite first. Message `type(scope): message`, imperative, English,
+  under 72 characters. Never force-push a shared branch, never commit `.env` or a secret, never
+  rewrite `main`'s history ([[engineering-rules]] #2).
+- One concern per PR; the description says what, why, and how it was tested.
+
+## Every PR gets a review before Sơn sees it — from a context that has not seen the code
+
+Not optional and not sized away: a ≤2-file PR gets `/code-review` at low effort, a logic or data
+PR at high. The cycle: open the PR → run `/code-review` (or a fresh agent given the PR's stated
+scope; never self-review in the same session) → fix confirmed defects and push → write the outcome
+into the PR description (`Review: N findings · M fixed · K dismissed (why)`) → only then report
+to Sơn. Sơn reviews what survived a review, never a first draft. "No findings" with no review run
+is a skipped gate; a review that found nothing says so explicitly.
+
 ## Adversarial review
 
 - To challenge a plan/diff, use **a context that has NEVER seen the code** (spawn a fresh agent /
