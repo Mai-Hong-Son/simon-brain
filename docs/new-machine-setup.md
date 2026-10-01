@@ -9,7 +9,7 @@
 cd ~/Documents/simon-brain && ./setup.sh
 ```
 
-Brings in `git-workflow`, `module-map`, `project-init`, `project-retro` (symlinks) + `~/.claude/CLAUDE.md`
+Brings in `git-workflow`, `module-map`, `project-init`, `project-retro`, `wrap-up` (symlinks) + `~/.claude/CLAUDE.md`
 (global rules) + `~/Documents/{products,spikes}`. If `~/.claude/CLAUDE.md` already exists as a
 real file, delete it and re-run.
 
@@ -48,7 +48,7 @@ linked by §1): upstream's frontmatter is invalid YAML, so the CLI skips it — 
 `⚠ Skipped` line buried in a hundred. See the Provenance note inside that file.
 
 **Doing ok2ship only?** ok2ship-ai is FastAPI + React/TS, so §3 narrows to
-`systematic-debugging` — one skill, `ls ~/.claude/skills | wc -l` → 5 with §1.
+`systematic-debugging` — one skill, `ls ~/.claude/skills | wc -l` → 6 with §1.
 The six swift-ios and three React Native ones wait until native-skline-chart starts.
 
 ## 4. Deliberately NOT installed — don't "helpfully" add them
@@ -71,7 +71,7 @@ description is generic advice ("use when you hit a bug") is never invoked — on
 Count, don't skim — both known CLI failure modes end on a cheerful "Done!":
 
 ```bash
-ls ~/.claude/skills | wc -l   # 4 from §1 + one per §3 skill installed (all of §3 → 14)
+ls ~/.claude/skills | wc -l   # 5 from §1 + one per §3 skill installed (all of §3 → 15)
 ls ~/.claude/skills           # eyeball the names against §1 + §3
 ```
 
