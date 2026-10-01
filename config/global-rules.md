@@ -11,7 +11,7 @@
   thì đọc `wiki/index.md` để tìm trang, **tra wiki trước khi suy đoán**.
 - Luật vận hành wiki: `~/Documents/simon-brain/AGENTS.md` — đọc trước khi ghi bất cứ gì vào wiki.
 - Chuẩn làm việc với Sơn: `wiki/entities/son.md`. Luật review: `wiki/concepts/approval-gates.md`.
-- Cuối session có kết luận/bài học đáng giữ → **đề xuất** cập nhật wiki theo AGENTS.md §7, chờ Sơn duyệt.
+- Cuối session → chạy `/wrap-up`: kiểm chứng kết quả, **đề xuất** cập nhật wiki theo AGENTS.md §7, chờ Sơn duyệt.
 
 ## Hành vi
 - Giải thích tư duy/khái niệm trước khi code; bước nhỏ → báo cáo → duyệt → bước tiếp.

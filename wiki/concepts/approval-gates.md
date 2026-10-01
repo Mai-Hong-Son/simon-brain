@@ -2,7 +2,7 @@
 title: Approval gates & adversarial review
 type: concept
 status: stable
-updated: 2026-09-28
+updated: 2026-10-01
 tags: [process, review, quality]
 sources: [ai-company/CLAUDE.md (workflow + debate mechanism), ai-company/.claude/agents (orchestrator, qa-reviewer)]
 ---
@@ -27,6 +27,9 @@ dropping the multi-agent model (now solo agent — see [[simon-platform]]).
 - Every plan ends with "awaiting approval before execution".
 - Tech research → report with a recommendation → Sơn approves adoption; stack deviation → ADR
   before code.
+- **Open design questions are resolved one at a time**, each with a recommended answer and one
+  sentence of reasoning — a question without a stance offloads the design onto Sơn. Read the
+  codebase and prior decisions before asking; never roll past an unresolved dependency.
 
 ## Adversarial review
 
