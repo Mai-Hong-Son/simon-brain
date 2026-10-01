@@ -5,12 +5,14 @@ status: stable
 updated: 2026-10-01
 tags: [process, review, quality]
 sources: [ai-company/CLAUDE.md (workflow + debate mechanism), ai-company/.claude/agents (orchestrator, qa-reviewer)]
+read_when: always
 ---
 
 # Approval gates & adversarial review
 
-Distilled from [[ai-company]]'s workflow + debate mechanism, keeping what stays valuable after
-dropping the multi-agent model (now solo agent — see [[simon-platform]]).
+How work moves from a request to `main`: plan, branch, review, merge. Solo agent by default —
+see [[simon-platform]]. Loaded into every session, so it holds rules; measured cases are on the
+project pages named.
 
 ## Size the process by SIZE, not ambition
 
@@ -59,18 +61,14 @@ is a skipped gate; a review that found nothing says so explicitly.
 
 ## The gate has an outcome — check that the work LANDED, by content
 
-A merge request can end merged **or closed**, and a batch cleanup closes both kinds. Verify the
-code is in the target branch; never infer it from the MR list or from branches left on the remote.
+A merge request can end merged **or closed**, and a batch cleanup closes both kinds. "No open
+MRs" and "the branch still exists" answer neither question; verify the code is in the target.
 
-- **"No open MRs" is not "everything merged."** Measured 2026-09-28: a consolidation closed the
-  superseded MRs and took one that was not superseded with them. Six fixes were missing from `main`
-  for half a day and nobody noticed — the checks being used were "are there open MRs?" (zero) and
-  "does the branch still exist?" (yes), and neither one answers the question.
-- **Ask by content:** `git cherry origin/main origin/<branch>` marks each commit `-` when its
-  PATCH is already in the target and `+` when it is not. It survives cherry-picks and rebases,
-  which `git merge-base --is-ancestor` does not — consolidate a branch by cherry-picking and the
-  ancestor test reports "unmerged" for work that is fully present. Confirm a headline file exists
-  in the target (`git cat-file -e origin/main:path`) before calling anything lost or landed.
-- **Read the forge, not its leftovers.** Branch on the remote ≠ MR open. With `glab`/`gh`
-  available, `glab mr list` answers directly; without it, say the state is unverified rather than
-  inferring it — a wrong "you still have to close these" is how the one MR that mattered got closed.
+- **Ask by content:** `git cherry origin/main origin/<branch>` marks a commit `-` when its PATCH
+  is already in the target and `+` when it is not. It survives cherry-picks and rebases, which
+  `git merge-base --is-ancestor` does not. Confirm a headline file with
+  `git cat-file -e origin/main:path` before calling anything lost or landed.
+- **Read the forge, not its leftovers.** A branch on the remote says nothing about its MR.
+  `glab mr list` / `gh pr list` answer directly; without them, say the state is unverified rather
+  than inferring it. (Case: [[ok2ship-ai]], 2026-09-28 — six fixes missing from `main` for half a
+  day behind "zero open MRs".)

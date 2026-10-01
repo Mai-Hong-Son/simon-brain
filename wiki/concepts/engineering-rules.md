@@ -2,18 +2,26 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-09-28
+updated: 2026-10-01
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
+read_when: always
 ---
 
 # Non-negotiable engineering rules
 
-Apply to **every** project, every session. Distilled from the ai-company constitution
-(see [[ai-company]]).
+Apply to **every** project, every session. This page is loaded into all of them, so it holds the
+rule and one line of why; the measured case behind each rule is on the project page it names.
 
 1. **Never trust AI output without independent verification** — check against ground truth,
    cross-checks, system metadata. This is rule #1; everything else ranks below it.
+   **A check counts only once it has been seen to FAIL and to PASS.** A test that has never gone
+   red, a build guard that has never gone green, a monitor that has never fired — none of them is
+   evidence yet. Fixing a bug: revert the fix, watch the test fail, restore it. Adding a guard:
+   watch it pass on a good build. A warning comment is not a control — the second time one is
+   missed, replace it with a test. (Cases: [[ok2ship-ai]] — a guard that failed every build, a
+   green suite around the one path production takes; [[vn30f-bot]] — safety rules broken on
+   purpose to find the test that catches each, a gap detector reporting zero while unable to fire.)
 2. **Secrets via env vars** — never hardcoded, never in images/CI files; `.env` is never committed.
 3. **Customer data never leaves approved environments** — and never touches a free-tier AI service.
 4. **Float comparisons use a tolerance, never `==`** — every comparison site carries a one-line
@@ -28,48 +36,22 @@ Apply to **every** project, every session. Distilled from the ai-company constit
 7. **Uncertainty rule**: when logic is unclear — especially external integrations (auth, payments,
    third-party SDKs, webhooks, native modules, LLM prompt behavior) — STOP and ask Sơn before
    changing it. Never silently rewrite code you don't fully understand.
-8. **UI built against a mockup: verify the RENDER, don't just read the source** — render it with
+8. **UI built against a reference: verify the RENDER, not the source** — render it with
    Playwright and extract real computed values (`getComputedStyle`, `getBoundingClientRect`);
-   never approximate with framework defaults. A lesson paid for with 5 correction rounds —
-   full story at [[ok2ship-ai]]. **Measuring tells you where you differ; it does not tell you to
-   copy.** A mockup is a prototype and carries its own bugs — match its intent, not its defects,
-   and say in the code which is which. (Measured 2026-09-08: a mockup whose column minWidths sum
-   to 1232px inside a 1158px area clips its own last two row actions; another whose name cell
-   wraps uncapped overflows its own row. Both were matched in ratio, not in defect.)
-   **A control's presence is not its state — read the attribute, not the tag.** A mockup's edit
-   form rendered real `<input>` elements for three identifier fields, and all three carried
-   `disabled`; reading "there are inputs here" produced the finding that the reference screen
-   edits them, and on the strength of that finding an immutability rule was relaxed in the
-   product (measured 2026-09-26; caught by Sơn on the render and reverted the same day). The same
-   trap sits on `readonly`, `aria-disabled`, `pointer-events:none`, a click handler that returns
-   early, and a control hidden behind a permission. What a screen *offers* is a computed property
-   of the element, so extract it (`el.disabled`, `getComputedStyle(el).cursor`) exactly as you
-   would a colour — never infer it from the markup shape. Dangerous specifically because it
-   points the wrong way: it invents a capability the reference does not have, and the product
-   then loosens a rule to match something nobody asked for.
-   **Measure to find where the two systems differ in MODEL, not only in value.** Many small
-   identical-looking mismatches are one model difference wearing a hundred faces — fixing them one
-   by one never converges, because each instance is off by a different amount. When several
-   elements are all slightly wrong in the same way, stop measuring instances and go find the rule
-   that generates them.
-   **That model difference often lives in the reference's SHARED STYLESHEET, not in the screen —
-   so diff its tokens between deliveries, and read its comments for the WHY measurement cannot
-   give.** Measured 2026-09-28: the reference dropped its Google Fonts import and pointed both its
-   UI and its "mono" variable at one system stack, so every control in our build was a little wide,
-   each by a different amount, with family, size and colour all apparently matching. One button
-   went 125.3px → 121.4px — their exact number — from a one-line change and nothing else. The
-   reason was in their CSS comment and nowhere in the pixels: the factory's internal network may
-   block the font CDN, and a webfont that loads on one machine and falls back on the next makes one
-   product look like two. A re-delivery can move the design system under every screen at once;
-   comparing only the page you are working on will never show it.
-   **Rendering the page does not reveal what a LIBRARY's own config declares or fetches.** The same
-   build also asked a grid component for `fontFamily: {googleFont: 'Inter'}`. Writing up the fix,
-   the claim "so it fetches a second copy from the CDN" was read off the config and shipped in a
-   commit message — the exact mistake this rule exists to prevent, made while fixing this rule.
-   Putting the setting back and driving the page showed no request and no injected `<link>`: that
-   library needs an explicit opt-in to load one. What it really did was DECLARE a family nothing
-   loads any more, so the grid alone would render in the browser's fallback. Measure the claim you
-   are about to write down, including the ones about third-party behaviour — a library's docs and
-   its behaviour in your build are two different sources.
-
-
+   never approximate with framework defaults. Each line below was paid for in [[ok2ship-ai]],
+   which keeps the measurements.
+   - **Measuring shows where you differ; it does not tell you to copy.** A mockup is a prototype
+     and carries its own bugs — match its intent, not its defects, and say in the code which is
+     which.
+   - **A control's presence is not its state — read the attribute, not the tag.** What a screen
+     *offers* is a computed property (`el.disabled`, `readonly`, `aria-disabled`,
+     `pointer-events`, the computed cursor, a handler that returns early). Inferring it from the
+     markup errs in the dangerous direction: it invents a capability the reference does not
+     have, and the product loosens a rule to match.
+   - **Many small, similar mismatches are one MODEL difference.** Fixing instances never
+     converges, because each is off by a different amount; find the rule that generates them. It
+     often lives in the reference's shared stylesheet — diff its tokens between deliveries, and
+     read its comments for the why that pixels cannot give.
+   - **Rendering does not reveal what a LIBRARY's config declares or fetches.** Drive the page and
+     watch the network before writing a claim about third-party behaviour down: a library's docs
+     and its behaviour in your build are two different sources.

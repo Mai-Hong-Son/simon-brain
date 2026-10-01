@@ -5,13 +5,19 @@ status: active
 updated: 2026-10-01
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-010]
+read_when: project:ok2ship-ai
 ---
 
 # ok2ship-ai — the OK2SHIP AI product
 
-Backend + web dashboard of the [[ok2ship]] program. 🚀 Serious product: tests mandatory, branch
-per feature, review before merge. Stack matches the [[default-stack]] defaults (no deviation ADR).
-**Current state + open work: read `HANDOFF.md` in the repo — the wiki doesn't copy it.**
+Backend + web dashboard of the [[ok2ship]] program — open that hub before starting an AI or data
+module, to see which spike already proved the requirement. 🚀 Serious product: tests mandatory,
+branch per feature, review before merge. Stack matches [[default-stack]] (no deviation ADR). The
+client's cluster, GitLab and the BA's terminology trap are in [[mektec-desoft]], loaded with this
+page. **Current state + open work: `HANDOFF.md` in the repo — the wiki doesn't copy it.**
+
+This page is loaded into every session of the product, so each entry is the rule and its one
+measured case; the full story is in the ADR or the commit history of the repo it names.
 
 ## ⚠️ Three-repo topology — read before touching git
 
@@ -21,12 +27,14 @@ client deliverables on [[mektec-desoft]]'s GitLab; planning docs are internal, o
 2. `backend/` — FastAPI (mektec GitLab).
 3. `frontend/` — React (mektec GitLab).
 
-Nothing auto-syncs between them; each is pushed separately, only when asked. MR state is readable
-with `glab mr list` (a `read_api` token lives in the macOS keyring since 2026-09-28) — read it
-there, never from branches still sitting on the remote, which say nothing about whether an MR is
-open, merged or closed (see [[approval-gates]]).
+Nothing auto-syncs between them; each is pushed separately, only when asked, and each tier deploys
+through its own pipeline — so the two are never guaranteed to be on the same version (see
+"Deploy skew" below). MR state is read with `glab mr list` (a `read_api` token is in the macOS
+keyring), never from branches left on the remote ([[approval-gates]]).
 
-## Locked decisions (summary — full detail in the repo's `docs/design/user-management.md`)
+## Locked decisions (detail: the repo's `docs/design/` and `docs/decisions/`)
+
+### Users and auth
 
 - **Full RBAC**, one user holds multiple roles; naming follows industry standard, NOT the BA's
   wording (terminology trap — see [[mektec-desoft]]). Went through 3 design rounds (v1→v3)
@@ -42,232 +50,206 @@ open, merged or closed (see [[approval-gates]]).
 - Monitoring: **the cluster's Loki, not Sentry** (ADR 004 superseding 003 the same day — the
   cluster already runs Loki+Grafana inside the customer-data boundary, which changed the whole
   PII problem).
-- **A run has a scope (ADR 010, 2026-09-29)**: "Chạy kiểm tra" checks the hạng mục that is open,
-  "Chạy tất cả" the whole report. What that broke was READING, not running: every reader took "the
-  report's verdicts" to mean "the latest run's rows", true only while a run covered everything.
-  One rule now, `service.Coverage`: per sheet, the newest run of THAT sheet if newer than the
-  newest whole-report run, else the whole run; nothing older than the newest whole run counts (a
-  whole run is a fresh start). No row is copied or rewritten; `summary` in every API answer is the
-  REPORT's tally so an older frontend shows the right number unchanged. Rejected: latest-run-only
-  (checking sheet B wiped sheet A, and the list went green over a failure elsewhere), copying rows
-  into the new run (rows under a snapshot that did not produce them), overwrite in place (ADR 006).
 
-## Milestones & lessons
+### Configuration and checking
+
+- **Data Mapping storage (ADR 005)**: a field hangs off the revision's sheet; the stable frame is
+  real columns, per-type settings are JSONB validated by one Pydantic schema per type. Fields stay
+  editable on any Rev status, every change audited — a field is HOW reports are checked, not what
+  the Rev is. Rejected: fully normalised (every BA change becomes a migration), one JSONB
+  document per field, fields attached to the Template instead of the revision.
+- **Check results (ADR 006)**: a run row plus a row per field, with the whole field configuration
+  snapshotted on the run — fields stay editable, so the Rev id alone does not say what ran. Four
+  statuses with fixed meanings: `pass`, `fail`, `error` (the data was not there), `manual` (not
+  automated — never counted as a pass). Rejected: one blob per run, overwrite in place, a Rev id
+  with no snapshot.
+- **Photo against data (ADR 007)**: RapidOCR, entirely on our own machines — customer images may
+  never reach a hosted service. A photo is read by pins and slots, and which slot answers which
+  sheet row is derived from the whole field, never configured. Shelved, each with its reasons
+  written down: a viewer for the photo behind a verdict, and a worker of its own
+  (`docs/design/report-check-worker.md`).
+- **Spec Management (ADR 008)**: one library of named criteria. A run resolves each criterion ONCE,
+  at its start, into its own snapshot — the key and the resolved values both — so editing a
+  parameter cannot reach a finished verdict. A parameter in use cannot be deleted; Inactive
+  retires it and yields `manual`. Typed thresholds were moved in through a reviewed catalogue,
+  never by grouping on numbers: `< 0.5` is two different criteria told apart only by the unit.
+  Rejected: store the key and resolve on display (the mockup's way — it re-captions an old
+  verdict with the new threshold).
+- **A Template has no scope; a report chooses its own (ADR 009, the BA's 2026-09-24 delivery)**:
+  the Template→catalog-node link and the Config→Build→Model resolution are gone. One Active Rev
+  per Mã tài liệu, held by a partial unique index (deactivate the old one BEFORE activating the
+  new — the index is checked per statement). **Accepted cost: scope and Template are independent,
+  so a report filed with the wrong Template runs to completion and yields wrong verdicts**; only a
+  non-blocking structure comparison stands between. Rejected: keep the scope and add a manual
+  override (two mechanisms for one answer).
+- **A run has a scope (ADR 010)**: "Chạy kiểm tra" checks the hạng mục that is open, "Chạy tất cả"
+  the whole report. A report's verdicts are, per sheet, the newest run of THAT sheet if it is
+  newer than the newest whole-report run, else the whole run (`service.Coverage`); no row is
+  copied, and `summary` in every API answer is the REPORT's tally. Rejected: latest-run-only
+  (checking sheet B wiped sheet A), copying rows into the new run, overwrite in place.
+
+## Milestones
 
 - Module 1 (User Management, WBS #5) **signed off 2026-08-29**, running in production on Desoft
   infrastructure, auto-deployed via GitLab CI/CD.
-- **Data Mapping (WBS #5.3) was gated, then built** — the gate is what made building it safe, so
-  both halves are worth keeping. The gate (2026-09): all 8 item groups of the customer's QA
-  checking guide were configured against the running mockup first, and the mockup's six check types
-  covered well under half of what the guide asks, so building the screen would have let users save
-  configurations that could never execute. It was lifted by closing that gap rather than by
-  ignoring it — each missing capability was added as an operator on an existing check type, not as
-  a new one (a spec value may be text, "Judgement = Pass"; or a set, "Fail mode ∈ {2, 5}"), which
-  is why the picker still has the same handful of check types.
-  **Every sheet of the report is now configurable.** Opening them was staged — first the two Peel
-  test sheets, then those the checklist's own "Hệ thống check?" column marks, then all of them —
-  because each stage needed evidence that the screen could express what the checklist asks. Being
-  open means a sheet can be CONFIGURED, not that the suggestion engine knows it; rules exist for
-  the force-test and cross-section families only, and the rest are configured by hand.
-- **Checking a photo against the data beside it runs in production (WBS #5.4 part B, ADR 007,
-  2026-09-17).** A cross-section photo carries its measurements printed on it; the cells beside it
-  hold the same numbers typed by the lab, and the check is whether they agree. RapidOCR, entirely
-  on our own machines — customer images may never reach a hosted service. Measured end to end on
-  the real V73 report: **4 of 4 image fields pass, 480 numbers, zero mismatches.** Two pieces are
-  deliberately shelved with their reasons written down: a screen for looking at the photo behind a
-  verdict, and a worker of its own (`docs/design/report-check-worker.md` — measured: 2,665 pictures
-  in the whole report, ~89 minutes at the pod's CPU limit, and memory is *not* the constraint).
-- **The BA's drawer looked like it edited three identifier fields, and did not** — its `<input>`
-  elements for Mã tài liệu / Rev / ECO# all carry `disabled`. Reading the tags and not the
-  attribute produced a written finding that the reference screen edits them, and decision #8's
-  "set once at Rev-save time" was relaxed on that basis before Sơn caught it on the render
-  (2026-09-26, reverted the same day, with tests that pin the refusal rather than merely the
-  absence of the field — an absent Pydantic field still lets an unknown key through unnoticed).
-  The general form is in [[engineering-rules]] #8: a control's presence is not its state.
-- **The mockup-fidelity lesson** (origin of [[engineering-rules]] #8): 5 consecutive UI correction
-  rounds all traced to reading the mockup's source instead of rendering + measuring — a long-line
-  filter silently ate the logo, CSS declared `width:46%` but the real render shrink-to-fit due to
-  a duplicated wrapper div, colors approximated with indigo-600 instead of reading the real
-  `--ant-colorPrimary`.
-- **TS gotcha** *(promotion candidate once another TS project hits it)*: a root `tsconfig.json`
-  of the `files:[] + references` shape makes `tsc --noEmit` a silent no-op — only `tsc -b`
-  actually catches errors.
+- **Data Mapping (WBS #5.3) was gated, then built.** All 8 item groups of the customer's QA
+  checking guide were first configured against the running mockup, whose six check types covered
+  well under half of the guide; the gate was lifted by adding operators to existing check types
+  (a spec value may be text, or a set), not new types. Every sheet is configurable; being open
+  means it can be CONFIGURED by hand, not that the suggestion engine knows it.
+- **Photo-against-data check in production since 2026-09-17.** Measured end to end on the real
+  V73 report: 4 of 4 image fields pass, 480 numbers, zero mismatches. The whole report holds
+  2,665 pictures — ~89 minutes at the pod's CPU limit, and memory is *not* the constraint.
+- Spec Management, the catalogue rebuild, the 2026-09-24 delivery and per-hạng-mục runs all
+  landed between 2026-09-22 and 2026-09-30.
+
+## Lessons
+
+### Reading the BA's deliverables
+
+- **The checklist decides WHAT is checked; the mockup decides only how it looks.** The mockup
+  ships a whole check type, `rowLookup`, that the governing SOP checklist marks "Không" on every
+  row it would answer. When the two disagree about scope the mockup is the one that is wrong, and
+  the ask back to the BA is to remove the drawing.
+- **Two markers in one requirements document that disagree: ask which governs before building.**
+  The checklist has red text and a "Hệ thống check?" column; following the red dropped three
+  requirements, of which one was really out. Disagreement between two signals in the same
+  document IS the signal.
+- **A re-packaged mockup reads as a new one.** A delivery that looked redesigned was the previous
+  one re-hosted (1.5 MB inlined → 66 KB + external files). Diff the `id="..."` sets before reading
+  a delivery as changed requirements.
+- **Probe a tool's capabilities by driving its real UI, not by reading its config tables**
+  *(promotion candidate)*: a check-type definition table produced four "this is impossible"
+  verdicts, and filling in the real form disproved every one. A false "impossible" becomes a
+  change request to the vendor for something that already ships.
+- **A control's presence is not its state** ([[engineering-rules]] #8): the BA's drawer rendered
+  `<input>`s for Mã tài liệu / Rev / ECO#, all `disabled`; reading the tags relaxed an
+  immutability rule for a day (2026-09-26). Pin a refusal with a test that SENDS the field — an
+  absent Pydantic field still lets an unknown key through unnoticed.
+- **Mockup fidelity** (origin of [[engineering-rules]] #8): five UI correction rounds all traced
+  to reading the mockup's source instead of its render — a `width:46%` that renders
+  shrink-to-fit, indigo-600 in place of the real `--ant-colorPrimary`. And its own bugs are
+  matched in intent, not copied: one mockup's column minWidths sum to 1232px inside a 1158px area
+  and clip its own row actions (2026-09-08).
+- **One model difference wears a hundred faces** ([[engineering-rules]] #8). Ant sizes
+  line-height by a single 22/14 ratio while Tailwind hard-codes one per step, so every line sat
+  1–3px off; fixed once, at the token layer (`--text-*--line-height`). And when the reference
+  dropped its webfont for a system stack — its CSS comment says why: the factory network may
+  block the font CDN — every control of ours was a different amount too wide; one button went
+  125.3px → 121.4px from a one-line change (2026-09-28).
+- **A claim about a library is measured, not read off its config.** "`googleFont: 'Inter'` makes
+  the grid fetch a second copy" went into a commit message; driving the page showed no request at
+  all — the setting only declared a family nothing loads.
+
+### Verification
+
+- **A build-time guard has to be watched PASSING** ([[engineering-rules]] #1): a Dockerfile check
+  ran `python -c "import cv2"` with the system interpreter, so it failed every build and had never
+  once succeeded (2026-09-17).
+- **Tests arranged to AVOID a code path do not protect it** ([[engineering-rules]] #1): every
+  test injected a DB session factory, so a missing `import SessionLocal` sat green through 564
+  tests and failed on the first real run. The default branch is the one production takes.
+- **A warning comment is not a control** ([[engineering-rules]] #1): `alembic/env.py` imports
+  each module's models by hand, and a module missing from that list makes autogenerate write
+  `drop_table` for its tables. Missed twice (2026-09-02, 2026-09-22), the second time with the
+  warning already in the file; a test now compares the list with the directory, and a second
+  test proves the first can fail.
+- **Deriving a mapping from the data itself is a CHECK when the winner is unanimous and the
+  runner-up is zero.** Which number on a photo answers which sheet row is scored over all of a
+  field's photos: the winning order matched every photo of all seven fields, the runner-up none,
+  and injected faults were still caught. Record the margin, and name what it cannot see (a swap
+  repeated on every sample and both pins).
+- **A status line is written when a module STARTS and nobody returns to it when the module
+  ships** *(promotion candidate)*: five design docs said "planned, not built" over code weeks in
+  production, and the handoff and a progress log that had stopped a month earlier said the same.
+  Fix with a dated "Status as of …" note; leave the design text as the record of why.
+- **Two readers of one workbook must agree on screen.** The run said "không tìm thấy ảnh" (strict
+  `covers`) while the viewer beside it showed the photo (nearest picture). A verdict names the
+  real reason — "spills out of the declared range" — never a generic "not found".
+
+### Backend
+
+- **A body that takes minutes to arrive is authenticated when it FINISHES arriving**
+  *(promotion candidate)*: FastAPI reads a whole form/file body before resolving dependencies, so
+  a 496 MB upload at 3 MB/s (158 s) outlived a 120 s token that was valid at Save, and the client
+  re-sent the file. Judge the token when the request ARRIVES (request middleware) and let the dependency
+  honour that verdict; raising the TTL only moves the threshold.
+- **Refresh-token reuse detection revokes EVERY session of the account** — the right answer to a
+  stolen token, so never share an account between automation and a person: Playwright driving
+  `admin` logged Sơn out twice in one day.
+- **An immutable-snapshot row is editable only while it is a draft** *(promotion candidate)*:
+  editing a published Rev in place rewrites what it claims to have been, with no new row to show
+  it, and bypasses checks that run only on the publish path. To change a published Rev, create a
+  new one; enforced server-side. Field configuration is the deliberate exception (ADR 005).
+- **"Reads as a number" means a plain decimal, never `float()` / `Number()`** — both accept
+  scientific notation (a "7E" product code becomes the threshold 7e-12) and `nan`/`inf`. One
+  regex, `^[+-]?(\d+(\.\d+)?|\.\d+)$`, shared by the API and the form.
+- **Two distributions that install the SAME files cannot be fixed by uninstalling one**
+  *(promotion candidate)*: RapidOCR requires `opencv-python` (needs libxcb, dies on a slim
+  image); the headless build ships the same `cv2`, and uninstalling the desktop one left
+  `import cv2` broken (2026-09-17). Exclude it at RESOLUTION time — `[tool.uv]
+  override-dependencies` with a marker that is never true.
 - Email belongs off the request path (BackgroundTasks) — synchronous SMTP once added whole
   seconds to every user create/edit.
-- **An immutable-snapshot row is only editable while it is still a draft** *(promotion candidate
-  once a second project hits it)*: a Template revision owns its scope and description, and the
-  version-history table shows one row per Rev with that row's current values. Editing a published
-  Rev in place therefore rewrites what it claims to have been, with no new row to show it happened
-  — and it bypasses checks that only run on the publish path (here, the one-Active-per-node rule
-  lives solely in `_set_revision_status`, so re-targeting an already-Active Rev never triggers it).
-  A draft has neither problem: nothing published, nothing active, nothing to conflict with. To
-  change a published Rev, create a new one. Enforced server-side, not just by hiding the control.
-- **A tool's capabilities must be probed by driving its real UI, not read from its config tables**
-  *(promotion candidate once a second project hits it)*: reading a mockup's check-type definition
-  table produced four separate "this is impossible" verdicts, and filling in the real form
-  disproved every one — the definitions constrain the default rendering, not what the form
-  accepts. Distinct from [[engineering-rules]] #8, which is about visual fidelity: this one is
-  about capability. The cost of getting it wrong is asymmetric — a false "impossible" becomes a
-  change request to the vendor for something that already ships.
-- **A re-packaged mockup reads as a new one.** The BA's 2026-09-07 delivery looked redesigned but
-  was the 2026-09-02 mockup re-hosted (1.5 MB inlined → 66 KB + external CSS/JS). Comparing the
-  `id="..."` sets settles it in seconds — Template Management differed by 2 ids, both template
-  literals moved into the extracted JS, while Data Mapping differed by 45. Do this before
-  re-reading a delivery as changed requirements.
-- **The mockup is a drawing, not the scope.** The BA's Data Mapping ships a whole check type,
-  `rowLookup` ("Đối chiếu theo dòng (tra cứu động)") — its own editor panel, live preview and
-  server implementation — that no row of the governing SOP asks for. It is not a mistake of theirs:
-  it would check the Assy Yield sheet, where each row of "Top Yield Hitters" carries its own
-  Station, looked up in "Yield by process" for `Input − Σ(H:L)`, and `Defects Qty ÷ that` must
-  equal the Defect Rate already printed beside it (verified against the real V73, 9 of 9 rows
-  exact; the sheet's own note states the rule in English). But the checklist marks all three rows
-  it would answer "Không" — QA does that one by hand. It sat on the open-questions list twice
-  before anyone compared the two artefacts. **The checklist decides WHAT is checked; the mockup
-  decides only how it looks** — when they disagree about scope, the mockup is the one that is
-  wrong, and the ask back to the BA is to remove the drawing.
-- **A delivered requirements document can carry two markers that disagree — ask which one governs
-  before building against either.** The BA's checklist spreadsheet has both red text and a
-  "Hệ thống check?" (Có/Không) column. Reading the red matched what had been asked verbally, so
-  three requirements were dropped on that basis; the column was the real marker, and only one of
-  the three was actually out. Cost: an implemented change, reverted. The tell was there beforehand
-  — the two markers disagreed on 2 of 3 rows, and on a neighbouring sheet the red marked a
-  different pair of requirements for identical wording. **Disagreement between two signals in the
-  same document is the signal**: stop and ask, rather than picking the one that confirms what you
-  already believe.
-- **Refresh-token reuse detection revokes EVERY session of that account, not just the one that
-  tripped it** — so a script logging in as a human's account will eventually log that human out,
-  from a different machine, with no visible cause. Hit twice in one day (audit log:
-  `auth.refresh_token_reuse_detected`) while driving the app with Playwright as `admin`, which is
-  also the account Sơn was using. The blast radius is correct — it is the right answer to a stolen
-  token — so the fix is never sharing an account between automation and a person, not softening the
-  rule.
-- **A chart in an Excel sheet may be a native chart, not a picture — and that changes what has to
-  be checked.** The V73 report's FAI/SPC family holds 300 native charts (50 per sheet across 6
-  sheets) and ZERO images; the drawing-XML image reader returns nothing for them. A native chart is
-  drawn from the cells, so "the chart must match the data" holds by construction — what is left to
-  verify is which range the series points at, readable from the chart XML. Six sheets that looked
-  like they needed image analysis need none. Check for `xl/charts/` before assuming a picture.
-- **An element with an animation that applies `transform` becomes the containing block for every
-  `fixed` descendant.** A dialog written as `fixed inset-0` inside a modal panel rendered 448×242 at
-  (496,379) — the panel's own box — instead of covering the 1440×1000 viewport (measured
-  2026-09-14). Any overlay opened over another overlay has to be its SIBLING, not its child. The
-  trap is that the transform comes from a zoom-in animation nobody thinks of as layout.
-- **Ant sizes line-height by one ratio, Tailwind hard-codes one per step — so rebuilding an Ant
-  mockup in Tailwind puts EVERY line of text 1-3px off** while family, size and colour all match.
-  Ant applies a single 22/14 multiplier at every size (11px → 17.29, 13px → 20.43, 20px → 31.43);
-  Tailwind's `text-sm` carries a fixed 20px, `text-xl` a fixed 28px. Nothing looks wrong enough to
-  name, which is why it came back as "nhiều chỗ font chưa chuẩn" with no specific example, and
-  chasing it element by element never converges because each step is off by a different amount.
-  The fix belongs at the token layer — override `--text-*--line-height` to the one ratio (127 uses
-  corrected at once, explicit `leading-*` still wins) and set font-size + line-height on `body` so
-  anything that declares no size stops falling back to the browser's 16px/`normal`. See
-  [[engineering-rules]] #8 on measuring for the model difference rather than the values.
-- **A body that takes minutes to arrive is authenticated when it FINISHES arriving, not when it
-  starts** *(promotion candidate once a second project hits it)*: FastAPI reads a whole form/file
-  body before it resolves dependencies, so `Depends(get_current_user)` runs against the clock at
-  the END of the upload. With a deliberately short access token, every upload slower than the TTL
-  fails with a token that was valid when the user pressed Save — and a client that retries then
-  sends the entire file a second time (measured: 496 MB at 3 MB/s = 158 s against a 120 s TTL; the
-  same file at full speed passes). The fix is to judge the token when the request ARRIVES — the
-  request-context middleware already decodes it there for logging — and let the dependency honour
-  that verdict for the same token string. Nothing is relaxed: a token dead or forged on arrival is
-  still rejected, and force-logout keeps its bound because no NEW request opens with a dead token.
-  Raising the TTL only moves the threshold; it does not remove it.
-- **Reversing one direction of an optimisation creates the symmetric bug** *(promotion candidate
-  once a second project hits it)*: a preview that fetched a whole zone in one request re-downloaded
-  every picture whenever one anchor changed, so it was changed to one request per anchor — which
-  made opening a field of 80 anchors fire 80 requests, ~8 s of pure per-request overhead against a
-  server that has the file open and cached either way. Neither shape is right alone. The answer
-  keeps both: cache per anchor, and coalesce whatever is requested in one burst into a single call.
-  Before flipping a batching decision, state what the OTHER direction then costs.
-- **A picture's position in a spreadsheet does not tell you which samples it describes.** On the
-  V73 cross-section sheets, `D53:E53` and `D43:E43` are anchored over the same two columns, yet the
-  first prints the numbers of two samples and the second only of one — the second sample's photo
-  is the one on the row below, anchored over the same pair. Pairing by geometry alone mis-assigns
-  every photo of such a row to its neighbour's data. Read the numbers off the pictures before
-  trusting a layout, and when a layout cannot be read that way, report a gap instead of guessing:
-  a configuration saved on a wrong pairing is worse than one a human has to type.
-- **OCR on a Mac needs no install**: Apple's Vision framework via a ~20-line `swiftc` program reads
-  text off an image entirely on the machine. That satisfies [[engineering-rules]] #3 for customer
-  images (nothing leaves the approved environment) without a PaddleOCR/Tesseract install, and it is
-  the practical way to check what a report's own photos actually print. Delete the extracted images
-  as soon as they have been read.
-- **Group generated proposals the way the source document groups things, not the way the algorithm
-  does.** Cross-section photo fields keyed purely by the shape of the pairing merged two unrelated
-  groups — the sheet's "Vertical" blocks and its "female and male" ones — into one field, because
-  both happened to map 12 cells per photo. Keying by the sheet's own group heading (column B of a
-  Barcode row) both names each proposal the way QA reads the report and keeps unrelated blocks
-  apart. Shape still subdivides a group, since one group can hold two kinds of photo.
-- **"Reads as a number" must mean a plain decimal, never `float()` / `Number()`.** Both accept
-  scientific notation, so a "7E" product code (`7E-0012`) silently becomes the threshold 7e-12, and
-  both accept `nan`/`inf`. One regex, `^[+-]?(\d+(\.\d+)?|\.\d+)$`, shared by the API and the
-  form, keeps a typed value's meaning identical on both sides of the wire.
-- **Two distributions that install the SAME files cannot be sorted out by uninstalling one
-  afterwards** *(promotion candidate once another Python project hits it)*: RapidOCR requires
-  `opencv-python`, the desktop build, which needs libxcb and dies on a slim image; the headless
-  build ships the same `cv2`. The Dockerfile installed both and removed the desktop one — and
-  measured 2026-09-17, `uv pip uninstall opencv-python` left `import cv2` broken with headless
-  still "installed", because whichever landed second owns the shared files. The fix belongs at
-  RESOLUTION time (`[tool.uv] override-dependencies` with a marker that is never true), so the
-  wrong one is never written at all and there is nothing to undo.
-  **The same commit carried the second half of the lesson: a build-time guard has to be watched
-  PASSING, not merely written.** Its check, `RUN uv pip uninstall … && python -c "import cv2"`,
-  used the bare `python` — the system interpreter, which has no cv2 whatever the venv holds — so it
-  failed *every* build and had never once succeeded. Written as "fail at build rather than in
-  production", it blocked precisely what it was meant to protect, and nobody noticed because it
-  landed in the same commit as the dependency it guarded.
-- **Tests arranged to AVOID a code path do not protect it** *(promotion candidate once a second
-  project hits it)*: a background task opens its own DB session, so every test injected a session
-  factory — deliberately, so a test could never write into the dev database. A missing
-  `import SessionLocal` therefore sat green through 564 tests and failed on the first real run:
-  the default branch, the only one production takes, was the one arrangement no test exercised.
-  The fixture that makes a test safe can be the thing that makes it blind. Pinned by pointing the
-  module's own `SessionLocal` at the test database and taking the default branch on purpose.
-- **Judge "is this still alive" where the clock is SHARED, not in the browser tab** *(promotion
-  candidate once a second project hits it)*: a check moved to a background task, and the screen
-  decided a run had stopped by counting three minutes itself. Measured on dev 2026-09-17 — a deploy
-  replaced the pod mid-run, the row still said `running`, and the button that would have rescued it
-  was disabled *because* the run still looked live; every reload restarted the countdown, so the
-  more the user tried, the further away the rescue got. Moving the verdict to the server made
-  "the screen says it stopped" and "the API will let me start another" the same question. Two
-  thresholds in two places always drift, and the user is the one told to press a button that then
-  refuses.
-- **Deriving a mapping from the data itself is a CHECK, not a circular argument — when the winner
-  is unanimous and the runner-up is zero.** Which number on a photo answers which spreadsheet row
-  cannot be read off the picture: the arrows are drawn where the feature physically sits, so one
-  block's sheet order was 3-2-1-4 down the image. Rather than adding a config field nobody would
-  know how to fill in, the engine scores every possible order against ALL the field's photos and
-  adopts one only if it wins outright. Measured on the real report: the winner matched **every**
-  photo of **every** one of seven fields, the runner-up matched **none**; injected faults were
-  still caught (one wrong digit; two rows swapped on one sample; two rows swapped on every sample
-  of one pin). What it cannot see is a swap repeated identically on every sample AND both pins —
-  indistinguishable from the block simply being laid out that way — so the derived order is logged
-  on every run and shown on screen when it is unusual. **A derivation earns the word "check" from
-  the margin it wins by; record the margin, and name what it still cannot see.**
-- **A design doc's status line is written when the module STARTS, and nobody comes back to it when
-  the module ships.** Five design docs opened with "planned, not built" / "NOT FINAL, do not treat as
-  done" / a module tree of three packages, over code that had run in production for weeks. Found
-  only because a bundle for a new developer forced a read as a stranger (2026-10-01); fixed with a
-  dated "Status as of …" note under each title, the design text left as the record of why.
-  *(promotion candidate once a second project hits it)*
+
+### Frontend
+
+- **Deploy skew: a field the API may not send yet is `undefined`, not `null`, and an absent
+  number is not a zero** *(promotion candidate)*. A field added together with the UI that reads
+  it is missing for as long as the two deploys are apart: `run === null` let `undefined` through
+  and one cell took down the whole report list (2026-09-16); an old run's missing `failed_total`
+  printed "20/0 cặp lệch" (2026-09-18). Use `== null` / `?.`, never let one row take the others
+  with it, and shape a response so an older frontend still shows the right thing (ADR 010's
+  `summary`).
+- **React crashes when something else edits the DOM** *(promotion candidate)*: a browser
+  translator or an extension moves a text node, React then removes it from a parent it no longer
+  has, and the ErrorBoundary takes the page — the BA hit it on every Template create
+  (2026-09-16), then twice in 16 s (2026-09-22). Opt the document out of translation
+  (`translate="no"` + the notranslate meta), make `removeChild`/`insertBefore` skip a node that
+  is no longer a child (facebook/react#11538), and report the first suppression instead of
+  swallowing it.
+- **TS gotcha** *(promotion candidate)*: a root `tsconfig.json` of the `files:[] + references`
+  shape makes `tsc --noEmit` a silent no-op — only `tsc -b` actually catches errors.
+- **An element animated with `transform` becomes the containing block for every `fixed`
+  descendant**: a `fixed inset-0` dialog inside a zoom-in modal rendered at the panel's 448×242
+  instead of the 1440×1000 viewport (2026-09-14). An overlay opened over an overlay must be its
+  SIBLING, not its child.
+- **Reversing one direction of an optimisation creates the symmetric bug**
+  *(promotion candidate)*: one request per zone re-downloaded every picture on any change; one request per
+  anchor fired 80 for a single field (~8 s of pure overhead). Cache per anchor AND coalesce a
+  burst into one call; before flipping a batching decision, state what the other direction costs.
+- **Unmounting a wizard step throws away uncontrolled state, and a list fetched once at open is
+  stale by the step that reads it** *(promotion candidate)*: "Quay lại" wiped the chosen scope,
+  and a Template activated in another tab could only be picked up by re-uploading 473 MB. Hide
+  the step instead of unmounting it; refetch on entering the step that consumes the list.
+
+### Running it
+
+- **Judge "is this still alive" where the clock is SHARED, not in the browser tab**
+  *(promotion candidate)*: the tab counted three minutes itself, so when a deploy killed a run mid-way
+  (2026-09-17) every reload restarted the countdown and the rescue button stayed locked. The
+  server decides `stalled`; two thresholds in two places always drift.
 - **A merged fix is not an applied fix when CI does not touch that manifest.** The Postgres probe
-  fix (`pg_isready -U '$(POSTGRES_USER)'`, a FATAL line every 10 s) merged 2026-09-16 and was still
-  firing on 2026-09-29, because `deploy/01-postgres.yaml` is applied by hand and nobody had. Seen
-  from Claude through `mcp-grafana` against the cluster's Loki, which is now wired (`brew install
-  mcp-grafana`; the service-account token sees every namespace — query only `ok2ship`).
-- **Two readers of one workbook must agree on screen.** The run used the strict `covers` (a picture
-  must sit inside the declared cells) and said "không tìm thấy ảnh"; the viewer beside it used
-  "nearest picture" and showed the photo, naming `D25:E25` under a zone declared `D25`. The rule
-  was right; the sentence was wrong. A verdict names the real reason — "spills out of the declared
-  range" (backend !55) — never a generic "not found" that the next panel contradicts.
-- **Unmounting a wizard step throws away an uncontrolled component's state, and a list fetched once
-  at open is stale by the step that reads it.** "Quay lại" wiped the chosen Project/Model (the
-  scope picker owns its selects), and the Active-Template list never refreshed, so someone who
-  activated a Template in another tab could only close the wizard — and re-upload 473 MB. Hide the
-  step instead of unmounting it; refetch on entering the step that consumes the list (frontend
-  !68). *(promotion candidate)*
-- **VLM reading modes stay stored-but-not-honoured, by decision (2026-09-29).** `hybrid`/`ai` are
-  valid to save and the engine answers `manual`. Before any ADR: measure whether a local vision
-  model reads what OCR cannot — in 14 days of Loki, `low_confidence` fired 0 times while
-  `count_mismatch` fired 125 and `low_resolution` summarised 203-px thumbnails, so "AI when OCR is
-  unsure" would never trigger as defined; and Desoft must answer whether the cluster has a GPU.
+  fix merged 2026-09-16 was still writing its FATAL line on 2026-10-01, because
+  `deploy/01-postgres.yaml` is applied by hand. Seen through `mcp-grafana` against the cluster's
+  Loki — the token sees every namespace; query `ok2ship` only.
+- **VLM reading modes stay stored-but-not-honoured, by decision (2026-09-29).** `hybrid`/`ai`
+  are valid to save and the engine answers `manual`. Before any ADR: measure whether a local
+  vision model reads what OCR cannot — in 14 days of Loki `low_confidence` fired 0 times against
+  125 `count_mismatch` — and Desoft must answer whether the cluster has a GPU.
+
+### Reading reports (Excel and photos)
+
+- **A chart in a sheet may be a native chart, not a picture**: the V73 FAI/SPC family holds 300
+  native charts and zero images. A native chart is drawn from the cells, so only the range its
+  series points at needs checking. Look for `xl/charts/` before assuming image analysis.
+- **A picture's position does not tell you which samples it describes.** Two photos anchored over
+  the same two columns printed two samples and one. Read the numbers off the pictures before
+  trusting a layout, and where that cannot be done report a gap instead of guessing.
+- **Group generated proposals the way the source document groups them, not the way the algorithm
+  does**: keying photo fields by the shape of the pairing merged two unrelated blocks that both
+  mapped 12 cells per photo; keying by the sheet's own group heading keeps them apart and names
+  them the way QA reads the report.
+- **OCR on a Mac needs no install**: Apple's Vision framework through a ~20-line `swiftc` program
+  reads text off an image entirely on the machine, which satisfies [[engineering-rules]] #3 for
+  customer images. Delete the extracted images as soon as they have been read.

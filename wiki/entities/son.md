@@ -2,9 +2,10 @@
 title: Sơn
 type: entity
 status: stable
-updated: 2026-09-28
+updated: 2026-10-01
 tags: [user, preferences, standards]
 sources: [ai-company/.claude/agents (dev-frontend, dev-mobile), feedback memory 07-08/2026]
+read_when: always
 ---
 
 # Sơn (Mai Hồng Sơn)
@@ -26,19 +27,17 @@ Owner of this system. Every agent working with Sơn needs these facts.
   Everything committed to a repo → English (operative rule: `config/global-rules.md`, loaded into every session).
 - Small sequential steps → stop and report → approval → next step.
 - **He tests on the machine's own dev server, which reads the working tree — so switching branch
-  changes what he is looking at, without telling him.** Measured 2026-09-28: he photographed a
-  screen asking why the new design was not there, because the checkout had moved to a branch that
-  did not carry it; a whole test round of his was wasted. Say which branch `localhost` is on every
-  time it changes, merge the branches he needs to see into one and check it out for him, and leave
-  the tree on `main` when the work is done.
-- **One merge request per repo for a batch of work**, not a chain that has to be merged in order.
-  He already carries a backlog of stale MRs; every extra one is manual work for him. Split by
-  commit inside the MR instead, and if branches must build on each other, rebase them into a
-  linear chain yourself rather than handing him the conflicts.
+  changes what he is looking at, without telling him** (2026-09-28: a whole test round of his
+  spent on a branch that did not carry the change). Say which branch `localhost` is on every time
+  it changes, merge what he needs to see into one branch and check it out for him, and leave the
+  tree on `main` when the work is done.
+- **One merge request per repo for a batch of work**, not a chain that has to be merged in order
+  — every extra MR is manual work for him. Split by commit inside the MR; if branches must build
+  on each other, rebase them into a linear chain yourself rather than handing him the conflicts.
 
 ## Standards expected of agents
 
-Three standards from Sơn's direct feedback after agents fell short (07/2026):
+From Sơn's direct feedback after agents fell short:
 
 1. **Survey tools before committing** — a doc pre-naming a library does NOT excuse skipping your
    own survey; before locking a tool for an important step, list 2–3 modern options + trade-offs
@@ -52,3 +51,11 @@ Three standards from Sơn's direct feedback after agents fell short (07/2026):
    "what would a domain expert add?" pass: list the object's invariants (valid shape, position,
    size); for each failure case ask "is this a per-object RULE?" before tuning global parameters;
    upgrade a given spec from first principles instead of executing it verbatim.
+4. **Build what was asked, and add nothing** — when the work has a reference (a mockup, a
+   checklist), what the reference does not contain is a decision, not an oversight: no extra
+   control, banner, counter or screen, however useful it seems. If something looks missing, build
+   the server side, leave the control out, and ask the question the absence raises. A step inside
+   an approved plan is not thereby a requirement someone raised — check each one against the
+   reference before building it. (2026-09, [[ok2ship-ai]]: seven additions taken back out of two
+   screens after the plan itself had said not to build them, and a viewer screen written and
+   closed unmerged.)

@@ -2,7 +2,7 @@
 title: Index
 type: hub
 status: active
-updated: 2026-09-28
+updated: 2026-10-01
 ---
 
 # Index — simon-brain wiki
@@ -12,21 +12,20 @@ updated: 2026-09-28
 
 ## Concepts
 
-- [[engineering-rules]] — 8 non-negotiable engineering rules for every project.
+- [[engineering-rules]] — 8 non-negotiable engineering rules for every project; #1 includes "a check counts only once seen to fail and to pass".
 - [[default-stack]] — default stack per tier, repo layout, deviation → ADR before code.
 - [[approval-gates]] — size the process by size, human gates, git/PR conventions, review before Sơn from a fresh context, check that work landed by content.
 
 ## Entities
 
-- [[son]] — expertise, preferred working style, 3 standards expected of agents.
+- [[son]] — expertise, preferred working style, 4 standards expected of agents (survey tools, cross-signals, model the object, add nothing that was not asked).
 - [[mektec-desoft]] — OK2SHIP's client & vendor; GitLab/Rancher/Loki infra; the BA's RBAC terminology trap.
-- [[simon-platform]] — the current foundation model: simon-brain + products/ + spikes/; the single-source-of-truth test.
-- [[ai-company]] — (historical) the company model 07–09/2026, why it was dropped, where assets went.
+- [[simon-platform]] — the current foundation model: simon-brain + products/ + spikes/; the single-source-of-truth test; how a page gets read (`read_when`); why the ai-company model was dropped.
 
 ## Projects
 
 - [[ok2ship]] — program hub: the BA's 5 requirements → which spike proved what → what the product consumes.
-- [[ok2ship-ai]] — 🚀 product: three-repo topology, locked decisions, mockup-fidelity + tsc -b lessons, Data Mapping gate→built, photo-vs-data check in production, same-files packaging trap, tests-that-avoid-a-path, liveness on a shared clock.
+- [[ok2ship-ai]] — 🚀 product: three-repo topology; locked decisions through ADR 010 (results snapshot, Spec library, a Template without scope, a run with a scope); lessons grouped by BA deliverables, verification, backend, frontend, running it, reading reports.
 - [[ok2ship-anomaly]] — 🧪 spike, req #3: golden/PatchCore; curation, seeding, calibrated-threshold lessons.
 - [[ok2ship-report-parser]] — 🧪 spike, reqs #1/2/4/5: label-keyed parsing, drifting report format, never drop sheets.
 - [[void-guard-xval]] — 🧪 spike, X-ray void%: ROI-box denominator, cyan-outline approach, hybrid criterion; doubles as backend course.
