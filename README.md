@@ -15,6 +15,7 @@ chứ không nằm chết trong lịch sử chat.
 simon-brain (repo này — NỀN TẢNG, sync git giữa nhiều máy)
 ├── AGENTS.md      # luật vận hành wiki — agent PHẢI đọc trước khi ghi
 ├── setup.sh       # dựng lại nền trên máy mới (symlink + products/ + spikes/)
+├── scripts/       # wiki-lint.sh — đếm sức khoẻ wiki, chỉ báo cáo không sửa
 ├── config/
 │   └── global-rules.md  # nội dung thật của ~/.claude/CLAUDE.md (symlink) — luật hành vi + @import
 ├── raw/sources/   # nguồn gốc Sơn nạp vào — BẤT BIẾN, agent chỉ đọc
@@ -24,7 +25,7 @@ simon-brain (repo này — NỀN TẢNG, sync git giữa nhiều máy)
 │   ├── concepts/  #   kiến thức tái dùng: pattern, kỹ thuật, bài học chung
 │   ├── entities/  #   người, khách hàng, tool, mô hình
 │   └── projects/  #   dự án đang chạy: mỗi dự án một trang (+ hub chương trình)
-├── skills/        # quy trình đóng gói (git-workflow, module-map, project-init, project-retro, wrap-up)
+├── skills/        # quy trình đóng gói (git-workflow, module-map, project-init, project-retro, wrap-up, wiki-lint)
 └── agents/        # kho năng lực — mặc định rỗng (mô hình solo agent)
 
 ~/Documents/products/<tên>            ~/Documents/spikes/<tên>
