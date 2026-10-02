@@ -2,16 +2,31 @@
 # wiki-lint.sh — mechanical health check of wiki/ (AGENTS.md §5.3). Reports, never fixes.
 # Usage: ./scripts/wiki-lint.sh            full report
 #        ./scripts/wiki-lint.sh --summary  one line per check
-# Exit code is always 0: this is a report for Sơn to pick from, not a gate.
+# Exit code is 0: this is a report for Sơn to pick from, not a gate (2 only on a malformed budget
+# override).
 set -uo pipefail
 
 BRAIN="$(cd "$(dirname "$0")/.." && pwd)"
 WIKI="$BRAIN/wiki"
 SUMMARY=0; [ "${1:-}" = "--summary" ] && SUMMARY=1
 STALE_DAYS=90; HUB_MAX=100; BULLET_MAX=10; LINT_EVERY=10
+# Context budgets, in words (≈1.3 tokens each). Every word under them is paid by every session they
+# load into; overridable from the environment so the check can be seen to fire.
+ALWAYS_MAX=${ALWAYS_MAX:-2500}; PROJECT_MAX=${PROJECT_MAX:-3000}; LOOP_DAYS=${LOOP_DAYS:-14}
+for v in ALWAYS_MAX PROJECT_MAX LOOP_DAYS; do
+  [[ "${!v}" =~ ^[0-9]+$ ]] || { echo "wiki-lint: $v must be a whole number, got '${!v}'" >&2; exit 2; }
+done
 
 pages() { find "$WIKI/concepts" "$WIKI/entities" "$WIKI/projects" -name '*.md' | sort; }
 slug()  { basename "$1" .md; }
+# days_since YYYY-MM-DD → whole days from that midnight to today's; fails on a date that does not
+# exist (BSD date silently rolls 2026-02-30 over to 03-02, so the round trip is checked).
+today_s=$(date -j -f '%Y-%m-%d %H:%M:%S' "$(date +%Y-%m-%d) 00:00:00" +%s)
+days_since() {
+  local s; s=$(date -j -f '%Y-%m-%d %H:%M:%S' "$1 00:00:00" +%s 2>/dev/null) || return 1
+  [ "$(date -j -r "$s" +%Y-%m-%d)" = "$1" ] || return 1
+  echo $(( (today_s - s) / 86400 ))
+}
 fm()    { awk -v k="$2" '/^---$/{n++; next} n==1 && $1==k":" {sub(/^[^:]*: */,""); print; exit}' "$1"; }
 
 section() { printf '\n== %s\n' "$1"; }
@@ -91,10 +106,9 @@ report "${#out[@]}" "Narrative wording (§2) — check each by hand, quotes are 
 
 # ---------------------------------------------------------------- 9. stale pages
 out=()
-today_s=$(date +%s)
 for p in $(pages); do
   u="$(fm "$p" updated)"; [[ "$u" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || continue
-  age=$(( (today_s - $(date -j -f %Y-%m-%d "$u" +%s)) / 86400 ))
+  age=$(days_since "$u") || { out+=("$(slug "$p"): 'updated' is not a real date ($u)"); continue; }
   [ "$age" -gt "$STALE_DAYS" ] && out+=("$(slug "$p"): updated $u ($age days)")
 done
 report "${#out[@]}" "Stale pages (updated > $STALE_DAYS days ago)" "${out[@]+"${out[@]}"}"
@@ -155,5 +169,27 @@ done
 report "${#out[@]}" "Pages whose declared reader does not exist (read_when, §0)" "${out[@]+"${out[@]}"}"
 [ "$SUMMARY" = 1 ] || { [ "${#unverified[@]}" -gt 0 ] && printf 'not verifiable here: %s\n' "${unverified[@]}"; }
 report "$always_words" "Words loaded into EVERY session (global rules + pages marked 'always')"
+
+# ---------------------------------------------------------------- 14. context budgets
+out=()
+[ "$always_words" -gt "$ALWAYS_MAX" ] && out+=("always tier: $always_words words (budget $ALWAYS_MAX) — cut a rule's story, keep the rule")
+for p in $(pages); do
+  r="$(fm "$p" read_when)"; [[ "$r" == project:* ]] || continue
+  n=$(wc -w < "$p" | tr -d ' ')
+  [ "$n" -gt "$PROJECT_MAX" ] && out+=("$(slug "$p"): $n words, imported by every '${r#project:}' session (budget $PROJECT_MAX)")
+done
+report "${#out[@]}" "OVER BUDGET — context loaded automatically" "${out[@]+"${out[@]}"}"
+
+# ---------------------------------------------------------------- 15. open loops left open
+out=()
+if [ -f "$BRAIN/open-loops.md" ]; then
+  while IFS= read -r l; do
+    d="$(printf '%s' "$l" | grep -o '^- \[[0-9-]\{10\}\]' | grep -o '[0-9-]\{10\}')"
+    [ -n "$d" ] || continue
+    age=$(days_since "$d") || { out+=("not a real date: $(printf '%s' "$l" | cut -c1-100)"); continue; }
+    [ "$age" -gt "$LOOP_DAYS" ] && out+=("$age days: $(printf '%s' "$l" | cut -c1-110)")
+  done < <(sed -n '/^## Open items$/,$p' "$BRAIN/open-loops.md")
+else out+=("open-loops.md is missing — /wrap-up has nowhere to record platform-level loops"); fi
+report "${#out[@]}" "Open loops older than $LOOP_DAYS days (open-loops.md)" "${out[@]+"${out[@]}"}"
 
 [ "$SUMMARY" = 1 ] || printf '\nDone. This is a report (AGENTS.md §5.3): nothing was changed. Pick items; the agent fixes only those.\n'

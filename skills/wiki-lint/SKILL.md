@@ -17,7 +17,9 @@ cd ~/Documents/simon-brain && git pull --rebase && ./scripts/wiki-lint.sh
 The script is the ground truth for: frontmatter, broken wikilinks, orphans, pages missing from
 `index.md`, hubs over 100 lines, content pages over 100 lines (context cost when @imported),
 bullets over 10 lines, §2 narrative wording, stale pages, contradiction markers, promotion
-candidates, ingests since the last lint, malformed log lines. Quote its counts; do not recount.
+candidates, ingests since the last lint, malformed log lines, declared readers, context budgets
+(always tier ≤ 2,500 words, each project-imported page ≤ 3,000), and `open-loops.md` lines older
+than 14 days. Quote its counts; do not recount. An OVER BUDGET line is a finding, always.
 
 ## Step 2 — What the script cannot see
 
