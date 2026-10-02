@@ -34,10 +34,15 @@ For each non-default choice: create `docs/decisions/NNN-<slug>.md` in the projec
    layout, build/test commands, project rules — which may only be stricter than the shared
    rules, never looser). No behavior rules or backstory here — global `~/.claude/CLAUDE.md`
    + the wiki cover those. Right before the first heading, add the auto-load line
-   `@~/Documents/simon-brain/wiki/projects/<name>.md` (the page itself is created in Step 4) —
+   `@~/Documents/simon-brain/wiki/projects/<name>.md` (the page itself is created in Step 4; 🧪
+   has no page, so no import) —
    prose pointers don't inject context; only @import lines do (see `entities/simon-platform`).
-3. Layout: single tier → flat at root; ≥2 tiers → `backend/`, `frontend/` (see default-stack).
-4. The detailed code skeleton is built AFTER cd-ing into the project — not part of init.
+3. Write `HANDOFF.md` at the root (🧪 too) with three headings — `Where it stands (as of <date>)`,
+   `Waiting on` (what, and on whom), `Next step` — and add at the top of CLAUDE.md the line
+   `Read HANDOFF.md first — current state and next step.` Named, not `@import`ed: it grows with
+   the project (see `entities/simon-platform`).
+4. Layout: single tier → flat at root; ≥2 tiers → `backend/`, `frontend/` (see default-stack).
+5. The detailed code skeleton is built AFTER cd-ing into the project — not part of init.
 
 ## Step 4 — Create the project's wiki page *(skip if 🧪)*
 
@@ -66,7 +71,7 @@ Initialized: <date>. Current state: the project repo.
 
 Update `wiki/index.md`, append one line to `wiki/log.md`, commit simon-brain per AGENTS.md §6.
 
-## Step 5 — Handoff
+## Step 5 — Report to Sơn
 
 Summarize: type, locked stack, ADRs (if any), repo path + wiki page. Wait for Sơn's approval
 before planning the first feature.

@@ -36,6 +36,7 @@ Read, in this order:
   never git-synced, so a durable lesson sitting there is invisible on every other machine until it
   reaches the wiki. Each file is a candidate; `MEMORY.md` is the index.
 - **The product's `HANDOFF.md`** (or its CLAUDE.md "Notes"), for items waiting on the outside world.
+- **simon-brain's `open-loops.md`**: a line this session closed is deleted in the same commit.
 
 ## Step 3 — Gate each candidate
 

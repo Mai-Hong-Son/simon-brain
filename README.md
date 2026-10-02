@@ -14,6 +14,7 @@ chứ không nằm chết trong lịch sử chat.
 ```
 simon-brain (repo này — NỀN TẢNG, sync git giữa nhiều máy)
 ├── AGENTS.md      # luật vận hành wiki — agent PHẢI đọc trước khi ghi
+├── open-loops.md  # việc cấp nền tảng đang chờ bên ngoài — mỗi việc một dòng, xong thì xoá
 ├── setup.sh       # dựng lại nền trên máy mới (symlink + products/ + spikes/)
 ├── scripts/       # wiki-lint.sh — đếm sức khoẻ wiki, chỉ báo cáo không sửa
 ├── config/
@@ -32,13 +33,15 @@ simon-brain (repo này — NỀN TẢNG, sync git giữa nhiều máy)
 └── sản phẩm 🚀 — đủ luật             └── spike 🧪 — không ghi wiki; PROMOTE hoặc DELETE
 ```
 
-Ba tầng của pattern LLM wiki:
+Các tầng (ba tầng của pattern LLM wiki, cộng hai file của nền tảng):
 
 | Tầng | Ở đâu | Ai sở hữu |
 |---|---|---|
 | **Raw sources** | `raw/sources/` | Sơn nạp, bất biến |
 | **Wiki** | `wiki/` | Agent viết toàn bộ, Sơn đọc & duyệt |
 | **Schema** | `AGENTS.md` | Sơn + agent cùng tiến hoá |
+| **Global rules** | `config/global-rules.md` | Sơn + agent cùng tiến hoá |
+| **Open loops** | `open-loops.md` | Agent ghi, liệt kê trong bảng wrap-up |
 
 Phép thử phân nhà (mỗi loại thông tin chỉ có MỘT nhà):
 
@@ -47,7 +50,8 @@ Phép thử phân nhà (mỗi loại thông tin chỉ có MỘT nhà):
 | Luật hành vi agent + con trỏ wiki | `~/.claude/CLAUDE.md` (mỏng) |
 | Quyết định + lý do, bài học, tổng hợp xuyên dự án | `wiki/` |
 | Hiện trạng code, lệnh build/test, convention | repo sản phẩm |
-| Diễn biến đang làm dở | session (bốc hơi) / HANDOFF.md |
+| Việc đang dở + việc chờ bên ngoài — một sản phẩm | `HANDOFF.md` của repo đó |
+| Việc chờ bên ngoài — bản thân nền tảng (wiki, skills, setup) | `open-loops.md` của simon-brain |
 
 ## Ba workflow (chi tiết trong `AGENTS.md` §5)
 

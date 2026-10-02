@@ -2,7 +2,7 @@
 title: Simon Platform
 type: entity
 status: active
-updated: 2026-10-01
+updated: 2026-10-02
 tags: [platform, architecture, meta]
 sources: [simon-brain-migration-brief.md (2026-09-07)]
 read_when: skill:project-init
@@ -53,7 +53,17 @@ executes, or keep that project outside `~/Documents`.
 | Agent behavior rules + pointer to the wiki | `~/.claude/CLAUDE.md` (kept thin) |
 | Decisions + rationale, lessons, cross-project synthesis | `wiki/` |
 | Current code state, build/test commands, technical conventions | the product repo |
-| Work-in-progress narrative | the session (evaporates) / the repo's HANDOFF.md |
+| Work in progress, and what waits on the outside world — one product | the repo's `HANDOFF.md` |
+| What waits on the outside world — the platform itself (wiki, skills, setup) | simon-brain's `open-loops.md` |
+
+`HANDOFF.md` is the convention for a repo's open work; `project-init` creates it at the root of
+every new repo, product or spike, with three parts: **where the work stands** (dated), **what
+waits on the outside world** (and on whom), **the next step**. Decisions do not belong in it —
+they go to the wiki and the repo's ADRs; older HANDOFFs that also carry locked decisions predate
+the convention. It is current state, so the wiki points at it and never copies it. It is named at
+the top of the repo's `CLAUDE.md` ("read HANDOFF.md first"), not `@import`ed, because it grows
+with the project and an import would charge all of it to every session — a deliberate trade, not
+a measured one: whether sessions open a named HANDOFF has not been counted.
 
 Anti-drift: the wiki records **shape**, never instantaneous values (AGENTS.md §2).
 Wiki↔repo contradiction: repo wins on current state, wiki wins on decision history.
@@ -80,8 +90,11 @@ So every page declares its reader in frontmatter (`read_when`, AGENTS.md §0), a
   states the question. The weakest channel: use it for depth a loaded page already summarises,
   never for a rule.
 
-`AGENTS.md` stays prose-referenced, because the skills that write to the wiki name it at the step
-that needs it. A page with no reader is merged into one that has, or deleted.
+`AGENTS.md` is loaded automatically into every session opened inside simon-brain — Claude Code
+reads a repo-root `AGENTS.md` as project instructions (measured 2026-10-02: a fresh `claude -p`
+with every file tool disabled quoted its §1 quality-gate question from inside the repo, and could
+not from outside it). Every line added to it is paid by each of those sessions. Elsewhere it is
+reached through the skills that write to the wiki, which name it at the step that needs it. A page with no reader is merged into one that has, or deleted.
 
 After changing an import, prove it loads: start a fresh non-interactive session (`claude -p`) in
 the directory concerned and have it quote a line of the imported page. The session that made the

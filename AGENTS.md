@@ -11,7 +11,7 @@ Vietnamese material (vendor wording, BA terminology, UI copy).
 
 ---
 
-## 0. Three layers
+## 0. Layers
 
 | Layer | Path | Owner | Rule |
 |---|---|---|---|
@@ -19,8 +19,9 @@ Vietnamese material (vendor wording, BA terminology, UI copy).
 | Wiki | `wiki/` | Agent (Sơn approves) | Agents write all of it. Sơn reads, asks, approves. |
 | Schema | `AGENTS.md` (this file) | Sơn + agent co-evolve | Change only with Sơn's explicit approval. |
 | Global rules | `config/global-rules.md` | Sơn + agent co-evolve | Symlinked to `~/.claude/CLAUDE.md` on every machine — change only with Sơn's explicit approval, same bar as this file. |
+| Open loops | `open-loops.md` | Agent (each line listed in the wrap-up table) | Platform-level items waiting on the outside world, one line each, deleted when closed. Exempt from §1, since every line is meant to stop being true. A product's open work goes to its own `HANDOFF.md`. |
 
-`agents/` and `skills/` are **capability config of the platform** (see wiki `entities/simon-platform`),
+`agents/`, `skills/` and `scripts/` are **capability config of the platform** (see wiki `entities/simon-platform`),
 not wiki content. Don't ingest wiki content there or vice versa.
 
 ### `wiki/` structure
