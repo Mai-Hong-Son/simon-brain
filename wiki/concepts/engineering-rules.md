@@ -2,7 +2,7 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-10-01
+updated: 2026-10-02
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
 read_when: always
@@ -11,7 +11,7 @@ read_when: always
 # Non-negotiable engineering rules
 
 Apply to **every** project, every session. This page is loaded into all of them, so it holds the
-rule and one line of why; the measured case behind each rule is on the project page it names.
+rule and one line of why; the measured case behind each rule is on the page or log entry it names.
 
 1. **Never trust AI output without independent verification** — check against ground truth,
    cross-checks, system metadata. This is rule #1; everything else ranks below it.
@@ -23,10 +23,11 @@ rule and one line of why; the measured case behind each rule is on the project p
    green suite around the one path production takes; [[vn30f-bot]] — safety rules broken on
    purpose to find the test that catches each, a gap detector reporting zero while unable to fire.)
    **The claims you check least are the ones that support what you are proposing — check those
-   first.** An anecdote that makes your own case arrives already believed. (2026-10-01, one
-   session arguing for a change wrote four statements down unmeasured — the order of two events,
-   a session count, why two sessions had opened a page, how a tool had run. Three were wrong and
-   one could not be shown; an independent review caught the first two.)
+   first.** An anecdote that makes your own case arrives already believed. (Case: `wiki/log.md`,
+   2026-10-01 — the "2 of 16" correction.)
+   **A monitor must tell silence from health** — measure the thing (messages arriving, a clock on
+   the server), never the component's word or the viewer's own count. (Cases:
+   [[vn30f-bot-architecture]], [[ok2ship-ai]].)
 2. **Secrets via env vars** — never hardcoded, never in images/CI files; `.env` is never committed.
 3. **Customer data never leaves approved environments** — and never touches a free-tier AI service.
 4. **Float comparisons use a tolerance, never `==`** — every comparison site carries a one-line

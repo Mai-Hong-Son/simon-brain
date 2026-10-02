@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-01
+updated: 2026-10-02
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-010]
 read_when: project:ok2ship-ai
@@ -227,7 +227,8 @@ keyring), never from branches left on the remote ([[approval-gates]]).
 ### Running it
 
 - **Judge "is this still alive" where the clock is SHARED, not in the browser tab**
-  *(promotion candidate)*: the tab counted three minutes itself, so when a deploy killed a run mid-way
+  (promoted to [[engineering-rules]] #1): the tab counted three minutes itself, so when a deploy
+  killed a run mid-way
   (2026-09-17) every reload restarted the countdown and the rescue button stayed locked. The
   server decides `stalled`; two thresholds in two places always drift.
 - **A merged fix is not an applied fix when CI does not touch that manifest.** The Postgres probe
