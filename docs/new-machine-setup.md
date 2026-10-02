@@ -79,5 +79,11 @@ ls ~/.claude/skills | wc -l   # 5 from §1 + one per §3 skill installed (all of
 ls ~/.claude/skills           # eyeball the names against §1 + §3
 ```
 
+First approve external imports: the approval lives in `~/.claude.json`, per machine and per
+directory a session starts in. Open `claude` interactively once in every repo whose CLAUDE.md
+imports a wiki page (products and spikes, plus any subdirectory you start sessions from, such as
+`ok2ship-ai/backend`) and approve when asked — unapproved, the page is skipped silently.
+`./scripts/wiki-lint.sh` lists the repo roots still unapproved; it does not see subdirectories.
+
 Then open a session in `~/Documents/products/ok2ship-ai`: it should know the project + rules
 without reading files (the @import chain).

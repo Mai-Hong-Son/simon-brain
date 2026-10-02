@@ -73,5 +73,8 @@ Update `wiki/index.md`, append one line to `wiki/log.md`, commit simon-brain per
 
 ## Step 5 — Report to Sơn
 
-Summarize: type, locked stack, ADRs (if any), repo path + wiki page. Wait for Sơn's approval
-before planning the first feature.
+Summarize: type, locked stack, ADRs (if any), repo path + wiki page. Unless 🧪, tell Sơn to open
+`claude` interactively in the new repo once and approve its external imports — until then
+sessions there skip the wiki page silently, and so does any subdirectory he starts one from
+(see `entities/simon-platform`). Wait for Sơn's
+approval before planning the first feature.

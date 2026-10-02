@@ -84,7 +84,12 @@ So every page declares its reader in frontmatter (`read_when`, AGENTS.md §0), a
   Rules plus one line of why; every word here is paid by every session, and lint prints the total.
 - `project:<name>` — imported by that project's CLAUDE.md: its own project page (`project-init`
   scaffolds the line), plus whatever every session of that project needs ([[mektec-desoft]] for
-  ok2ship-ai).
+  ok2ship-ai). **Such an import points outside the repo, so it loads only after external imports
+  are approved for the directory the session starts in, on that machine** — the flag lives in
+  `~/.claude.json` keyed by that exact path, not in git. A subdirectory, a nested repo or a
+  worktree is a new path with no approval. Unapproved, the page is skipped without a warning
+  (measured 2026-10-02: unapproved repo roots and `ok2ship-ai/backend`, under an approved root,
+  could not quote it from a fresh `claude -p`). Lint checks repo roots only.
 - `skill:<name>` — read at a step of that skill ([[default-stack]] and this page at project-init).
 - `on-demand — <question>` — reached through a link from a page that IS loaded, and that link
   states the question. The weakest channel: use it for depth a loaded page already summarises,
@@ -94,7 +99,8 @@ So every page declares its reader in frontmatter (`read_when`, AGENTS.md §0), a
 reads a repo-root `AGENTS.md` as project instructions (measured 2026-10-02: a fresh `claude -p`
 with every file tool disabled quoted its §1 quality-gate question from inside the repo, and could
 not from outside it). Every line added to it is paid by each of those sessions. Elsewhere it is
-reached through the skills that write to the wiki, which name it at the step that needs it. A page with no reader is merged into one that has, or deleted.
+reached through the skills that write to the wiki, which name it at the step that needs it. A
+page with no reader is merged into one that has, or deleted.
 
 After changing an import, prove it loads: start a fresh non-interactive session (`claude -p`) in
 the directory concerned and have it quote a line of the imported page. The session that made the
