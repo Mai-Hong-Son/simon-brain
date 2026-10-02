@@ -136,7 +136,23 @@ report "$bad_log" "log.md lines not in the fixed format"
 # checked against the thing that would do the loading, not taken on trust.
 GLOBAL="$BRAIN/config/global-rules.md"
 links_to() { grep -q "\[\[$2\]\]\|\[\[$2|" "$1"; }   # links_to <file> <slug>
-out=(); unverified=(); loaded=()
+out=(); unverified=(); loaded=(); unapproved=()
+# An @import outside the repo is skipped until someone approves external imports for that repo in
+# an interactive session; the flag lives in ~/.claude.json, so this check is per machine.
+# Measured 2026-10-02: four repos had the import line, and a fresh session could not quote the page.
+CLAUDE_JSON="${CLAUDE_JSON:-$HOME/.claude.json}"
+approved() { # exit 0 approved, 1 not approved, anything else unknown (no python3, bad file)
+  python3 - "$CLAUDE_JSON" "$1" <<'PY'
+import json, os, sys
+key = lambda d: os.path.realpath(d.rstrip("/"))
+try:
+    projects = json.load(open(sys.argv[1]))["projects"]
+    flags = {key(k): v for k, v in projects.items()}.get(key(sys.argv[2])) or {}
+    sys.exit(0 if flags.get("hasClaudeMdExternalIncludesApproved") is True else 1)
+except Exception: sys.exit(2)
+PY
+}
+json_unreadable=0
 always_words=$(wc -w < "$GLOBAL" | tr -d ' ')
 for p in $(pages); do
   s="$(slug "$p")"; rel="${p#"$BRAIN"/}"; r="$(fm "$p" read_when)"
@@ -149,7 +165,13 @@ for p in $(pages); do
       for d in "$HOME/Documents/products/$name" "$HOME/Documents/spikes/$name"; do [ -d "$d" ] && dir="$d"; done
       if [ -z "$dir" ]; then unverified+=("$s: project '$name' is not on this machine")
       elif ! grep -q "^@.*/$rel\$" "$dir/CLAUDE.md" 2>/dev/null; then
-        out+=("$s: '$r', but $name/CLAUDE.md has no @import of it"); fi
+        out+=("$s: '$r', but $name/CLAUDE.md has no @import of it")
+      else approved "$dir" 2>/dev/null; case $? in
+        0) ;;
+        1) unapproved+=("$s: ${dir/#$HOME/~} never approved external imports — sessions there skip the page") ;;
+        *) [ "$json_unreadable" = 1 ] || unverified+=("${CLAUDE_JSON/#$HOME/~} unreadable (or no python3): import approval unknown")
+           json_unreadable=1 ;;
+      esac; fi
       loaded+=("$p") ;;
     skill:*)
       name="${r#skill:}"
@@ -167,7 +189,8 @@ for p in $(pages); do
   [ "$found" = 1 ] || out+=("$s: on-demand, but no page that IS loaded links to it")
 done
 report "${#out[@]}" "Pages whose declared reader does not exist (read_when, §0)" "${out[@]+"${out[@]}"}"
-[ "$SUMMARY" = 1 ] || { [ "${#unverified[@]}" -gt 0 ] && printf 'not verifiable here: %s\n' "${unverified[@]}"; }
+report "${#unverified[@]}" "Not verifiable on this machine" "${unverified[@]+"${unverified[@]}"}"
+report "${#unapproved[@]}" "Imports never approved on this machine (open claude there once, approve)" "${unapproved[@]+"${unapproved[@]}"}"
 report "$always_words" "Words loaded into EVERY session (global rules + pages marked 'always')"
 
 # ---------------------------------------------------------------- 14. context budgets
