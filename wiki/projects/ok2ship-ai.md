@@ -2,9 +2,9 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-02
+updated: 2026-10-04
 tags: [ok2ship, product, fastapi, react]
-sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-010]
+sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-011]
 read_when: project:ok2ship-ai
 ---
 
@@ -87,6 +87,13 @@ keyring), never from branches left on the remote ([[approval-gates]]).
   newer than the newest whole-report run, else the whole run (`service.Coverage`); no row is
   copied, and `summary` in every API answer is the REPORT's tally. Rejected: latest-run-only
   (checking sheet B wiped sheet A), copying rows into the new run, overwrite in place.
+- **Biểu đồ lực (ADR 011)**: check type `chartPeak`, chart i against force cell i. The U-max is the
+  centre of the machine's blue dot — the dot hides the curve's top, which read up to 0.07 N off;
+  the dot, within 0.008 N on 64 of 64 charts. The scale is read per chart by OCR (the line most
+  axis labels agree on, fitted on the gridlines), never assumed. A second peak counts only if it
+  stands ≥ 5 % above its dip — a shoulder on the falling slope is not a peak (Sơn). A single-cell
+  image anchor means "the picture starting here", for every image check. Rejected: a "Loại ảnh"
+  select with one strip entry per row, the curve's own top, chart-to-table models, a fixed 0–10 N.
 
 ## Milestones
 
@@ -102,6 +109,8 @@ keyring), never from branches left on the remote ([[approval-gates]]).
   2,665 pictures — ~89 minutes at the pod's CPU limit, and memory is *not* the constraint.
 - Spec Management, the catalogue rebuild, the 2026-09-24 delivery and per-hạng-mục runs all
   landed between 2026-09-22 and 2026-09-30.
+- **Peel test configurable and checked end to end against the V69 template** (built 2026-10-04):
+  every callout is a field that runs, the charts through "Biểu đồ lực".
 
 ## Lessons
 
@@ -115,6 +124,9 @@ keyring), never from branches left on the remote ([[approval-gates]]).
   The checklist has red text and a "Hệ thống check?" column; following the red dropped three
   requirements, of which one was really out. Disagreement between two signals in the same
   document IS the signal.
+- **The mockup is live, and ahead of any copy**: `ba-ok2ship.desoft.vn/data-mapping.html` already
+  drew the force-chart check while a design of our own was built from a stale copy in Downloads,
+  and replaced the same day. Read the live page before designing a screen for a new requirement.
 - **A re-packaged mockup reads as a new one.** A delivery that looked redesigned was the previous
   one re-hosted (1.5 MB inlined → 66 KB + external files). Diff the `id="..."` sets before reading
   a delivery as changed requirements.
@@ -143,6 +155,12 @@ keyring), never from branches left on the remote ([[approval-gates]]).
 
 ### Verification
 
+- **Render-measure our own screens without a real account**: a second Vite port, Playwright routing
+  `http://localhost:<port>/api/**` to fakes (`**/api/**` also swallows the `src/api/*.ts` modules
+  and the page renders blank) and an unsigned JWT — the shared-account trap below never arises.
+- **A tolerance-boundary test needs values a double holds exactly** *(promotion candidate)*:
+  8.38969 − 8.36969 is 0.0199…, so a test meant to sit on 0.02 never touched it — found only
+  because breaking `>` into `>=` left it green; 8.5 − 8.0 is exactly 0.5.
 - **A build-time guard has to be watched PASSING** ([[engineering-rules]] #1): a Dockerfile check
   ran `python -c "import cv2"` with the system interpreter, so it failed every build and had never
   once succeeded (2026-09-17).
@@ -201,7 +219,9 @@ keyring), never from branches left on the remote ([[approval-gates]]).
   printed "20/0 cặp lệch" (2026-09-18). Use `== null` / `?.`, never let one row take the others
   with it, and shape a response so an older frontend still shows the right thing (ADR 010's
   `summary`). To tell skew from bad data in one step, read what is actually deployed:
-  `/api/openapi.json` on the dev site listed 48 paths that day against the repo's 50.
+  `/api/openapi.json` on the dev site listed 48 paths that day against the repo's 50. A new
+  **enum value** is worse: a frontend that indexes a table by `check_type` throws on one it does
+  not know, so a new check type ships frontend first, and display code falls back to the raw name.
 - **React crashes when something else edits the DOM** *(promotion candidate)*: a browser
   translator or an extension moves a text node, React then removes it from a parent it no longer
   has, and the ErrorBoundary takes the page — the BA hit it on every Template create
