@@ -31,4 +31,4 @@ updated: 2026-10-01
 - [[void-guard-xval]] — 🧪 spike, X-ray void%: ROI-box denominator, cyan-outline approach, hybrid criterion; doubles as backend course.
 - [[native-skline-chart]] — native K-line RN library: 5 ADRs (Fabric-only, command fast path, native indicators, licensed port).
 - [[vn30f-bot]] — 🚀 product a client owns and operates: VN30 futures bot on SSI FastConnect; PROD-only so the simulator fills pessimistically, read-only dashboard plus a nine-command operator console, one OTP per trading day, handover with root returned; entry is a scored setup plus a confirmation, judged by separation rather than win rate.
-- [[vn30f-bot-architecture]] — how that bot is built: three processes with a wall between money and screen, four layers inside the bot, what lives outside the repo and why, how it starts itself, and why macOS denies a launchd agent the folder it lives in.
+- [[vn30f-bot-architecture]] — how that bot is built: separate processes with a wall between money and screen, four layers inside the bot, what lives outside the repo and why, and why its recorder starts by hand.
