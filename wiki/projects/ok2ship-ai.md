@@ -65,7 +65,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   mechanisms for one answer).
 - **ADR 010 — a run has a scope**: one hạng mục or the whole report; per sheet, the newest run
   covering it answers. Rejected: latest run only (checking sheet B wiped sheet A).
-- **ADR 011 — Biểu đồ lực** *(proposed; on an unmerged branch as of 2026-10-04)*: chart i against force cell i; U-max is the machine's blue dot, never
+- **ADR 011 — Biểu đồ lực** *(merged 2026-10-04)*: chart i against force cell i; U-max is the machine's blue dot, never
   the curve's top (the dot hides it); scale read per chart by OCR, never assumed; a shoulder on the
   falling slope is not a second peak (Sơn). A single-cell image anchor means "the picture starting
   here", for every image check. Rejected: the curve's own top, a fixed 0–10 N scale, a hosted
@@ -80,8 +80,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - 2026-09-17 — photo-against-data check in production (V73: 480/480 numbers; a whole report is
   ~89 min of pictures at the pod's CPU limit).
 - 2026-09-22..30 — Spec Management, the 2026-09-24 delivery, per-hạng-mục runs.
-- 2026-10-04 — Peel test configured and checked end to end against the V69 template (on
-  unmerged branches).
+- 2026-10-04 — Peel test configured and checked end to end against the V69 template.
 
 ## Lessons
 
