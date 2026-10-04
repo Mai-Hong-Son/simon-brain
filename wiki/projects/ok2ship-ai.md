@@ -105,8 +105,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   #8), and the error runs both ways. A check-type definition table produced four "this is
   impossible" verdicts that filling in the real form disproved — each would have been a change
   request for something that already ships. The BA's drawer rendered `<input>`s for Mã tài liệu /
-  Rev / ECO#, all `disabled`; reading the tags relaxed an immutability rule for a day (2026-09-26). Pin a refusal with a test that SENDS the field — an
-  absent Pydantic field still lets an unknown key through unnoticed.
+  Rev / ECO#, all `disabled`; reading the tags relaxed an immutability rule for a day (2026-09-26).
+  Pin a refusal with a test that SENDS the field — an absent Pydantic field still lets an unknown
+  key through unnoticed.
 - **Mockup fidelity** (origin of [[engineering-rules]] #8): five UI correction rounds all traced
   to reading the mockup's source instead of its render — a `width:46%` that renders
   shrink-to-fit, indigo-600 in place of the real `--ant-colorPrimary`. And its own bugs are
