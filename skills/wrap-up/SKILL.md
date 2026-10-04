@@ -46,12 +46,19 @@ Read, in this order:
 - §3, reader first: who needs this, at what moment? It must land on a page whose `read_when` is
   true (§0) — a rule for every session goes into a page marked `always`, never into a new page
   nobody loads.
+- §3, feature detail: true only while one feature (a sheet, a screen, a module) is worked on —
+  its design, measurements, thresholds, a lesson about its data → the repo's ADR / design doc, not
+  the wiki. The project page gets the decision in one or two lines, ~50 words per feature.
 - §3: true only in this project → `wiki/projects/<name>.md`; already seen in ≥2 projects →
   `wiki/concepts/<slug>.md` plus a one-line link from each project page; looks general but seen
   once → project page, tagged *promotion candidate*.
 - Sơn's feedback on how agents should work → `wiki/entities/son.md`.
 - Something **waiting on the outside world** is not wiki material: it goes to the product's
   `HANDOFF.md`, or to simon-brain's `open-loops.md` when it is platform-level.
+
+Count the words a write would add (`wc -w` on the page before, plus the proposed text): a
+`project:` page is paid by every session of the project (budget 3,000 words, `always` tier 2,500 —
+`scripts/wiki-lint.sh`).
 
 ## Step 4 — Print the table and STOP
 
@@ -67,6 +74,7 @@ Output exactly this, then stop:
 | 3 | index.md | edit | one line for the new page | ✅ |
 
 Not proposed (failed the gate): <item — reason>, ...
+Budget: <page> <words now> → <words after> / <budget> — over budget → add the rows that cut (one in, one out)
 Open loops recorded in: <HANDOFF.md / open-loops.md — item>, or "none"
 Auto-memory entries this supersedes: <file names>, or "none"
 ```

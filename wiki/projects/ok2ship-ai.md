@@ -36,81 +36,52 @@ keyring), never from branches left on the remote ([[approval-gates]]).
 
 ### Users and auth
 
-- **Full RBAC**, one user holds multiple roles; naming follows industry standard, NOT the BA's
-  wording (terminology trap — see [[mektec-desoft]]). Went through 3 design rounds (v1→v3)
-  because the BA changed requirements.
-- No separate approver role (uploader also reviews) — `audit_log` is the main safety net.
-- Report visibility is role-based, not Line-scoped; if Line returns, model it as more roles
-  (cheap) rather than building a scope table early.
-- 4 account statuses (Create→Active→Locked→Inactive), **never hard delete** (audit trail).
-- Near-instant force-logout is an SRS requirement → short-lived access tokens or a Redis check;
-  never default to long-lived JWTs.
-- argon2id for passwords, SHA-256 for tokens (deliberately different); refresh tokens in an
-  httpOnly cookie.
-- Monitoring: **the cluster's Loki, not Sentry** (ADR 004 superseding 003 the same day — the
-  cluster already runs Loki+Grafana inside the customer-data boundary, which changed the whole
-  PII problem).
+The User Management design (RBAC, account statuses, force-logout, hashing) is in the product's
+`CLAUDE.md`, loaded beside this page. Three decisions it does not carry:
+- No separate approver role: the uploader also reviews, and `audit_log` is the safety net.
+- Refresh tokens live in an httpOnly cookie.
+- Monitoring is **the cluster's Loki, not Sentry** (ADR 004): it already runs inside the
+  customer-data boundary, which removes the ordinary-PII problem a hosted service would bring (passwords, tokens and
+  cookies are still never logged).
 
 ### Configuration and checking
 
-- **Data Mapping storage (ADR 005)**: a field hangs off the revision's sheet; the stable frame is
-  real columns, per-type settings are JSONB validated by one Pydantic schema per type. Fields stay
-  editable on any Rev status, every change audited — a field is HOW reports are checked, not what
-  the Rev is. Rejected: fully normalised (every BA change becomes a migration), one JSONB
-  document per field, fields attached to the Template instead of the revision.
-- **Check results (ADR 006)**: a run row plus a row per field, with the whole field configuration
-  snapshotted on the run — fields stay editable, so the Rev id alone does not say what ran. Four
-  statuses with fixed meanings: `pass`, `fail`, `error` (the data was not there), `manual` (not
-  automated — never counted as a pass). Rejected: one blob per run, overwrite in place, a Rev id
-  with no snapshot.
-- **Photo against data (ADR 007)**: RapidOCR, entirely on our own machines — customer images may
-  never reach a hosted service. A photo is read by pins and slots, and which slot answers which
-  sheet row is derived from the whole field, never configured. Shelved, each with its reasons
-  written down: a viewer for the photo behind a verdict, and a worker of its own
-  (`docs/design/report-check-worker.md`).
-- **Spec Management (ADR 008)**: one library of named criteria. A run resolves each criterion ONCE,
-  at its start, into its own snapshot — the key and the resolved values both — so editing a
-  parameter cannot reach a finished verdict. A parameter in use cannot be deleted; Inactive
-  retires it and yields `manual`. Typed thresholds were moved in through a reviewed catalogue,
-  never by grouping on numbers: `< 0.5` is two different criteria told apart only by the unit.
-  Rejected: store the key and resolve on display (the mockup's way — it re-captions an old
-  verdict with the new threshold).
-- **A Template has no scope; a report chooses its own (ADR 009, the BA's 2026-09-24 delivery)**:
-  the Template→catalog-node link and the Config→Build→Model resolution are gone. One Active Rev
-  per Mã tài liệu, held by a partial unique index (deactivate the old one BEFORE activating the
-  new — the index is checked per statement). **Accepted cost: scope and Template are independent,
-  so a report filed with the wrong Template runs to completion and yields wrong verdicts**; only a
-  non-blocking structure comparison stands between. Rejected: keep the scope and add a manual
-  override (two mechanisms for one answer).
-- **A run has a scope (ADR 010)**: "Chạy kiểm tra" checks the hạng mục that is open, "Chạy tất cả"
-  the whole report. A report's verdicts are, per sheet, the newest run of THAT sheet if it is
-  newer than the newest whole-report run, else the whole run (`service.Coverage`); no row is
-  copied, and `summary` in every API answer is the REPORT's tally. Rejected: latest-run-only
-  (checking sheet B wiped sheet A), copying rows into the new run, overwrite in place.
-- **Biểu đồ lực (ADR 011)**: check type `chartPeak`, chart i against force cell i. The U-max is the
-  centre of the machine's blue dot — the dot hides the curve's top, which read up to 0.07 N off;
-  the dot, within 0.008 N on 64 of 64 charts. The scale is read per chart by OCR (the line most
-  axis labels agree on, fitted on the gridlines), never assumed. A second peak counts only if it
-  stands ≥ 5 % above its dip — a shoulder on the falling slope is not a peak (Sơn). A single-cell
-  image anchor means "the picture starting here", for every image check. Rejected: a "Loại ảnh"
-  select with one strip entry per row, the curve's own top, chart-to-table models, a fixed 0–10 N.
+Each line is the decision; the ADR (`docs/decisions/`) holds its measurements and full reasoning.
+- **ADR 005 — Data Mapping storage**: fields hang off the revision's sheet; real columns for the
+  frame, JSONB per type validated by Pydantic; fields stay editable on any Rev, every change
+  audited. Rejected: fully normalised (every BA change a migration); fields on the Template
+  instead of the revision.
+- **ADR 006 — check results**: a run row + a row per field, the field's configuration snapshotted
+  on the run. `pass` / `fail` / `error` (data not there) / `manual` (not automated — never a pass).
+  Rejected: a Rev id with no snapshot (fields stay editable, so it cannot say what ran).
+- **ADR 007 — photo against data**: RapidOCR on our own machines only (customer images); which
+  number answers which row is derived from the whole field, never configured. Rejected: any hosted
+  OCR/VLM. A dedicated worker is shelved (`docs/design/report-check-worker.md`).
+- **ADR 008 — Spec Management**: one library of criteria; a run snapshots each criterion at its
+  start, so editing one never re-captions a finished verdict. Rejected: resolve on display.
+- **ADR 009 — a Template has no scope**: a report chooses its Template; one Active Rev per Mã tài
+  liệu (deactivate the old BEFORE activating the new). Accepted cost: a wrong Template runs to
+  completion with wrong verdicts. Rejected: keep the scope and add a manual override (two
+  mechanisms for one answer).
+- **ADR 010 — a run has a scope**: one hạng mục or the whole report; per sheet, the newest run
+  covering it answers. Rejected: latest run only (checking sheet B wiped sheet A).
+- **ADR 011 — Biểu đồ lực** *(proposed; on an unmerged branch as of 2026-10-04)*: chart i against force cell i; U-max is the machine's blue dot, never
+  the curve's top (the dot hides it); scale read per chart by OCR, never assumed; a shoulder on the
+  falling slope is not a second peak (Sơn). A single-cell image anchor means "the picture starting
+  here", for every image check. Rejected: the curve's own top, a fixed 0–10 N scale, a hosted
+  chart-reading model (DePlot/MatCha).
 
 ## Milestones
 
-- Module 1 (User Management, WBS #5) **signed off 2026-08-29**, running in production on Desoft
-  infrastructure, auto-deployed via GitLab CI/CD.
-- **Data Mapping (WBS #5.3) was gated, then built.** All 8 item groups of the customer's QA
-  checking guide were first configured against the running mockup, whose six check types covered
-  well under half of the guide; the gate was lifted by adding operators to existing check types
-  (a spec value may be text, or a set), not new types. Every sheet is configurable; being open
-  means it can be CONFIGURED by hand, not that the suggestion engine knows it.
-- **Photo-against-data check in production since 2026-09-17.** Measured end to end on the real
-  V73 report: 4 of 4 image fields pass, 480 numbers, zero mismatches. The whole report holds
-  2,665 pictures — ~89 minutes at the pod's CPU limit, and memory is *not* the constraint.
-- Spec Management, the catalogue rebuild, the 2026-09-24 delivery and per-hạng-mục runs all
-  landed between 2026-09-22 and 2026-09-30.
-- **Peel test configurable and checked end to end against the V69 template** (built 2026-10-04):
-  every callout is a field that runs, the charts through "Biểu đồ lực".
+- 2026-08-29 — User Management signed off; in production on Desoft's cluster, deployed by GitLab CI.
+- Data Mapping — gated until the customer's QA checking guide could be configured against the
+  mockup; lifted by adding operators to existing check types (text and set spec values), not new
+  types. Every sheet is configurable by hand (open ≠ known to the suggestion engine).
+- 2026-09-17 — photo-against-data check in production (V73: 480/480 numbers; a whole report is
+  ~89 min of pictures at the pod's CPU limit).
+- 2026-09-22..30 — Spec Management, the 2026-09-24 delivery, per-hạng-mục runs.
+- 2026-10-04 — Peel test configured and checked end to end against the V69 template (on
+  unmerged branches).
 
 ## Lessons
 
@@ -181,9 +152,11 @@ keyring), never from branches left on the remote ([[approval-gates]]).
   ships** *(promotion candidate)*: five design docs said "planned, not built" over code weeks in
   production, and the handoff and a progress log that had stopped a month earlier said the same.
   Fix with a dated "Status as of …" note; leave the design text as the record of why.
-- **Two readers of one workbook must agree on screen.** The run said "không tìm thấy ảnh" (strict
-  `covers`) while the viewer beside it showed the photo (nearest picture). A verdict names the
-  real reason — "spills out of the declared range" — never a generic "not found".
+- **Two readers of one workbook must agree on screen.** The run said "không tìm thấy ảnh" while
+  the viewer beside it showed the photo: the two used different rules for which picture an anchor
+  means (the run reads the declared range strictly, the viewer and previews take the nearest
+  picture). Where the two can still differ, the verdict names the real reason — "spills out of the
+  declared range" — never a generic "not found".
 
 ### Backend
 

@@ -175,11 +175,34 @@ merge back into the project page, propose deletion.
 
 ### Architecture decisions (ADR)
 
-- The project's wiki page records each architecture decision as **decision + rationale + rejected alternatives**.
-- The detailed, code-attached ADR (full context/consequences) lives in the product repo
-  (`docs/decisions/`); the wiki points to it — no duplication.
+- The project's wiki page records each architecture decision in **one or two lines that state the
+  decision itself** (+ the rejected alternative that matters), so a session that never opens the
+  ADR still cannot contradict it. "See ADR 011" alone is not an entry.
+- The detailed, code-attached ADR (full context, measurements, consequences) lives in the product
+  repo (`docs/decisions/`); the wiki points to it — no duplication.
 - Deviating from the default stack (see `concepts/default-stack`) → an ADR in the product repo
   **before any code**.
+
+### A project page is paid by every session — keep feature detail in the repo
+
+A `project:` page is @imported into every session of its project, so each word is paid even by a
+session that only fixes a button. It holds what every session of the project needs: topology,
+one line per decision, lessons that apply beyond the feature they came from. Detail that matters
+only while one feature (a sheet, a screen, a module) is being worked on lives in the repo, read
+when that work needs it:
+
+| Information about one feature | Where it goes |
+|---|---|
+| Design, measurements, thresholds, rejected options | an ADR in the repo |
+| What it checks / how it is configured | the repo's design doc for it |
+| What waits on the outside world | the repo's `HANDOFF.md` |
+| The decision, in one or two lines | the project page |
+| A lesson that holds beyond this feature | the project page (or a concept, §3 promotion) |
+| A lesson true only of this feature's data | its ADR, not the wiki |
+
+Expect ~50 words on the project page per feature. **One in, one out:** a proposal that would take a
+page over its budget (`scripts/wiki-lint.sh`: 3,000 words for a project page, 2,500 for the
+`always` tier) names the lines it removes in the same proposal.
 
 ---
 
@@ -293,6 +316,7 @@ At the end of each session (or when Sơn says "wrap up"), output exactly this ta
 | 3 | index.md | edit | Add 1 line for the new page | ✅ |
 
 Not proposed (failed the quality gate): <short list + reasons>
+Budget: <page> <words now> → <words after> / <budget> (over → the rows that cut, §3)
 ```
 
 Then **stop and wait**. Sơn answers with numbers (`1,3` / `all` / `none`). Write only the
