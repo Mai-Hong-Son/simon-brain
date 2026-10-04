@@ -10,16 +10,9 @@ read_when: project:vn30f-bot
 
 # vn30f-bot
 
-Automated trading bot for **VN30 index futures** on HNX's derivatives market, through the **SSI
-FastConnect API**. Built for a client who owns and operates it: their account, keys, daily OTP and
-server; Sơn builds, sets the server up, hands root back, and supports on exported data only. Sơn
-develops on his own SSI account, never a client's. Three surfaces: the bot (a long-lived process),
-a read-only dashboard, and a nine-command operator console. Stack: Python 3.12 + Pydantic v2 +
-pytest plus the default web tier ([[default-stack]]). Initialized 2026-09-16.
-
-The operative rules (money safety, 2FA, secrets, limits, roles) live in the repo's `CLAUDE.md`,
-which every session loads, and open work in its `HANDOFF.md`; this page keeps only **why** each
-decision was taken and what was rejected. How the pieces fit together: [[vn30f-bot-architecture]].
+VN30 index futures bot on SSI FastConnect, built for a client who owns and operates it (what it
+is and its rules: the repo's `CLAUDE.md`; open work: its `HANDOFF.md`). This page keeps **why**
+each decision was taken and what was rejected; how the pieces fit: [[vn30f-bot-architecture]].
 
 ## Decisions & rationale
 
@@ -36,20 +29,16 @@ decision was taken and what was rejected. How the pieces fit together: [[vn30f-b
   protocol details the guide omits.
 - **SQLite WAL for the log and state, a Unix socket for control** (ADR 004). One writer on one
   machine. Rejected: PostgreSQL — a daemon to secure and patch on the host holding the keys.
-- **The dashboard is read-only and blind to the credentials** (ADR 005). A compromised screen has
-  nothing to sign an order with. Rejected: an order ticket in the viewing screen — a write path in
-  the web tier for the one action that spends money.
-- **The write surface is a separate operator console** (ADR 006), because the owner uses no
-  terminal and the dashboard's read-only proof is worth keeping. The bot validates every command,
-  so a console bug cannot become a trading bug; reducing risk is instant, raising it waits.
-  Rejected: write routes on the dashboard; a Telegram bot as control surface (OTP and keys through
-  a third-party chat; fine for outbound alerts only).
-- **2FA is OTP on a delivered system, once per trading day**; PIN only in development, because it
-  sits in the environment and SSI is retiring it. An OTP cannot be minted, so a bot that restarts
-  mid-session needs a person.
-- **Accountability by construction**: every order event carries its config version, every version
-  the request that authorized it. Rejected: client screenshots in the repo behind `.gitignore` — a
-  Docker context or deploy rsync takes the folder along.
+- **Read-only dashboard** (ADR 005): a compromised screen has nothing to sign an order with.
+  Rejected: an order ticket in the viewing screen.
+- **Separate operator console** (ADR 006): the owner uses no terminal, and the dashboard's
+  read-only proof is worth keeping; the bot validates every command, so a console bug cannot
+  become a trading bug. Rejected: write routes on the dashboard; a Telegram bot as control surface
+  (OTP and keys through a third-party chat; fine for outbound alerts only).
+- **OTP on a delivered system, PIN only in development**: PIN sits in the environment and SSI is
+  retiring it.
+- **Client material outside the repo**, referenced by name and hash. Rejected: inside the repo
+  behind `.gitignore` — a Docker context or deploy rsync takes the folder along.
 - **The simulated broker fills pessimistically and states its assumptions** (ADR 007, proposed).
   With no sandbox every number comes from it, so its errors must point one way: later and worse.
   Rejected: filling on touch; probabilistic fills (the assumption hidden in a coin flip).
