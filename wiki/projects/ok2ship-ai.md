@@ -101,13 +101,11 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **A re-packaged mockup reads as a new one.** A delivery that looked redesigned was the previous
   one re-hosted (1.5 MB inlined → 66 KB + external files). Diff the `id="..."` sets before reading
   a delivery as changed requirements.
-- **Probe a tool's capabilities by driving its real UI, not by reading its config tables**
-  *(promotion candidate)*: a check-type definition table produced four "this is impossible"
-  verdicts, and filling in the real form disproved every one. A false "impossible" becomes a
-  change request to the vendor for something that already ships.
-- **A control's presence is not its state** ([[engineering-rules]] #8): the BA's drawer rendered
-  `<input>`s for Mã tài liệu / Rev / ECO#, all `disabled`; reading the tags relaxed an
-  immutability rule for a day (2026-09-26). Pin a refusal with a test that SENDS the field — an
+- **What a tool can do is read off its real UI, not its tables or tags** ([[engineering-rules]]
+  #8), and the error runs both ways. A check-type definition table produced four "this is
+  impossible" verdicts that filling in the real form disproved — each would have been a change
+  request for something that already ships. The BA's drawer rendered `<input>`s for Mã tài liệu /
+  Rev / ECO#, all `disabled`; reading the tags relaxed an immutability rule for a day (2026-09-26). Pin a refusal with a test that SENDS the field — an
   absent Pydantic field still lets an unknown key through unnoticed.
 - **Mockup fidelity** (origin of [[engineering-rules]] #8): five UI correction rounds all traced
   to reading the mockup's source instead of its render — a `width:46%` that renders
@@ -180,8 +178,6 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   image); the headless build ships the same `cv2`, and uninstalling the desktop one left
   `import cv2` broken (2026-09-17). Exclude it at RESOLUTION time — `[tool.uv]
   override-dependencies` with a marker that is never true.
-- Email belongs off the request path (BackgroundTasks) — synchronous SMTP once added whole
-  seconds to every user create/edit.
 
 ### Frontend
 
@@ -245,6 +241,5 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   does**: keying photo fields by the shape of the pairing merged two unrelated blocks that both
   mapped 12 cells per photo; keying by the sheet's own group heading keeps them apart and names
   them the way QA reads the report.
-- **OCR on a Mac needs no install**: Apple's Vision framework through a ~20-line `swiftc` program
-  reads text off an image entirely on the machine, which satisfies [[engineering-rules]] #3 for
-  customer images. Delete the extracted images as soon as they have been read.
+- **Measure customer photos with the backend's own RapidOCR** (`backend/.venv`): it reads on the
+  machine ([[engineering-rules]] #3) and sees what production sees. Delete extracted images once read.
