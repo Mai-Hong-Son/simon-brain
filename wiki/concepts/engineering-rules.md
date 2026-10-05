@@ -2,7 +2,7 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-10-02
+updated: 2026-10-06
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
 read_when: always
@@ -17,7 +17,8 @@ rule and one line of why; the measured case behind each rule is on the page or l
    cross-checks, system metadata. This is rule #1; everything else ranks below it.
    **A check counts only once it has been seen to FAIL and to PASS.** A test that has never gone
    red, a build guard that has never gone green, a monitor that has never fired — none of them is
-   evidence yet. Fixing a bug: revert the fix, watch the test fail, restore it. Adding a guard:
+   evidence yet. Fixing a bug: revert the fix, watch the test fail, restore it — commit first, since
+   `git checkout -- <file>` to restore also discards what was not committed. Adding a guard:
    watch it pass on a good build. A warning comment is not a control — the second time one is
    missed, replace it with a test. (Cases: [[ok2ship-ai]] — a guard that failed every build, a
    green suite around the one path production takes; [[vn30f-bot]] — safety rules broken on

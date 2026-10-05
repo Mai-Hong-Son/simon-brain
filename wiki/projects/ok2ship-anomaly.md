@@ -2,7 +2,7 @@
 title: ok2ship-anomaly
 type: project
 status: active
-updated: 2026-09-07
+updated: 2026-10-06
 tags: [ok2ship, spike, anomaly-detection, ml]
 sources: [~/Documents/spikes/ok2ship-anomaly/HANDOFF.md, ai-company hub memory]
 read_when: project:ok2ship-anomaly
@@ -31,6 +31,8 @@ per-pin. **Current state: `HANDOFF.md` in the spike repo.** Not yet PROMOTED.
   contours; an automatic OK/NG gate requires calibration; a human-assist ranking tool can live
   with a loose cutoff.
 - An honest test = the judged image is **absent** from both the memory bank and the val/test split.
+  The same held true for [[ok2ship-ai]]'s X-ray reader: right on its tuning set, wrong on the
+  first unseen board.
 - Detection works on both real components; localisation only on one so far — with a golden set
   below the trust threshold, results are smoke tests, not evidence.
 

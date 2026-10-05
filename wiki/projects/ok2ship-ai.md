@@ -2,9 +2,9 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-04
+updated: 2026-10-06
 tags: [ok2ship, product, fastapi, react]
-sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-011]
+sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-012]
 read_when: project:ok2ship-ai
 ---
 
@@ -70,6 +70,10 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   falling slope is not a second peak (Sơn). A single-cell image anchor means "the picture starting
   here", for every image check. Rejected: the curve's own top, a fixed 0–10 N scale, a hosted
   chart-reading model (DePlot/MatCha).
+- **ADR 012 — Void X-ray** *(proposed 2026-10-05)*: pins from the machine's frames, each label cut
+  out and read alone by PP-OCRv6 (`rapidocr` 3, here only); pass only when every reading
+  agrees, no automatic fail yet; the pixel-measured void can only take a pass back. Rejected:
+  whole-picture OCR, PP-OCRv6 for "Ảnh với Data" (520 → 484 numbers).
 
 ## Milestones
 
@@ -127,34 +131,38 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **Render-measure our own screens without a real account**: a second Vite port, Playwright routing
   `http://localhost:<port>/api/**` to fakes (`**/api/**` also swallows the `src/api/*.ts` modules
   and the page renders blank) and an unsigned JWT — the shared-account trap below never arises.
-- **A tolerance-boundary test needs values a double holds exactly** *(promotion candidate)*:
-  8.38969 − 8.36969 is 0.0199…, so a test meant to sit on 0.02 never touched it — found only
-  because breaking `>` into `>=` left it green; 8.5 − 8.0 is exactly 0.5.
+- **A float test needs the float it claims** *(promotion candidate)*: a boundary test needs values
+  a double holds exactly (8.38969 − 8.36969 is 0.0199…, so a test meant to sit on 0.02 never touched
+  it), and a float-noise test needs one it does not (0.124 × 100 is exactly 12.4; 0.119 × 100 is
+  not). Both were found only because breaking the code left the test green.
 - **A build-time guard has to be watched PASSING** ([[engineering-rules]] #1): a Dockerfile check
   ran `python -c "import cv2"` with the system interpreter, so it failed every build and had never
   once succeeded (2026-09-17).
 - **Tests arranged to AVOID a code path do not protect it** ([[engineering-rules]] #1): every
   test injected a DB session factory, so a missing `import SessionLocal` sat green through 564
   tests and failed on the first real run. The default branch is the one production takes.
+- **A test that re-implements the logic it checks protects nothing** *(promotion candidate)*: a
+  helper copying the reader's intact-before-damaged order stayed green with the order reversed; the
+  test now calls the production function.
 - **A warning comment is not a control** ([[engineering-rules]] #1): `alembic/env.py` imports
   each module's models by hand, and a module missing from that list makes autogenerate write
   `drop_table` for its tables. Missed twice (2026-09-02, 2026-09-22), the second time with the
   warning already in the file; a test now compares the list with the directory, and a second
   test proves the first can fail.
 - **Deriving a mapping from the data itself is a CHECK when the winner is unanimous and the
-  runner-up is zero.** Which number on a photo answers which sheet row is scored over all of a
-  field's photos: the winning order matched every photo of all seven fields, the runner-up none,
-  and injected faults were still caught. Record the margin, and name what it cannot see (a swap
-  repeated on every sample and both pins).
+  runner-up is zero** (photo row order: every photo of seven fields). Record the margin and name
+  what it cannot see.
+- **A reader tuned on a set is trusted only on a set it never saw** *(promotion candidate; also
+  [[ok2ship-anomaly]])*: the X-ray reader passed 159/160 pins of the spike it was tuned on, then
+  gave 3 confident wrong verdicts on the first unseen board (V73). Keep pictures back; judge a
+  checker by two questions: does a correct cell pass, does an altered one never pass.
 - **A status line is written when a module STARTS and nobody returns to it when the module
   ships** *(promotion candidate)*: five design docs said "planned, not built" over code weeks in
   production, and the handoff and a progress log that had stopped a month earlier said the same.
   Fix with a dated "Status as of …" note; leave the design text as the record of why.
-- **Two readers of one workbook must agree on screen.** The run said "không tìm thấy ảnh" while
-  the viewer beside it showed the photo: the two used different rules for which picture an anchor
-  means (the run reads the declared range strictly, the viewer and previews take the nearest
-  picture). Where the two can still differ, the verdict names the real reason — "spills out of the
-  declared range" — never a generic "not found".
+- **Two readers of one workbook must agree on screen**: the run said "không tìm thấy ảnh" while
+  the viewer showed the photo (strict range vs nearest picture). Where they can still differ, the
+  verdict names the real reason ("spills out of the declared range"), never "not found".
 
 ### Backend
 
@@ -191,13 +199,11 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   `/api/openapi.json` on the dev site listed 48 paths that day against the repo's 50. A new
   **enum value** is worse: a frontend that indexes a table by `check_type` throws on one it does
   not know, so a new check type ships frontend first, and display code falls back to the raw name.
+  A new per-row state reuses one every build renders (Void X-ray's "review" is stored as `manual`).
 - **React crashes when something else edits the DOM** *(promotion candidate)*: a browser
-  translator or an extension moves a text node, React then removes it from a parent it no longer
-  has, and the ErrorBoundary takes the page — the BA hit it on every Template create
-  (2026-09-16), then twice in 16 s (2026-09-22). Opt the document out of translation
-  (`translate="no"` + the notranslate meta), make `removeChild`/`insertBefore` skip a node that
-  is no longer a child (facebook/react#11538), and report the first suppression instead of
-  swallowing it.
+  translator moved a text node and the ErrorBoundary took the page (the BA, 2026-09-16/22). Opt out
+  of translation (`translate="no"` + notranslate meta), make `removeChild`/`insertBefore` skip a
+  node no longer a child (facebook/react#11538), report the first suppression.
 - **TS gotcha** *(promotion candidate)*: a root `tsconfig.json` of the `files:[] + references`
   shape makes `tsc --noEmit` a silent no-op — only `tsc -b` actually catches errors.
 - **An element animated with `transform` becomes the containing block for every `fixed`
@@ -243,3 +249,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   them the way QA reads the report.
 - **Measure customer photos with the backend's own RapidOCR** (`backend/.venv`): it reads on the
   machine ([[engineering-rules]] #3) and sees what production sees. Delete extracted images once read.
+  **Opening a customer picture in the assistant sends it off the machine**: ask Sơn first (granted
+  2026-10-05 for the Void X-ray work only).
+- **A picture's `to` corner less than 1 px into a cell does not cover it**: Excel rounding of a
+  picture laid on a gridline; ignoring it changed the span of 256 of V73's 2,665 pictures.

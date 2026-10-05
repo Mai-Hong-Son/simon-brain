@@ -2,7 +2,7 @@
 title: Mektec & Desoft
 type: entity
 status: active
-updated: 2026-10-01
+updated: 2026-10-06
 tags: [client, vendor, ok2ship]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ~/Documents/products/ok2ship-ai/docs/decisions/002, 004]
 read_when: project:ok2ship-ai
@@ -49,6 +49,10 @@ cluster, and a hand edit is erased by the next `helm upgrade`.
 - Postgres is reachable only through the cluster: `kubectl -n ok2ship port-forward
   ok2ship-postgres-0 5434:5432`, credentials in the `ok2ship-postgres` Secret — read-only in the
   client, since that account is the app's own superuser and a hand edit leaves no `audit_log`.
+- **MinIO `pre-prod` is shared with `pre-nwris` and sits on one Longhorn replica.** After node2's
+  fault (2026-10-03) it served 503s from a read-only, I/O-erroring mount while Longhorn said
+  "healthy" — check with `ls` and `/proc/mounts` inside the pod. Fixed by a Longhorn snapshot, then
+  scaling the deployment 0 → 1 (2026-10-04); a restart is Desoft's call, it touches `pre-nwris`.
 - **GitLab merge requests are created by push options, and a push-option value must be ONE line**
   — git refuses a value with a newline, and a retry without the description creates the MR with no
   body; the local `glab` token is `read_api` only, so a description cannot be added afterwards.
