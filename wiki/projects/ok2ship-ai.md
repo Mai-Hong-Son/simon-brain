@@ -65,7 +65,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   mechanisms for one answer).
 - **ADR 010 — a run has a scope**: one hạng mục or the whole report; per sheet, the newest run
   covering it answers. Rejected: latest run only (checking sheet B wiped sheet A).
-- **ADR 011 — Biểu đồ lực** *(merged 2026-10-04)*: chart i against force cell i; U-max is the machine's blue dot, never
+- **ADR 011 — Biểu đồ lực** *(merged 2026-10-04; amended 2026-10-06: thin-line export)*: chart i against force cell i; U-max is the machine's blue dot, never
   the curve's top (the dot hides it); scale read per chart by OCR, never assumed; a shoulder on the
   falling slope is not a second peak (Sơn). A single-cell image anchor means "the picture starting
   here", for every image check. Rejected: the curve's own top, a fixed 0–10 N scale, a hosted
@@ -74,17 +74,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   out and read alone by PP-OCRv6 (`rapidocr` 3, here only); pass only when every reading
   agrees, no automatic fail yet; the pixel-measured void can only take a pass back. Rejected:
   whole-picture OCR, PP-OCRv6 for "Ảnh với Data" (520 → 484 numbers).
-
-## Milestones
-
-- 2026-08-29 — User Management signed off; in production on Desoft's cluster, deployed by GitLab CI.
-- Data Mapping — gated until the customer's QA checking guide could be configured against the
-  mockup; lifted by adding operators to existing check types (text and set spec values), not new
-  types. Every sheet is configurable by hand (open ≠ known to the suggestion engine).
-- 2026-09-17 — photo-against-data check in production (V73: 480/480 numbers; a whole report is
-  ~89 min of pictures at the pod's CPU limit).
-- 2026-09-22..30 — Spec Management, the 2026-09-24 delivery, per-hạng-mục runs.
-- 2026-10-04 — Peel test configured and checked end to end against the V69 template.
+- Every sheet is configurable by hand; open ≠ known to the suggestion engine.
 
 ## Lessons
 
@@ -98,6 +88,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   The checklist has red text and a "Hệ thống check?" column; following the red dropped three
   requirements, of which one was really out. Disagreement between two signals in the same
   document IS the signal.
+- **A sheet's requirements are the latest template's yellow callouts**, replacing its SOP rows
+  (Peel, Void X-ray, Un-mating). "The spec below" was a drawn text box, not a cell or picture:
+  read the drawing XML first.
 - **The mockup is live, and ahead of any copy**: `ba-ok2ship.desoft.vn/data-mapping.html` already
   drew the force-chart check while a design of our own was built from a stale copy in Downloads,
   and replaced the same day. Read the live page before designing a screen for a new requirement.
@@ -156,6 +149,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   [[ok2ship-anomaly]])*: the X-ray reader passed 159/160 pins of the spike it was tuned on, then
   gave 3 confident wrong verdicts on the first unseen board (V73). Keep pictures back; judge a
   checker by two questions: does a correct cell pass, does an altered one never pass.
+- **A fixture must carry the real input's defects** *(promotion candidate)*: a chart fix green
+  on lossless PNGs put 54 of 64 real JPEG charts off-peak (blur beside dotted gridlines read as
+  ink).
 - **A status line is written when a module STARTS and nobody returns to it when the module
   ships** *(promotion candidate)*: five design docs said "planned, not built" over code weeks in
   production, and the handoff and a progress log that had stopped a month earlier said the same.
@@ -200,6 +196,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   **enum value** is worse: a frontend that indexes a table by `check_type` throws on one it does
   not know, so a new check type ships frontend first, and display code falls back to the raw name.
   A new per-row state reuses one every build renders (Void X-ray's "review" is stored as `manual`).
+- **"Absent from the failures" means "agreed" only for the shape it was written for**: the
+  photo dialog showed every chart and X-ray picture "khớp", a FAIL included
+  (2026-10-04..06).
 - **React crashes when something else edits the DOM** *(promotion candidate)*: a browser
   translator moved a text node and the ErrorBoundary took the page (the BA, 2026-09-16/22). Opt out
   of translation (`translate="no"` + notranslate meta), make `removeChild`/`insertBefore` skip a
