@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-06
+updated: 2026-10-08
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-012]
 read_when: project:ok2ship-ai
@@ -72,7 +72,8 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   chart-reading model (DePlot/MatCha).
 - **ADR 012 — Void X-ray** *(proposed 2026-10-05)*: pins from the machine's frames, each label cut
   out and read alone by PP-OCRv6 (`rapidocr` 3, here only); pass only when every reading
-  agrees, no automatic fail yet; the pixel-measured void can only take a pass back. Rejected:
+  agrees, no automatic fail yet; the pixel-measured void is a second result item, "Đo bọt khí"
+  (Pass/Manual, ±2 points), independent of the reading (amended 2026-10-08). Rejected:
   whole-picture OCR, PP-OCRv6 for "Ảnh với Data" (520 → 484 numbers).
 - Every sheet is configurable by hand; open ≠ known to the suggestion engine.
 
@@ -80,6 +81,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Reading the BA's deliverables
 
+- **A mockup label is only as real as what produces it**: `D22 #1 → D25` numbers values the BA's
+  sample photos print ("1: 1.8um"); ours print none (0 of 3,080 OCR rows), so `#n` was dropped.
+  Find the source of a label before building it.
 - **The checklist decides WHAT is checked; the mockup decides only how it looks.** The mockup
   ships a whole check type, `rowLookup`, that the governing SOP checklist marks "Không" on every
   row it would answer. When the two disagree about scope the mockup is the one that is wrong, and
@@ -124,6 +128,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **Render-measure our own screens without a real account**: a second Vite port, Playwright routing
   `http://localhost:<port>/api/**` to fakes (`**/api/**` also swallows the `src/api/*.ts` modules
   and the page renders blank) and an unsigned JWT — the shared-account trap below never arises.
+- **The mockup's result screens are measured without uploading a report**: route its
+  `/api/run_checks` to a fake in Playwright and read computed styles (found "Kiểm tra Sheet"
+  tinted there, white on ours).
 - **A float test needs the float it claims** *(promotion candidate)*: a boundary test needs values
   a double holds exactly (8.38969 − 8.36969 is 0.0199…, so a test meant to sit on 0.02 never touched
   it), and a float-noise test needs one it does not (0.124 × 100 is exactly 12.4; 0.119 × 100 is
@@ -220,6 +227,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Running it
 
+- **Gate everything chained after `git commit` on its exit code** *(promotion candidate)*: a
+  pre-commit hook rejected a commit, the chain still pushed the old branch, and `git worktree
+  remove --force` deleted the uncommitted fix.
 - **Judge "is this still alive" where the clock is SHARED, not in the browser tab**
   (promoted to [[engineering-rules]] #1): the tab counted three minutes itself, so when a deploy
   killed a run mid-way
