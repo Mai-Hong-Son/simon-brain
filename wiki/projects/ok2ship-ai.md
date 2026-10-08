@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-08
+updated: 2026-10-09
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-012]
 read_when: project:ok2ship-ai
@@ -72,8 +72,10 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   chart-reading model (DePlot/MatCha).
 - **ADR 012 — Void X-ray** *(proposed 2026-10-05)*: pins from the machine's frames, each label cut
   out and read alone by PP-OCRv6 (`rapidocr` 3, here only); pass only when every reading
-  agrees, no automatic fail yet; the pixel-measured void is a second result item, "Đo bọt khí"
-  (Pass/Manual, ±2 points), independent of the reading (amended 2026-10-08). Rejected:
+  agrees, no automatic fail yet; the pixel-measured void is a second result item, "Đo bọt khí",
+  independent of the reading: every pin of every picture against its print (±2 points), an
+  unmeasurable pin Manual for QA's eye — so the item is Manual almost always, accepted (amended
+  2026-10-08). Rejected:
   whole-picture OCR, PP-OCRv6 for "Ảnh với Data" (520 → 484 numbers).
 - Every sheet is configurable by hand; open ≠ known to the suggestion engine.
 
@@ -169,6 +171,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Backend
 
+- **A guard promoted to its own check keeps the scope of what it guarded until someone re-derives
+  it** *(promotion candidate)*: the void measurement still measured only the cell's pin (8 of 40
+  pictures) after it became "Đo bọt khí", whose question is every pin.
 - **A body that takes minutes to arrive is authenticated when it FINISHES arriving**
   *(promotion candidate)*: FastAPI reads a whole form/file body before resolving dependencies, so
   a 496 MB upload at 3 MB/s (158 s) outlived a 120 s token that was valid at Save, and the client
@@ -192,6 +197,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Frontend
 
+- **A long result list puts what needs a person first and folds the rest under one summary row per
+  group** (Sơn: 300 pin rows scrolled too far) — items to look at first, matches last, every group
+  folded at start.
 - **Deploy skew: a field the API may not send yet is `undefined`, not `null`, and an absent
   number is not a zero** *(promotion candidate)*. A field added together with the UI that reads
   it is missing for as long as the two deploys are apart: `run === null` let `undefined` through
