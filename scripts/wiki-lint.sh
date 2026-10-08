@@ -12,7 +12,7 @@ SUMMARY=0; [ "${1:-}" = "--summary" ] && SUMMARY=1
 STALE_DAYS=90; HUB_MAX=100; BULLET_MAX=10; LINT_EVERY=10
 # Context budgets, in words (≈1.3 tokens each). Every word under them is paid by every session they
 # load into; overridable from the environment so the check can be seen to fire.
-ALWAYS_MAX=${ALWAYS_MAX:-2500}; PROJECT_MAX=${PROJECT_MAX:-3000}; LOOP_DAYS=${LOOP_DAYS:-14}
+ALWAYS_MAX=${ALWAYS_MAX:-2500}; PROJECT_MAX=${PROJECT_MAX:-5000}; LOOP_DAYS=${LOOP_DAYS:-14}
 for v in ALWAYS_MAX PROJECT_MAX LOOP_DAYS; do
   [[ "${!v}" =~ ^[0-9]+$ ]] || { echo "wiki-lint: $v must be a whole number, got '${!v}'" >&2; exit 2; }
 done

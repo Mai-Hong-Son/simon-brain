@@ -201,8 +201,13 @@ when that work needs it:
 | A lesson true only of this feature's data | its ADR, not the wiki |
 
 Expect ~50 words on the project page per feature. **One in, one out:** a proposal that would take a
-page over its budget (`scripts/wiki-lint.sh`: 3,000 words for a project page, 2,500 for the
+page over its budget (`scripts/wiki-lint.sh`: 5,000 words for a project page, 2,500 for the
 `always` tier) names the lines it removes in the same proposal.
+
+**Write at final length from the first draft** (Sơn, 2026-10-08). The budget is a ceiling, not room
+to fill: every new line is the shortest form that keeps the rule, its one line of why and its case
+pointer — no story a later lint would have to cut. A proposal shows its word cost (§7), and an
+entry that a tighter wording would halve is rewritten before it is proposed, not after.
 
 ---
 
@@ -332,6 +337,7 @@ the list of touched pages after writing.
 - [ ] Ran `git pull --rebase`?
 - [ ] Passed the quality gate: **still true and still useful one month from now?**
 - [ ] A durable conclusion, not session narrative?
+- [ ] Written at final length — the shortest wording that keeps the rule and its why (§3)?
 - [ ] Lesson filed at the right level: project-only → project page; reusable → concept + link?
 - [ ] Reader named: the page it lands on has a `read_when` that is true (§0)?
 - [ ] Hubs still thin (overview + links only)?

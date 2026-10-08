@@ -57,8 +57,9 @@ Read, in this order:
   `HANDOFF.md`, or to simon-brain's `open-loops.md` when it is platform-level.
 
 Count the words a write would add (`wc -w` on the page before, plus the proposed text): a
-`project:` page is paid by every session of the project (budget 3,000 words, `always` tier 2,500 —
-`scripts/wiki-lint.sh`).
+`project:` page is paid by every session of the project (budget 5,000 words, `always` tier 2,500 —
+`scripts/wiki-lint.sh`). Draft each line at its final length before counting: the shortest wording
+that keeps the rule and its why (AGENTS.md §3) — never propose a long draft to trim later.
 
 ## Step 4 — Print the table and STOP
 
