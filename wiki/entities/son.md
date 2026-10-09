@@ -2,7 +2,7 @@
 title: Sơn
 type: entity
 status: stable
-updated: 2026-10-01
+updated: 2026-10-09
 tags: [user, preferences, standards]
 sources: [ai-company/.claude/agents (dev-frontend, dev-mobile), feedback memory 07-08/2026]
 read_when: always
@@ -35,6 +35,10 @@ Owner of this system. Every agent working with Sơn needs these facts.
 - **One merge request per repo for a batch of work**, not a chain that has to be merged in order
   — every extra MR is manual work for him. Split by commit inside the MR; if branches must build
   on each other, rebase them into a linear chain yourself rather than handing him the conflicts.
+- **Pull every repo of the product before each piece of work, and tell him what changed** —
+  other developers push to `main` (Hiệp on [[ok2ship-ai]] since 2026-10-09); run the migrations
+  that arrived on the local DB. Sơn: "mỗi lần làm mình sẽ pull code mới nhất về, xong report xem
+  code mới nhất update phần gì cho anh biết, để tránh conflict".
 
 ## Standards expected of agents
 

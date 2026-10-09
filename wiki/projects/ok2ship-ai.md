@@ -54,15 +54,20 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **ADR 006 — check results**: a run row + a row per field, the field's configuration snapshotted
   on the run. `pass` / `fail` / `error` (data not there) / `manual` (not automated — never a pass).
   Rejected: a Rev id with no snapshot (fields stay editable, so it cannot say what ran).
-- **ADR 007 — photo against data**: RapidOCR on our own machines only (customer images); which
-  number answers which row is derived from the whole field, never configured. Rejected: any hosted
-  OCR/VLM. A dedicated worker is shelved (`docs/design/report-check-worker.md`).
+- **ADR 007 — photo against data**: RapidOCR on our own machines only (customer images). *Amended
+  2026-10-09 (the BA, via Sơn):* a picture's numbers are read top→bottom and answer the cells
+  top→bottom, never derived; a swap is a Fail. Measured cost: V73's "female and male" block
+  (arrows in sheet order 3-2-1-4) fails 60/120 pairs of a correct report, so the lab annotates in
+  sheet order. Rejected: any hosted OCR/VLM. A dedicated worker is shelved
+  (`docs/design/report-check-worker.md`).
 - **ADR 008 — Spec Management**: one library of criteria; a run snapshots each criterion at its
-  start, so editing one never re-captions a finished verdict. Rejected: resolve on display.
-- **ADR 009 — a Template has no scope**: a report chooses its Template; one Active Rev per Mã tài
-  liệu (deactivate the old BEFORE activating the new). Accepted cost: a wrong Template runs to
-  completion with wrong verdicts. Rejected: keep the scope and add a manual override (two
-  mechanisms for one answer).
+  start, so editing one never re-captions a finished verdict. *Amended 2026-10-09:* a parameter
+  names the SHEET it applies to (the mockup's `sheetName` since 09-24; NULL = dùng chung, offered
+  on every sheet), not one of the BA's 22 check items. Rejected: resolve on display.
+- **ADR 009 — a Template has no scope**: a report chooses its Template. *§3 withdrawn 2026-10-09
+  (the BA, by chat):* any number of Revs of a Mã tài liệu may be Active, QA picks. Accepted cost:
+  a wrong Template runs to completion with wrong verdicts, now with more Revs to pick wrong from.
+  Rejected: keep the scope and add a manual override (two mechanisms for one answer).
 - **ADR 010 — a run has a scope**: one hạng mục or the whole report; per sheet, the newest run
   covering it answers. Rejected: latest run only (checking sheet B wiped sheet A).
 - **ADR 011 — Biểu đồ lực** *(merged 2026-10-04; amended 2026-10-06: thin-line export)*: chart i against force cell i; U-max is the machine's blue dot, never
@@ -127,6 +132,11 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Verification
 
+- **A suggestion rule follows the sheet's requirement source**: when a sheet moves from the SOP
+  checklist to the template's callouts, the engine's rule moves with it, and the check is
+  `suggest.for_sheet` against the hand configuration cell for cell. Three sheets were configured
+  from V69 on 2026-10-06 while the engine still proposed the SOP set (0/6, 0/6, 2/6 fields in
+  common), found 10-09.
 - **Render-measure our own screens without a real account**: a second Vite port, Playwright routing
   `http://localhost:<port>/api/**` to fakes (`**/api/**` also swallows the `src/api/*.ts` modules
   and the page renders blank) and an unsigned JWT — the shared-account trap below never arises.
@@ -171,6 +181,11 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Backend
 
+- **An exception handler on a DB session rolls back before it touches anything** *(promotion
+  candidate)*: a flush that violated a FK (a field deleted under a running check, whose snapshot
+  still carried the id) left the handler committing on a failed transaction, so the crash escaped
+  and the run sat `running` for the stall detector (2026-10-09). The orphaned verdict is written
+  with a null owner, as a field deleted after its verdict ends up.
 - **A guard promoted to its own check keeps the scope of what it guarded until someone re-derives
   it** *(promotion candidate)*: the void measurement still measured only the cell's pin (8 of 40
   pictures) after it became "Đo bọt khí", whose question is every pin.
@@ -211,6 +226,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   **enum value** is worse: a frontend that indexes a table by `check_type` throws on one it does
   not know, so a new check type ships frontend first, and display code falls back to the raw name.
   A new per-row state reuses one every build renders (Void X-ray's "review" is stored as `manual`).
+  Renaming a field is both skews at once: an update endpoint that copies every field wipes the
+  value when one side is older — send it under both names for a release, backend first
+  (`category` → `sheet_name`, 2026-10-09).
 - **"Absent from the failures" means "agreed" only for the shape it was written for**: the
   photo dialog showed every chart and X-ray picture "khớp", a FAIL included
   (2026-10-04..06).
@@ -254,6 +272,14 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Reading reports (Excel and photos)
 
+- **Excel stores a formula's list separator as `,` in every locale; the Vietnamese UI shows `;`**
+  *(promotion candidate)*: QA types what they see and an exact comparison fails (four Un-mating
+  summary fields, 2026-10-09). Normalise on save — outside quotes and outside `{}`, where the
+  stored form itself separates array rows with `;`.
+- **A photo check validated on originals refuses thumbnails**: the reader needs 80 px per number;
+  Shell B2B cross section pastes 154–444 px where B2B cross section pastes 1440 px, so 6 of 9
+  image fields are Manual. Ask the lab for originals (the BA agreed 2026-10-09); never lower the
+  floor.
 - **A chart in a sheet may be a native chart, not a picture**: the V73 FAI/SPC family holds 300
   native charts and zero images. A native chart is drawn from the cells, so only the range its
   series points at needs checking. Look for `xl/charts/` before assuming image analysis.

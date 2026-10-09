@@ -2,7 +2,7 @@
 title: Mektec & Desoft
 type: entity
 status: active
-updated: 2026-10-06
+updated: 2026-10-09
 tags: [client, vendor, ok2ship]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ~/Documents/products/ok2ship-ai/docs/decisions/002, 004]
 read_when: project:ok2ship-ai
@@ -65,4 +65,9 @@ calls `permissions`; their "role group" = industry `roles`. The schema uses stan
 `docs/design/user-management.md`, or the two sides will talk past each other.
 
 Requirements channel: the BA sends SRS/Excel files via Downloads; requirements can change after
-a design is locked (happened with RBAC v1→v3) — designs should keep the retreat path cheap.
+a design is locked (happened with RBAC v1→v3) — designs should keep the retreat path cheap. They
+also change rules **in chat, ahead of the mockup**: on 2026-10-09 the one-Active-Rev rule and the
+derived row order were withdrawn by chat while the live mockup still carried both — quote the
+chat in the ADR amendment. And the live mockup moves without notice: diff the page per screen
+before building (Spec Management dropped the 22 check items two days after we measured it; seen
+15 days later, [[ok2ship-ai]] ADR 008).
