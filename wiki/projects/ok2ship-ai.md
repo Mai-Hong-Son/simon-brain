@@ -152,6 +152,10 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   a double holds exactly (8.38969 − 8.36969 is 0.0199…, so a test meant to sit on 0.02 never touched
   it), and a float-noise test needs one it does not (0.124 × 100 is exactly 12.4; 0.119 × 100 is
   not). Both were found only because breaking the code left the test green.
+- **A list-order test dates its rows in the future** *(promotion candidate)*: the endpoints commit
+  and the test database lives for the whole pytest session, so earlier tests' reports and
+  Templates outrank rows dated in the past and push them off the page — green alone, red in the
+  full suite; two such tests in one session take different years (2026-10-13, twice).
 - **A build-time guard has to be watched PASSING** ([[engineering-rules]] #1): a Dockerfile check
   ran `python -c "import cv2"` with the system interpreter, so it failed every build and had never
   once succeeded (2026-09-17).
