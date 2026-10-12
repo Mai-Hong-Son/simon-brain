@@ -2,7 +2,7 @@
 title: Sơn
 type: entity
 status: stable
-updated: 2026-10-09
+updated: 2026-10-13
 tags: [user, preferences, standards]
 sources: [ai-company/.claude/agents (dev-frontend, dev-mobile), feedback memory 07-08/2026]
 read_when: always
@@ -64,3 +64,7 @@ From Sơn's direct feedback after agents fell short:
    reference before building it. (2026-09, [[ok2ship-ai]]: seven additions taken back out of two
    screens after the plan itself had said not to build them, and a viewer screen written and
    closed unmerged.)
+5. **QA's screens speak QA's words, and carry no knob QA cannot reason about** — no σ, no "% đỉnh",
+   no reference mean, no table of the technical numbers behind a verdict; a measured threshold is
+   fixed in code, not a field setting. (2026-10-12, [[ok2ship-ai]]: four rounds trimming the
+   histogram result.)

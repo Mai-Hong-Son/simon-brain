@@ -2,9 +2,9 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-09
+updated: 2026-10-13
 tags: [ok2ship, product, fastapi, react]
-sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-012]
+sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
 ---
 
@@ -82,6 +82,11 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   unmeasurable pin Manual for QA's eye — so the item is Manual almost always, accepted (amended
   2026-10-08). Rejected:
   whole-picture OCR, PP-OCRv6 for "Ảnh với Data" (520 → 484 numbers).
+- **ADR 013 — Biểu đồ histogram** *(merged 2026-10-12)*: each point's native Excel chart is judged
+  on the cells it is drawn from; a bar is "outside the curve" where the curve over its width is
+  under 1 % of its peak — fixed in code, not a setting (Sơn). "Xem biểu đồ" redraws it in SVG laid
+  out from the chart XML. Rejected: reading the picture; every bar under the curve (fails every
+  approved report).
 - Every sheet is configurable by hand; open ≠ known to the suggestion engine.
 
 ## Lessons
@@ -253,6 +258,10 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Running it
 
+- **Prove a teammate's work survived a merge by content** *(promotion candidate)*: `git diff
+  origin/main HEAD -- <their files>`, then blame every removed line. In zsh pass the list as an
+  array — an unsplit `$F` matched no path and printed an empty diff that read as "identical"
+  (2026-10-12).
 - **Gate everything chained after `git commit` on its exit code** *(promotion candidate)*: a
   pre-commit hook rejected a commit, the chain still pushed the old branch, and `git worktree
   remove --force` deleted the uncommitted fix.
