@@ -259,6 +259,10 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   stale by the step that reads it** *(promotion candidate)*: "Quay lại" wiped the chosen scope,
   and a Template activated in another tab could only be picked up by re-uploading 473 MB. Hide
   the step instead of unmounting it; refetch on entering the step that consumes the list.
+- **AG Grid sorts a column by its value, with `<`** *(promotion candidate)*: a value already
+  formatted as text sorts as text, so "Rev 10" came before "Rev 9" and 13/10 before 30/09
+  (2026-10-13). Put the raw value in `valueGetter`, print it in the renderer, and give natural text
+  a `comparator`.
 
 ### Running it
 
