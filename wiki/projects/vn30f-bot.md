@@ -2,7 +2,7 @@
 title: vn30f-bot
 type: project
 status: active
-updated: 2026-10-04
+updated: 2026-10-14
 tags: [trading, derivatives, python, ssi, dashboard]
 sources: [~/Documents/products/vn30f-bot, https://guide.ssi.com.vn/ssi-products, https://github.com/SSI-Securities-Corporation/python-fctrading, https://github.com/SSI-Securities-Corporation/python-fcdata]
 read_when: project:vn30f-bot
@@ -39,30 +39,11 @@ each decision was taken and what was rejected; how the pieces fit: [[vn30f-bot-a
   retiring it.
 - **Client material outside the repo**, referenced by name and hash. Rejected: inside the repo
   behind `.gitignore` — a Docker context or deploy rsync takes the folder along.
-- **The simulated broker fills pessimistically and states its assumptions** (ADR 007, proposed).
-  With no sandbox every number comes from it, so its errors must point one way: later and worse.
-  Rejected: filling on touch; probabilistic fills (the assumption hidden in a coin flip).
-- **The entry is a score, not a set of conditions** (ADR 008). Hard conditions entered 93% of their
-  own signals: a condition cannot rank two moments that both meet it. Weights start equal — fitted
-  on one session they fit the session. ADR 009 (proposed) replaces ADR 008's tick-wait
-  confirmation with the client's own two entry moments, measured before the push.
 - **The instrument code is the KRX-style one** (`41I1GA000` for October 2026; `VN30F1M` is a
   rolling alias). The recorder's `--symbol` default is hard-coded and changes at each expiry.
 
 ## Lessons
 
-- **On this feed, count seconds or episodes, never updates.** ~40 book snapshots a second put any
-  "updates" measure out by two orders of magnitude (17,468 lulls found where there were ~300).
-- **Exits decide the sign before entries do.** A fixed target plus a time cap and no stop stacks
-  the losers at the cap, wherever it is set (300 s for the previous team; ours is a parameter). Swept at one
-  contract, every stop tighter than about 1.0 point was worse than none; target 1.0 with a 1.5 stop
-  was six times better than the baseline at 19 contracts while the win rate fell from 68% to 53%.
-  Below the round-trip cost, winning trades still lose.
-- **Judge a filter by separation, not win rate.** Win rate mixes entry, exit ladder, queue model and
-  fee; separation (forward move of kept vs rejected, both printed) does not. Build that instrument
-  before the filter it judges.
-- **A component that never varies is a broken measurement, not a weak signal.** A unit-free formula
-  fed raw contract counts read 1.00 at 100% of moments. Print every input's distribution first.
 - **A gap detector that cannot fire still reports zero gaps** — the morning's first subscribe
   replays the previous session's close; case for [[engineering-rules]] #1, "a monitor must tell silence from
   health".
