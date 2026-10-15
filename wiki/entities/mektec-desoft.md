@@ -2,7 +2,7 @@
 title: Mektec & Desoft
 type: entity
 status: active
-updated: 2026-10-09
+updated: 2026-10-15
 tags: [client, vendor, ok2ship]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ~/Documents/products/ok2ship-ai/docs/decisions/002, 004]
 read_when: project:ok2ship-ai
@@ -53,6 +53,8 @@ cluster, and a hand edit is erased by the next `helm upgrade`.
   fault (2026-10-03) it served 503s from a read-only, I/O-erroring mount while Longhorn said
   "healthy" — check with `ls` and `/proc/mounts` inside the pod. Fixed by a Longhorn snapshot, then
   scaling the deployment 0 → 1 (2026-10-04); a restart is Desoft's call, it touches `pre-nwris`.
+  Grafana's PVC (namespace `logging`) did the same: CrashLoop on "attempt to write a readonly
+  database", fixed the same way (2026-10-15).
 - **GitLab merge requests are created by push options, and a push-option value must be ONE line**
   — git refuses a value with a newline, and a retry without the description creates the MR with no
   body; the local `glab` token is `read_api` only, so a description cannot be added afterwards.

@@ -58,3 +58,4 @@
 ## [2026-10-13] ingest | [[ok2ship-ai]]: a list-order test dates its rows in the future — endpoints commit and the test DB lives for the pytest session (promotion candidate) | @claude-code
 ## [2026-10-13] ingest | [[ok2ship-ai]]: AG Grid sorts a column by its value with `<` — keep the raw value, print it in the renderer (promotion candidate) | @claude-code
 ## [2026-10-14] lint | [[vn30f-bot]]: strategy logic removed at Sơn's request (entry score ADR 008/009, simulated broker ADR 007, the exit, separation, constant-component and count-seconds lessons; the index clause; the 2026-09-25 log line and the strategy half of 2026-09-28); technical setup kept | @claude-code
+## [2026-10-15] ingest | [[ok2ship-ai]]: printed chart peaks told by pixels not OCR digits, RapidOCR palette/RGBA trap, openpyxl keep_links OOM, mutate on a copy; [[mektec-desoft]]: Grafana PVC read-only after node2 fault | @claude-code

@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-13
+updated: 2026-10-15
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -74,7 +74,8 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   the curve's top (the dot hides it); scale read per chart by OCR, never assumed; a shoulder on the
   falling slope is not a second peak (Sơn). A single-cell image anchor means "the picture starting
   here", for every image check. Rejected: the curve's own top, a fixed 0–10 N scale, a hosted
-  chart-reading model (DePlot/MatCha).
+  chart-reading model (DePlot/MatCha). *Amended 2026-10-15: a printed peak is told by the curve
+  meeting the top line, never by its digits.*
 - **ADR 012 — Void X-ray** *(proposed 2026-10-05)*: pins from the machine's frames, each label cut
   out and read alone by PP-OCRv6 (`rapidocr` 3, here only); pass only when every reading
   agrees, no automatic fail yet; the pixel-measured void is a second result item, "Đo bọt khí",
@@ -218,6 +219,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   image); the headless build ships the same `cv2`, and uninstalling the desktop one left
   `import cv2` broken (2026-09-17). Exclude it at RESOLUTION time — `[tool.uv]
   override-dependencies` with a marker that is never true.
+- **openpyxl `load_workbook` parses every external-link part unless `keep_links=False`**: V73's
+  574 links cost +117 MB per open and, with argon2's 64 MiB login, OOMKilled the 1 GiB pod
+  (2026-10-15).
 
 ### Frontend
 
@@ -286,6 +290,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   are valid to save and the engine answers `manual`. Before any ADR: measure whether a local
   vision model reads what OCR cannot — in 14 days of Loki `low_confidence` fired 0 times against
   125 `count_mismatch` — and Desoft must answer whether the cluster has a GPU.
+- **An agent that mutates code works on a copy, never in a tree another agent is using**
+  *(promotion candidate)*: a claims-verifier mutated the worktree while the main session ran
+  `git stash`, which swapped a mutation out mid-run (2026-10-15).
 
 ### Reading reports (Excel and photos)
 
@@ -313,3 +320,11 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   2026-10-05 for the Void X-ray work only).
 - **A picture's `to` corner less than 1 px into a cell does not cover it**: Excel rounding of a
   picture laid on a gridline; ignoring it changed the span of 256 of V73's 2,665 pictures.
+- **Tell two picture styles apart by what the picture draws, never by what OCR read**
+  *(promotion candidate)*: a digits rule (decimals, tick lattice) let each of three review rounds
+  find a new misread that invented a reading; "the curve meets the top line" (Sơn) separated 64
+  printed from 320 dotted charts (≤ 0.30 % vs ≥ 1.22 %). Each round finding a new instance means
+  the rule sits at the wrong layer (ADR 011, 2026-10-15).
+- **RapidOCR (`rapidocr_onnxruntime`) reads a palette PNG's indices as grey, and inverts RGBA**:
+  give it RGB as Excel shows it (`palette_as_shown`); 84 of the Normal B2B report's PNGs are
+  palette.
