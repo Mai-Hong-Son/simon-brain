@@ -61,3 +61,4 @@
 ## [2026-10-15] ingest | [[ok2ship-ai]]: printed chart peaks told by pixels not OCR digits, RapidOCR palette/RGBA trap, openpyxl keep_links OOM, mutate on a copy; [[mektec-desoft]]: Grafana PVC read-only after node2 fault | @claude-code
 ## [2026-10-17] ingest | [[ok2ship-ai]]: limits inclusive (USL/LSL, WCA); QA fills the latest layout, older ones stay configured, Shell sheets share callouts; ADR 011 merged axis labels read one at a time | @claude-code
 ## [2026-10-17] ingest | [[ok2ship-ai]]: inclusive-limit rule gets its exception — the report's own Judgment failing the boundary (Flex Bending ±10 %) | @claude-code
+## [2026-10-17] ingest | [[ok2ship-ai]]: MCO/APN shared within one Model node, EEEE unique; two worktrees share the test DB (gate pytest on pgrep); [[mektec-desoft]]: node stats/summary for real disk and PVC usage | @claude-code

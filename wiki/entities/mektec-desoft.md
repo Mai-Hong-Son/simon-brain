@@ -2,7 +2,7 @@
 title: Mektec & Desoft
 type: entity
 status: active
-updated: 2026-10-15
+updated: 2026-10-17
 tags: [client, vendor, ok2ship]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ~/Documents/products/ok2ship-ai/docs/decisions/002, 004]
 read_when: project:ok2ship-ai
@@ -55,6 +55,9 @@ cluster, and a hand edit is erased by the next `helm upgrade`.
   scaling the deployment 0 → 1 (2026-10-04); a restart is Desoft's call, it touches `pre-nwris`.
   Grafana's PVC (namespace `logging`) did the same: CrashLoop on "attempt to write a readonly
   database", fixed the same way (2026-10-15).
+- **Real disk and PVC usage without `exec`**: `kubectl get --raw
+  /api/v1/nodes/<node>/proxy/stats/summary` gives the node filesystem and each volume's
+  used/available, which `kubectl top` does not.
 - **GitLab merge requests are created by push options, and a push-option value must be ONE line**
   — git refuses a value with a newline, and a retry without the description creates the MR with no
   body; the local `glab` token is `read_api` only, so a description cannot be added afterwards.

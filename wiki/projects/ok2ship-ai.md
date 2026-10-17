@@ -46,6 +46,9 @@ The User Management design (RBAC, account statuses, force-logout, hashing) is in
 
 ### Configuration and checking
 
+- **MCO/APN repeat within one Model node, never across Models; the EEEE Code stays unique** —
+  same-named Models of two Projects are two Models (Sơn, 2026-10-17). Held by the service under an
+  advisory lock, since no index can state "unique outside one Model" (migration `5e0b7c3a91d2`).
 Each line is the decision; the ADR (`docs/decisions/`) holds its measurements and full reasoning.
 - **ADR 005 — Data Mapping storage**: fields hang off the revision's sheet; real columns for the
   frame, JSONB per type validated by Pydantic; fields stay editable on any Rev, every change
@@ -275,6 +278,10 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Running it
 
+- **Two worktrees share the backend test database** *(promotion candidate)*: `tests/conftest.py`
+  drops and recreates `ok2ship_test` per session, so a suite started meanwhile kills the other
+  (103 `KeyError`s, 2026-10-17). Run pytest only when `pgrep -f pytest` is empty — as a gate in the
+  command, not a printout.
 - **Prove a teammate's work survived a merge by content** *(promotion candidate)*: `git diff
   origin/main HEAD -- <their files>`, then blame every removed line. In zsh pass the list as an
   array — an unsplit `$F` matched no path and printed an empty diff that read as "identical"
