@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-15
+updated: 2026-10-17
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -75,7 +75,8 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   falling slope is not a second peak (Sơn). A single-cell image anchor means "the picture starting
   here", for every image check. Rejected: the curve's own top, a fixed 0–10 N scale, a hosted
   chart-reading model (DePlot/MatCha). *Amended 2026-10-15: a printed peak is told by the curve
-  meeting the top line, never by its digits.*
+  meeting the top line, never by its digits. Amended 2026-10-17: axis labels OCR merges into one
+  box are read one at a time.*
 - **ADR 012 — Void X-ray** *(proposed 2026-10-05)*: pins from the machine's frames, each label cut
   out and read alone by PP-OCRv6 (`rapidocr` 3, here only); pass only when every reading
   agrees, no automatic fail yet; the pixel-measured void is a second result item, "Đo bọt khí",
@@ -89,6 +90,8 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   out from the chart XML. Rejected: reading the picture; every bar under the curve (fails every
   approved report).
 - Every sheet is configurable by hand; open ≠ known to the suggestion engine.
+- **A limit is inclusive**: "Max 30" passes 30, even where a callout writes "<" or ">" (Sơn: USL/LSL
+  2026-10-12, WCA 2026-10-17).
 
 ## Lessons
 
@@ -107,7 +110,8 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   document IS the signal.
 - **A sheet's requirements are the latest template's yellow callouts**, replacing its SOP rows
   (Peel, Void X-ray, Un-mating). "The spec below" was a drawn text box, not a cell or picture:
-  read the drawing XML first.
+  read the drawing XML first. QA fills the latest layout; an older one (V73's split ACF sheets)
+  stays configured beside it, and Shell sheets share the non-Shell callouts (Sơn, 2026-10-17).
 - **The mockup is live, and ahead of any copy**: `ba-ok2ship.desoft.vn/data-mapping.html` already
   drew the force-chart check while a design of our own was built from a stale copy in Downloads,
   and replaced the same day. Read the live page before designing a screen for a new requirement.
