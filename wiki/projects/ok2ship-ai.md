@@ -91,7 +91,8 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   approved report).
 - Every sheet is configurable by hand; open ≠ known to the suggestion engine.
 - **A limit is inclusive**: "Max 30" passes 30, even where a callout writes "<" or ">" (Sơn: USL/LSL
-  2026-10-12, WCA 2026-10-17).
+  2026-10-12, WCA 2026-10-17) — unless the report's own Judgment formula fails the boundary (Flex
+  Bending ±10 %, 2026-10-17).
 
 ## Lessons
 

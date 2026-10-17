@@ -60,3 +60,4 @@
 ## [2026-10-14] lint | [[vn30f-bot]]: strategy logic removed at Sơn's request (entry score ADR 008/009, simulated broker ADR 007, the exit, separation, constant-component and count-seconds lessons; the index clause; the 2026-09-25 log line and the strategy half of 2026-09-28); technical setup kept | @claude-code
 ## [2026-10-15] ingest | [[ok2ship-ai]]: printed chart peaks told by pixels not OCR digits, RapidOCR palette/RGBA trap, openpyxl keep_links OOM, mutate on a copy; [[mektec-desoft]]: Grafana PVC read-only after node2 fault | @claude-code
 ## [2026-10-17] ingest | [[ok2ship-ai]]: limits inclusive (USL/LSL, WCA); QA fills the latest layout, older ones stay configured, Shell sheets share callouts; ADR 011 merged axis labels read one at a time | @claude-code
+## [2026-10-17] ingest | [[ok2ship-ai]]: inclusive-limit rule gets its exception — the report's own Judgment failing the boundary (Flex Bending ±10 %) | @claude-code
