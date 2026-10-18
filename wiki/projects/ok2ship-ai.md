@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-17
+updated: 2026-10-18
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -50,6 +50,11 @@ The User Management design (RBAC, account statuses, force-logout, hashing) is in
   same-named Models of two Projects are two Models (Sơn, 2026-10-17). Held by the service under an
   advisory lock, since no index can state "unique outside one Model" (migration `5e0b7c3a91d2`).
 Each line is the decision; the ADR (`docs/decisions/`) holds its measurements and full reasoning.
+- **ADR 016 — catalog delete and rename**: a node is soft-deleted with its subtree, and deleted or
+  re-coded only once no live report is under it; its NAME is locked while one is (the BA,
+  2026-10-18), and every refusal links the blocking reports. A retired Config keeps its codes (Sơn).
+  Golden-set A3 ignores deleted reports' runs. Rejected: hard delete; renaming under a report (it
+  keeps its path as filed, so list and catalog disagree).
 - **ADR 005 — Data Mapping storage**: fields hang off the revision's sheet; real columns for the
   frame, JSONB per type validated by Pydantic; fields stay editable on any Rev, every change
   audited. Rejected: fully normalised (every BA change a migration); fields on the Template
@@ -233,6 +238,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Frontend
 
+- **A refusal names what blocks it and a way out the screen can take** *(promotion candidate)*:
+  "1 báo cáo" sent the user hunting for a report filed under a node's old name; review then caught
+  "vô hiệu hóa Build này" pointing at a control the row does not have (2026-10-18).
 - **A long result list puts what needs a person first and folds the rest under one summary row per
   group** (Sơn: 300 pin rows scrolled too far) — items to look at first, matches last, every group
   folded at start.
@@ -280,8 +288,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 - **Two worktrees share the backend test database** *(promotion candidate)*: `tests/conftest.py`
   drops and recreates `ok2ship_test` per session, so a suite started meanwhile kills the other
-  (103 `KeyError`s, 2026-10-17). Run pytest only when `pgrep -f pytest` is empty — as a gate in the
-  command, not a printout.
+  (103 `KeyError`s, 2026-10-17). Give each checkout its own: `TEST_DB_NAME=ok2ship_test_<name>`
+  (`e03ee54`; only `ok2ship_test*` names are accepted). Without it, gate the command on
+  `pgrep -f pytest` being empty.
 - **Prove a teammate's work survived a merge by content** *(promotion candidate)*: `git diff
   origin/main HEAD -- <their files>`, then blame every removed line. In zsh pass the list as an
   array — an unsplit `$F` matched no path and printed an empty diff that read as "identical"

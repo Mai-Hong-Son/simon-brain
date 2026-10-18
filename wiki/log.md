@@ -62,3 +62,4 @@
 ## [2026-10-17] ingest | [[ok2ship-ai]]: limits inclusive (USL/LSL, WCA); QA fills the latest layout, older ones stay configured, Shell sheets share callouts; ADR 011 merged axis labels read one at a time | @claude-code
 ## [2026-10-17] ingest | [[ok2ship-ai]]: inclusive-limit rule gets its exception — the report's own Judgment failing the boundary (Flex Bending ±10 %) | @claude-code
 ## [2026-10-17] ingest | [[ok2ship-ai]]: MCO/APN shared within one Model node, EEEE unique; two worktrees share the test DB (gate pytest on pgrep); [[mektec-desoft]]: node stats/summary for real disk and PVC usage | @claude-code
+## [2026-10-18] ingest | [[ok2ship-ai]]: ADR 016 catalog soft delete + rename lock, TEST_DB_NAME per checkout, a refusal names its blocker and a reachable way out; [[son]]: serve worktrees on other ports when his tree holds uncommitted work | @claude-code

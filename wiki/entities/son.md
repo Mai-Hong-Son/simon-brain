@@ -2,7 +2,7 @@
 title: Sơn
 type: entity
 status: stable
-updated: 2026-10-13
+updated: 2026-10-18
 tags: [user, preferences, standards]
 sources: [ai-company/.claude/agents (dev-frontend, dev-mobile), feedback memory 07-08/2026]
 read_when: always
@@ -31,7 +31,9 @@ Owner of this system. Every agent working with Sơn needs these facts.
   spent on a branch that did not carry the change). Say which branch `localhost` is on every time
   it changes, merge what he needs to see into one branch and check it out for him, and leave the
   tree on `main` when the work is done. Work that needs another branch goes in a `git worktree`
-  outside the tree he tests on, so his dev server never reloads under him.
+  outside the tree he tests on, so his dev server never reloads under him. When that tree holds
+  uncommitted work, do not switch it: serve the worktrees on other ports against a copy of the
+  database and give him that URL (2026-10-18).
 - **One merge request per repo for a batch of work**, not a chain that has to be merged in order
   — every extra MR is manual work for him. Split by commit inside the MR; if branches must build
   on each other, rebase them into a linear chain yourself rather than handing him the conflicts.
