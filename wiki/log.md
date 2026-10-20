@@ -63,3 +63,4 @@
 ## [2026-10-17] ingest | [[ok2ship-ai]]: inclusive-limit rule gets its exception — the report's own Judgment failing the boundary (Flex Bending ±10 %) | @claude-code
 ## [2026-10-17] ingest | [[ok2ship-ai]]: MCO/APN shared within one Model node, EEEE unique; two worktrees share the test DB (gate pytest on pgrep); [[mektec-desoft]]: node stats/summary for real disk and PVC usage | @claude-code
 ## [2026-10-18] ingest | [[ok2ship-ai]]: ADR 016 catalog soft delete + rename lock, TEST_DB_NAME per checkout, a refusal names its blocker and a reachable way out; [[son]]: serve worktrees on other ports when his tree holds uncommitted work | @claude-code
+## [2026-10-20] ingest | [[ok2ship-ai]]: EEEE Code shared within a Model like MCO/APN; ADR 016 record delete up to the Project; lock a tree root-first (deadlock); read the MR state before pushing to its branch again | @claude-code

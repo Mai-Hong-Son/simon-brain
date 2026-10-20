@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-18
+updated: 2026-10-20
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -46,14 +46,17 @@ The User Management design (RBAC, account statuses, force-logout, hashing) is in
 
 ### Configuration and checking
 
-- **MCO/APN repeat within one Model node, never across Models; the EEEE Code stays unique** —
-  same-named Models of two Projects are two Models (Sơn, 2026-10-17). Held by the service under an
-  advisory lock, since no index can state "unique outside one Model" (migration `5e0b7c3a91d2`).
+- **MCO/APN/EEEE Code repeat within one Model node, never across Models** — same-named Models of
+  two Projects are two Models (Sơn, 2026-10-17; EEEE the BA, 2026-10-19, migration `c4e8a2f61b9d`).
+  Held by the service under an advisory lock, since no index can state "unique outside one Model"
+  (migration `5e0b7c3a91d2`).
 Each line is the decision; the ADR (`docs/decisions/`) holds its measurements and full reasoning.
 - **ADR 016 — catalog delete and rename**: a node is soft-deleted with its subtree, and deleted or
   re-coded only once no live report is under it; its NAME is locked while one is (the BA,
   2026-10-18), and every refusal links the blocking reports. A retired Config keeps its codes (Sơn).
-  Golden-set A3 ignores deleted reports' runs. Rejected: hard delete; renaming under a report (it
+  Golden-set A3 ignores deleted reports' runs. Deleting a row deletes its record: every parent left
+  empty goes too, up to the Project; one still holding a report or a golden set stays, and the
+  dialog names it (the BA, 2026-10-19). Rejected: hard delete; renaming under a report (it
   keeps its path as filed, so list and catalog disagree).
 - **ADR 005 — Data Mapping storage**: fields hang off the revision's sheet; real columns for the
   frame, JSONB per type validated by Pydantic; fields stay editable on any Rev, every change
@@ -204,6 +207,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Backend
 
+- **Two writers lock a tree in one order, root-first** *(promotion candidate)*: a catalog delete
+  locked Config then Build while report filing locks Build then Config, and a test reproduced
+  `DeadlockDetected` (2026-10-19). Lock every ancestor top-down before the node.
 - **An exception handler on a DB session rolls back before it touches anything** *(promotion
   candidate)*: a flush that violated a FK (a field deleted under a running check, whose snapshot
   still carried the id) left the handler committing on a failed transaction, so the crash escaped
@@ -286,6 +292,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Running it
 
+- **Read the MR's state before pushing to its branch again** *(promotion candidate)*: a push to a
+  branch whose MR had merged recreated the branch on GitLab, and the commit had to move to a new
+  MR (2026-10-19).
 - **Two worktrees share the backend test database** *(promotion candidate)*: `tests/conftest.py`
   drops and recreates `ok2ship_test` per session, so a suite started meanwhile kills the other
   (103 `KeyError`s, 2026-10-17). Give each checkout its own: `TEST_DB_NAME=ok2ship_test_<name>`
