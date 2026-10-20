@@ -104,6 +104,10 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **A limit is inclusive**: "Max 30" passes 30, even where a callout writes "<" or ">" (Sơn: USL/LSL
   2026-10-12, WCA 2026-10-17) — unless the report's own Judgment formula fails the boundary (Flex
   Bending ±10 %, 2026-10-17).
+- **ADR 017 §9 — Boxplot comparison** (the BA's rule, 2026-10-20): within one column and Config,
+  every pair of boxes, |Avg A − Avg B| / |Avg A|, A the Build first (major descending, minor
+  ascending); for two Lots of one Build, the smaller |Average| (Sơn). 20.0 % or more, as printed, is
+  Bất thường. Rejected: one Average per Build over its Lots (the factory: each Lot on its own).
 
 ## Lessons
 
@@ -169,6 +173,13 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   a double holds exactly (8.38969 − 8.36969 is 0.0199…, so a test meant to sit on 0.02 never touched
   it), and a float-noise test needs one it does not (0.124 × 100 is exactly 12.4; 0.119 × 100 is
   not). Both were found only because breaking the code left the test green.
+- **An Excel formula is checked in Excel itself** *(promotion candidate)*: openpyxl writes formulas
+  with no cached value, so a test reads only their text. Open a synthetic file through AppleScript
+  (`tell application "Microsoft Excel"`, `string value of range`); the comparison table agreed on
+  45/45 pairs, boundaries included (2026-10-20).
+- **A mutation check reverts the production change only** *(promotion candidate)*: `git stash` took
+  the new test away with the fix, so a green run "without the fix" proved nothing (2026-10-20).
+  Replace the changed line in place, run, restore.
 - **A list-order test dates its rows in the future** *(promotion candidate)*: the endpoints commit
   and the test database lives for the whole pytest session, so earlier tests' reports and
   Templates outrank rows dated in the past and push them off the page — green alone, red in the
