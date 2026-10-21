@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-20
+updated: 2026-10-21
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -103,11 +103,16 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - Every sheet is configurable by hand; open ≠ known to the suggestion engine.
 - **A limit is inclusive**: "Max 30" passes 30, even where a callout writes "<" or ">" (Sơn: USL/LSL
   2026-10-12, WCA 2026-10-17) — unless the report's own Judgment formula fails the boundary (Flex
-  Bending ±10 %, 2026-10-17).
+  Bending ±10 %, 2026-10-17); SEM keeps 0.43 passing although column N writes `<0.43` (Sơn,
+  2026-10-21). A verdict formula with a limit of its own (SEM N35's 0.628) is compared with the
+  template as written, never asked about.
 - **ADR 017 §9 — Boxplot comparison** (the BA's rule, 2026-10-20): within one column and Config,
   every pair of boxes, |Avg A − Avg B| / |Avg A|, A the Build first (major descending, minor
   ascending); for two Lots of one Build, the smaller |Average| (Sơn). 20.0 % or more, as printed, is
   Bất thường. Rejected: one Average per Build over its Lots (the factory: each Lot on its own).
+- **ADR 018 — Ảnh với % Black** (merged 2026-10-21): % Black recounted on each binarized SEM picture
+  (SEM 200 inside the pad, SEM 500 the whole picture), judged against the cell and a library limit.
+  Rejected: a mode of "Ảnh với Data" — it reads printed numbers, these pictures print none.
 
 ## Lessons
 
@@ -221,6 +226,10 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **Two writers lock a tree in one order, root-first** *(promotion candidate)*: a catalog delete
   locked Config then Build while report filing locks Build then Config, and a test reproduced
   `DeadlockDetected` (2026-10-19). Lock every ancestor top-down before the node.
+- **A Spec parameter's "in use" count reads every place a `param_key` lives** *(promotion
+  candidate)*: zone, multi-row `pairs`, conditional rules, a field's `settings` (Ảnh với % Black) —
+  each was missed once, letting a parameter in use be deleted (third time 2026-10-21). A new pointer
+  location joins `specs.usage` with a test that sends the delete.
 - **An exception handler on a DB session rolls back before it touches anything** *(promotion
   candidate)*: a flush that violated a FK (a field deleted under a running check, whose snapshot
   still carried the id) left the handler committing on a failed transaction, so the crash escaped
@@ -310,7 +319,8 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   drops and recreates `ok2ship_test` per session, so a suite started meanwhile kills the other
   (103 `KeyError`s, 2026-10-17). Give each checkout its own: `TEST_DB_NAME=ok2ship_test_<name>`
   (`e03ee54`; only `ok2ship_test*` names are accepted). Without it, gate the command on
-  `pgrep -f pytest` being empty.
+  `pgrep -f pytest` being empty. The pre-commit hook runs the suite too: `TEST_DB_NAME=… git
+  commit` (on the shared one it blocked a commit on unrelated golden-set tests, 2026-10-21).
 - **Prove a teammate's work survived a merge by content** *(promotion candidate)*: `git diff
   origin/main HEAD -- <their files>`, then blame every removed line. In zsh pass the list as an
   array — an unsplit `$F` matched no path and printed an empty diff that read as "identical"
