@@ -260,7 +260,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   override-dependencies` with a marker that is never true.
 - **openpyxl `load_workbook` parses every external-link part unless `keep_links=False`**: V73's
   574 links cost +117 MB per open and, with argon2's 64 MiB login, OOMKilled the 1 GiB pod
-  (2026-10-15).
+  (2026-10-15). Even then the open is the cost, not the cells: 74 % of a report's 1.9 s is
+  `workbook.xml`'s 48,319 defined names, 15 % the stylesheet. Boxplot opens the parts it needs
+  itself (`boxplots.xlsx`, ADR 017 §4); check runs still pay it.
 
 ### Frontend
 
@@ -312,6 +314,11 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Running it
 
+- **Time a speed-up where it runs, and against its prototype on the same counters** *(promotion
+  candidate)*: local MinIO with added latency promised that four threads would help; in the pod
+  8.5 of 9.7 s was CPU and four threads gained nothing. The shipped reader then fetched 3× the
+  prototype's bytes (every sheet built at open), caught only by comparing `boxplot.read`'s bytes
+  and requests with the prototype's (2026-10-21).
 - **Read the MR's state before pushing to its branch again** *(promotion candidate)*: a push to a
   branch whose MR had merged recreated the branch on GitLab, and the commit had to move to a new
   MR (2026-10-19).
