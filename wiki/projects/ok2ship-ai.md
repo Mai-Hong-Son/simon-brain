@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-21
+updated: 2026-10-22
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -63,8 +63,8 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   audited. Rejected: fully normalised (every BA change a migration); fields on the Template
   instead of the revision.
 - **ADR 006 — check results**: a run row + a row per field, the field's configuration snapshotted
-  on the run. `pass` / `fail` / `error` (data not there) / `manual` (not automated — never a pass).
-  Rejected: a Rev id with no snapshot (fields stay editable, so it cannot say what ran).
+  on the run. `pass` / `fail` / `error` (data not there) / `manual` (not automated — never a pass);
+  `na` "Không áp dụng": a Spec field with "Bắt buộc" unticked that reads nothing (2026-10-21). Rejected: a Rev id with no snapshot (fields stay editable, so it cannot say what ran).
 - **ADR 007 — photo against data**: RapidOCR on our own machines only (customer images). *Amended
   2026-10-09 (the BA, via Sơn):* a picture's numbers are read top→bottom and answer the cells
   top→bottom, never derived; a swap is a Fail. Measured cost: V73's "female and male" block
@@ -103,7 +103,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - Every sheet is configurable by hand; open ≠ known to the suggestion engine.
 - **A limit is inclusive**: "Max 30" passes 30, even where a callout writes "<" or ">" (Sơn: USL/LSL
   2026-10-12, WCA 2026-10-17) — unless the report's own Judgment formula fails the boundary (Flex
-  Bending ±10 %, 2026-10-17); SEM keeps 0.43 passing although column N writes `<0.43` (Sơn,
+  Bending ±10 %, 2026-10-17), set with the conditional Khoảng's "Biên" (ADR 014); SEM keeps 0.43 passing although column N writes `<0.43` (Sơn,
   2026-10-21). A verdict formula with a limit of its own (SEM N35's 0.628) is compared with the
   template as written, never asked about.
 - **ADR 017 §9 — Boxplot comparison** (the BA's rule, 2026-10-20): within one column and Config,
@@ -285,7 +285,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   A new per-row state reuses one every build renders (Void X-ray's "review" is stored as `manual`).
   Renaming a field is both skews at once: an update endpoint that copies every field wipes the
   value when one side is older — send it under both names for a release, backend first
-  (`category` → `sheet_name`, 2026-10-09).
+  (`category` → `sheet_name`, 2026-10-09). A new field saved through a form ships backend first: an
+  older API drops it silently (`extra="ignore"`), an older form on resave — nobody saves that
+  configuration between the two deploys (Biên, 2026-10-21).
 - **"Absent from the failures" means "agreed" only for the shape it was written for**: the
   photo dialog showed every chart and X-ray picture "khớp", a FAIL included
   (2026-10-04..06).

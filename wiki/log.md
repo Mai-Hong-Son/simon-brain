@@ -67,3 +67,4 @@
 ## [2026-10-20] ingest | [[ok2ship-ai]]: ADR 017 §9 Boxplot comparison (pairs per column and Config, 20 % as printed); check Excel formulas in Excel itself; a mutation check reverts the production change only | @claude-code
 ## [2026-10-21] ingest | [[ok2ship-ai]]: ADR 018 Ảnh với % Black; SEM 0.43 passes and N35 compared with the template as written; a Spec parameter's in-use count reads every param_key location; TEST_DB_NAME for the pre-commit hook too | @claude-code
 ## [2026-10-21] ingest | [[ok2ship-ai]]: load_workbook's cost is the open (defined names, styles), not the cells; time a speed-up where it runs and against its prototype on the same counters | @claude-code
+## [2026-10-22] ingest | [[ok2ship-ai]]: ADR 006 na status ("Bắt buộc" honoured); an exclusive limit is the conditional's Biên; a new form field ships backend first | @claude-code
