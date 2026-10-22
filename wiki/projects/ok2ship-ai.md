@@ -167,7 +167,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   checklist to the template's callouts, the engine's rule moves with it, and the check is
   `suggest.for_sheet` against the hand configuration cell for cell. Three sheets were configured
   from V69 on 2026-10-06 while the engine still proposed the SOP set (0/6, 0/6, 2/6 fields in
-  common), found 10-09.
+  common), found 10-09. The temporary checklist panel moves too (Flex Bending showed SOP 14/09
+  until 2026-10-22). A later decision dropping a row sits beside the BA's "Hệ thống check?", never
+  overwrites it: flipping it blamed the checklist for 4 "Không" rows where it has 2.
 - **Render-measure our own screens without a real account**: a second Vite port, Playwright routing
   `http://localhost:<port>/api/**` to fakes (`**/api/**` also swallows the `src/api/*.ts` modules
   and the page renders blank) and an unsigned JWT — the shared-account trap below never arises.
