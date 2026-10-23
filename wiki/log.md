@@ -69,3 +69,4 @@
 ## [2026-10-21] ingest | [[ok2ship-ai]]: load_workbook's cost is the open (defined names, styles), not the cells; time a speed-up where it runs and against its prototype on the same counters | @claude-code
 ## [2026-10-22] ingest | [[ok2ship-ai]]: ADR 006 na status ("Bắt buộc" honoured); an exclusive limit is the conditional's Biên; a new form field ships backend first | @claude-code
 ## [2026-10-22] ingest | [[ok2ship-ai]]: the checklist panel follows the requirement source; a later decision sits beside the BA's marker, never overwrites it | @claude-code
+## [2026-10-23] ingest | [[ok2ship-ai]]: hide a control only on the sample's positive answer; an engine version is numbered at merge; [[approval-gates]]: the fix of a finding is reviewed too | @claude-code

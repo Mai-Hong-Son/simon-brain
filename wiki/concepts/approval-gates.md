@@ -2,7 +2,7 @@
 title: Approval gates & adversarial review
 type: concept
 status: stable
-updated: 2026-10-01
+updated: 2026-10-23
 tags: [process, review, quality]
 sources: [ai-company/CLAUDE.md (workflow + debate mechanism), ai-company/.claude/agents (orchestrator, qa-reviewer)]
 read_when: always
@@ -50,6 +50,10 @@ scope; never self-review in the same session) → fix confirmed defects and push
 into the PR description (`Review: N findings · M fixed · K dismissed (why)`) → only then report
 to Sơn. Sơn reviews what survived a review, never a first draft. "No findings" with no review run
 is a skipped gate; a review that found nothing says so explicitly.
+
+**The fix of a finding is reviewed too.** A fix answers one scenario and can break the next: twice
+in one [[ok2ship-ai]] session (2026-10-22) round 2 caught a regression the round-1 fix made. Send
+the fix back to a fresh context, inside the 3-round limit.
 
 **A diff-only pass cannot check a statement of fact.** When the PR's content IS claims — docs, a
 handoff, an ADR — brief a fresh agent to check each claim against its source, not only to read

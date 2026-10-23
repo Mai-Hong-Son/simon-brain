@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-22
+updated: 2026-10-23
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -136,9 +136,6 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **The mockup is live, and ahead of any copy**: `ba-ok2ship.desoft.vn/data-mapping.html` already
   drew the force-chart check while a design of our own was built from a stale copy in Downloads,
   and replaced the same day. Read the live page before designing a screen for a new requirement.
-- **A re-packaged mockup reads as a new one.** A delivery that looked redesigned was the previous
-  one re-hosted (1.5 MB inlined → 66 KB + external files). Diff the `id="..."` sets before reading
-  a delivery as changed requirements.
 - **What a tool can do is read off its real UI, not its tables or tags** ([[engineering-rules]]
   #8), and the error runs both ways. A check-type definition table produced four "this is
   impossible" verdicts that filling in the real form disproved — each would have been a change
@@ -268,6 +265,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Frontend
 
+- **Hide a control only on the sample's positive answer** *(promotion candidate)*: "Cộng thêm
+  (ngày)" vanished for good when there was no sample file. No file, a failed read or an empty cell
+  all mean show (2026-10-22).
 - **A refusal names what blocks it and a way out the screen can take** *(promotion candidate)*:
   "1 báo cáo" sent the user hunting for a report filed under a node's old name; review then caught
   "vô hiệu hóa Build này" pointing at a control the row does not have (2026-10-18).
@@ -318,6 +318,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 
 ### Running it
 
+- **An engine version is numbered at merge, not at branch** *(promotion candidate)*: `main` and a
+  branch both took 1.17.0 for different changes (2026-10-22); the branch became 1.18.0. A change
+  no verdict sees takes none.
 - **Time a speed-up where it runs, and against its prototype on the same counters** *(promotion
   candidate)*: local MinIO with added latency promised that four threads would help; in the pod
   8.5 of 9.7 s was CPU and four threads gained nothing. The shipped reader then fetched 3× the
