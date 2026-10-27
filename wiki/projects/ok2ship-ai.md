@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-23
+updated: 2026-10-27
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -69,8 +69,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   2026-10-09 (the BA, via Sơn):* a picture's numbers are read top→bottom and answer the cells
   top→bottom, never derived; a swap is a Fail. Measured cost: V73's "female and male" block
   (arrows in sheet order 3-2-1-4) fails 60/120 pairs of a correct report, so the lab annotates in
-  sheet order. Rejected: any hosted OCR/VLM. A dedicated worker is shelved
-  (`docs/design/report-check-worker.md`).
+  sheet order. Rejected: any hosted OCR/VLM.
 - **ADR 008 — Spec Management**: one library of criteria; a run snapshots each criterion at its
   start, so editing one never re-captions a finished verdict. *Amended 2026-10-09:* a parameter
   names the SHEET it applies to (the mockup's `sheetName` since 09-24; NULL = dùng chung, offered
@@ -80,8 +79,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   a wrong Template runs to completion with wrong verdicts, now with more Revs to pick wrong from.
   Rejected: keep the scope and add a manual override (two mechanisms for one answer).
 - **ADR 010 — a run has a scope**: one hạng mục or the whole report; per sheet, the newest run
-  covering it answers. Rejected: latest run only (checking sheet B wiped sheet A).
-- **ADR 011 — Biểu đồ lực** *(merged 2026-10-04; amended 2026-10-06: thin-line export)*: chart i against force cell i; U-max is the machine's blue dot, never
+  covering it answers. Rejected: latest run only (checking sheet B wiped sheet A). *Amended
+  2026-10-26:* a run can be stopped; checked fields keep the new verdicts.
+- **ADR 011 — Biểu đồ lực**: chart i against force cell i; U-max is the machine's blue dot, never
   the curve's top (the dot hides it); scale read per chart by OCR, never assumed; a shoulder on the
   falling slope is not a second peak (Sơn). A single-cell image anchor means "the picture starting
   here", for every image check. Rejected: the curve's own top, a fixed 0–10 N scale, a hosted
@@ -95,7 +95,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   unmeasurable pin Manual for QA's eye — so the item is Manual almost always, accepted (amended
   2026-10-08). Rejected:
   whole-picture OCR, PP-OCRv6 for "Ảnh với Data" (520 → 484 numbers).
-- **ADR 013 — Biểu đồ histogram** *(merged 2026-10-12)*: each point's native Excel chart is judged
+- **ADR 013 — Biểu đồ histogram**: each point's native Excel chart is judged
   on the cells it is drawn from; a bar is "outside the curve" where the curve over its width is
   under 1 % of its peak — fixed in code, not a setting (Sơn). "Xem biểu đồ" redraws it in SVG laid
   out from the chart XML. Rejected: reading the picture; every bar under the curve (fails every
@@ -103,14 +103,14 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - Every sheet is configurable by hand; open ≠ known to the suggestion engine.
 - **A limit is inclusive**: "Max 30" passes 30, even where a callout writes "<" or ">" (Sơn: USL/LSL
   2026-10-12, WCA 2026-10-17) — unless the report's own Judgment formula fails the boundary (Flex
-  Bending ±10 %, 2026-10-17), set with the conditional Khoảng's "Biên" (ADR 014); SEM keeps 0.43 passing although column N writes `<0.43` (Sơn,
+  Bending ±10 %, 2026-10-17), set by the Khoảng end's sign, ≥/> or ≤/< (ADR 014); SEM keeps 0.43 passing although column N writes `<0.43` (Sơn,
   2026-10-21). A verdict formula with a limit of its own (SEM N35's 0.628) is compared with the
   template as written, never asked about.
 - **ADR 017 §9 — Boxplot comparison** (the BA's rule, 2026-10-20): within one column and Config,
   every pair of boxes, |Avg A − Avg B| / |Avg A|, A the Build first (major descending, minor
   ascending); for two Lots of one Build, the smaller |Average| (Sơn). 20.0 % or more, as printed, is
   Bất thường. Rejected: one Average per Build over its Lots (the factory: each Lot on its own).
-- **ADR 018 — Ảnh với % Black** (merged 2026-10-21): % Black recounted on each binarized SEM picture
+- **ADR 018 — Ảnh với % Black**: % Black recounted on each binarized SEM picture
   (SEM 200 inside the pad, SEM 500 the whole picture), judged against the cell and a library limit.
   Rejected: a mode of "Ảnh với Data" — it reads printed numbers, these pictures print none.
 
@@ -170,9 +170,6 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **Render-measure our own screens without a real account**: a second Vite port, Playwright routing
   `http://localhost:<port>/api/**` to fakes (`**/api/**` also swallows the `src/api/*.ts` modules
   and the page renders blank) and an unsigned JWT — the shared-account trap below never arises.
-- **The mockup's result screens are measured without uploading a report**: route its
-  `/api/run_checks` to a fake in Playwright and read computed styles (found "Kiểm tra Sheet"
-  tinted there, white on ours).
 - **A float test needs the float it claims** *(promotion candidate)*: a boundary test needs values
   a double holds exactly (8.38969 − 8.36969 is 0.0199…, so a test meant to sit on 0.02 never touched
   it), and a float-noise test needs one it does not (0.124 × 100 is exactly 12.4; 0.119 × 100 is
@@ -297,6 +294,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   translator moved a text node and the ErrorBoundary took the page (the BA, 2026-09-16/22). Opt out
   of translation (`translate="no"` + notranslate meta), make `removeChild`/`insertBefore` skip a
   node no longer a child (facebook/react#11538), report the first suppression.
+- **A layout repeated in every route element is one React instance** *(promotion candidate)*:
+  its effects survive navigation; an `[]` one waited 10 s after Back (2026-10-27) — key it on
+  `pathname`.
 - **TS gotcha** *(promotion candidate)*: a root `tsconfig.json` of the `files:[] + references`
   shape makes `tsc --noEmit` a silent no-op — only `tsc -b` actually catches errors.
 - **An element animated with `transform` becomes the containing block for every `fixed`
