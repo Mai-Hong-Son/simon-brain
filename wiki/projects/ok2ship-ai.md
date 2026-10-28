@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-27
+updated: 2026-10-28
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -133,9 +133,10 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   (Peel, Void X-ray, Un-mating). "The spec below" was a drawn text box, not a cell or picture:
   read the drawing XML first. QA fills the latest layout; an older one (V73's split ACF sheets)
   stays configured beside it, and Shell sheets share the non-Shell callouts (Sơn, 2026-10-17).
-- **The mockup is live, and ahead of any copy**: `ba-ok2ship.desoft.vn/data-mapping.html` already
-  drew the force-chart check while a design of our own was built from a stale copy in Downloads,
-  and replaced the same day. Read the live page before designing a screen for a new requirement.
+- **The mockup is live, and ahead of any copy**: `ba-ok2ship.desoft.vn/data-mapping.html` drew the
+  force-chart check while ours was built from a stale Downloads copy. Read it first; what it lacks
+  goes on the design canvas "OK2SHIP" (claude.ai/artifact/8pt1oZdf8SazmSDdooWfjq), to the BA only
+  when Sơn says so.
 - **What a tool can do is read off its real UI, not its tables or tags** ([[engineering-rules]]
   #8), and the error runs both ways. A check-type definition table produced four "this is
   impossible" verdicts that filling in the real form disproved — each would have been a change

@@ -2,7 +2,7 @@
 title: Approval gates & adversarial review
 type: concept
 status: stable
-updated: 2026-10-23
+updated: 2026-10-28
 tags: [process, review, quality]
 sources: [ai-company/CLAUDE.md (workflow + debate mechanism), ai-company/.claude/agents (orchestrator, qa-reviewer)]
 read_when: always
@@ -32,6 +32,10 @@ project pages named.
 - **Open design questions are resolved one at a time**, each with a recommended answer and one
   sentence of reasoning — a question without a stance offloads the design onto Sơn. Read the
   codebase and prior decisions before asking; never roll past an unresolved dependency.
+- **A screen no reference draws gets designs before the plan**: up to three genuinely different
+  directions (reuse / extend / new; two if only two are sensible), main states and a one-line
+  trade-off each, one recommended, on the project's design canvas (a page per module). A reference
+  that arrives later wins. No plan until Sơn picks (2026-10-28).
 
 ## Git and PR conventions (every project)
 
