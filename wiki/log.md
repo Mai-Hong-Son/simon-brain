@@ -72,3 +72,4 @@
 ## [2026-10-23] ingest | [[ok2ship-ai]]: hide a control only on the sample's positive answer; an engine version is numbered at merge; [[approval-gates]]: the fix of a finding is reviewed too | @claude-code
 ## [2026-10-27] ingest | [[ok2ship-ai]]: ADR 010 amended (a run can be stopped); Biên line follows ADR 014; a layout repeated in every route is one React instance; budget cuts | @claude-code
 ## [2026-10-28] ingest | [[approval-gates]]: a screen no reference draws gets up to three designs before the plan; [[ok2ship-ai]]: the OK2SHIP design canvas | @claude-code
+## [2026-10-29] ingest | [[ok2ship-ai]]: module docs are checked against their commits after every pull; cut the MR-state lesson ([[approval-gates]] covers it) | @claude-code

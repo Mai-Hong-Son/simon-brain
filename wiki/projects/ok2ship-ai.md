@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-28
+updated: 2026-10-29
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -327,9 +327,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   8.5 of 9.7 s was CPU and four threads gained nothing. The shipped reader then fetched 3× the
   prototype's bytes (every sheet built at open), caught only by comparing `boxplot.read`'s bytes
   and requests with the prototype's (2026-10-21).
-- **Read the MR's state before pushing to its branch again** *(promotion candidate)*: a push to a
-  branch whose MR had merged recreated the branch on GitLab, and the commit had to move to a new
-  MR (2026-10-19).
+- **Module docs are checked, not trusted**: each `docs/modules/` page names the commits it was
+  read against; after a pull, `docs/tools/check.py` flags stale pages — re-read and move
+  `verified` (three pages, 2026-10-29). An ADR for unmerged code merges with it.
 - **Two worktrees share the backend test database** *(promotion candidate)*: `tests/conftest.py`
   drops and recreates `ok2ship_test` per session, so a suite started meanwhile kills the other
   (103 `KeyError`s, 2026-10-17). Give each checkout its own: `TEST_DB_NAME=ok2ship_test_<name>`
