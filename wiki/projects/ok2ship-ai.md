@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-29
+updated: 2026-10-30
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -65,6 +65,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **ADR 006 — check results**: a run row + a row per field, the field's configuration snapshotted
   on the run. `pass` / `fail` / `error` (data not there) / `manual` (not automated — never a pass);
   `na` "Không áp dụng": a Spec field with "Bắt buộc" unticked that reads nothing (2026-10-21). Rejected: a Rev id with no snapshot (fields stay editable, so it cannot say what ran).
+  *Amended 2026-10-30:* a sheet the report's file does not hold is not checked (the BA).
 - **ADR 007 — photo against data**: RapidOCR on our own machines only (customer images). *Amended
   2026-10-09 (the BA, via Sơn):* a picture's numbers are read top→bottom and answer the cells
   top→bottom, never derived; a swap is a Fail. Measured cost: V73's "female and male" block
@@ -243,10 +244,6 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **Refresh-token reuse detection revokes EVERY session of the account** — the right answer to a
   stolen token, so never share an account between automation and a person: Playwright driving
   `admin` logged Sơn out twice in one day.
-- **An immutable-snapshot row is editable only while it is a draft** *(promotion candidate)*:
-  editing a published Rev in place rewrites what it claims to have been, with no new row to show
-  it, and bypasses checks that run only on the publish path. To change a published Rev, create a
-  new one; enforced server-side. Field configuration is the deliberate exception (ADR 005).
 - **"Reads as a number" means a plain decimal, never `float()` / `Number()`** — both accept
   scientific notation (a "7E" product code becomes the threshold 7e-12) and `nan`/`inf`. One
   regex, `^[+-]?(\d+(\.\d+)?|\.\d+)$`, shared by the API and the form.
@@ -304,6 +301,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   descendant**: a `fixed inset-0` dialog inside a zoom-in modal rendered at the panel's 448×242
   instead of the 1440×1000 viewport (2026-09-14). An overlay opened over an overlay must be its
   SIBLING, not its child.
+- **A mask that centres with `items-center` and does not scroll cuts a taller dialog at both ends**
+  *(promotion candidate)*: the page behind is locked, so nothing reaches them (the BA, 2026-10-28).
+  Mask `overflow-y-auto`, panel `my-auto`.
 - **Reversing one direction of an optimisation creates the symmetric bug**
   *(promotion candidate)*: one request per zone re-downloaded every picture on any change; one request per
   anchor fired 80 for a single field (~8 s of pure overhead). Cache per anchor AND coalesce a

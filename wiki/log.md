@@ -73,3 +73,4 @@
 ## [2026-10-27] ingest | [[ok2ship-ai]]: ADR 010 amended (a run can be stopped); Biên line follows ADR 014; a layout repeated in every route is one React instance; budget cuts | @claude-code
 ## [2026-10-28] ingest | [[approval-gates]]: a screen no reference draws gets up to three designs before the plan; [[ok2ship-ai]]: the OK2SHIP design canvas | @claude-code
 ## [2026-10-29] ingest | [[ok2ship-ai]]: module docs are checked against their commits after every pull; cut the MR-state lesson ([[approval-gates]] covers it) | @claude-code
+## [2026-10-30] ingest | [[son]]: standard 6, trace every reader and writer before scoping a fix; [[ok2ship-ai]]: ADR 006 amended (a sheet the file lacks is not checked); a tall dialog needs a scrolling mask; cut the stale draft-snapshot lesson (ADR 020) | @claude-code

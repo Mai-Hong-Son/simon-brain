@@ -2,7 +2,7 @@
 title: Sơn
 type: entity
 status: stable
-updated: 2026-10-18
+updated: 2026-10-30
 tags: [user, preferences, standards]
 sources: [ai-company/.claude/agents (dev-frontend, dev-mobile), feedback memory 07-08/2026]
 read_when: always
@@ -70,3 +70,5 @@ From Sơn's direct feedback after agents fell short:
    no reference mean, no table of the technical numbers behind a verdict; a measured threshold is
    fixed in code, not a field setting. (2026-10-12, [[ok2ship-ai]]: four rounds trimming the
    histogram result.)
+6. **Before proposing a fix's scope, find every reader and writer of what it changes; mark what
+   you did not check "chưa kiểm"** (2026-10-29, [[ok2ship-ai]]: a hidden sheet still counted as Lỗi).
