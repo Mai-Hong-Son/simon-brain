@@ -2,7 +2,7 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-10-06
+updated: 2026-10-31
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
 read_when: always
@@ -62,3 +62,6 @@ rule and one line of why; the measured case behind each rule is on the page or l
    - **Rendering does not reveal what a LIBRARY's config declares or fetches.** Drive the page and
      watch the network before writing a claim about third-party behaviour down: a library's docs
      and its behaviour in your build are two different sources.
+   - **A design and its code change together** (Sơn, 2026-10-31): draw a case the design lacks
+     before it ships, or regenerate the artboard from the render; compare the backend's screen text
+     too, and hand a UI review the artboard. (Case: [[ok2ship-ai]].)

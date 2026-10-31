@@ -201,7 +201,7 @@ when that work needs it:
 | A lesson true only of this feature's data | its ADR, not the wiki |
 
 Expect ~50 words on the project page per feature. **One in, one out:** a proposal that would take a
-page over its budget (`scripts/wiki-lint.sh`: 5,000 words for a project page, 2,500 for the
+page over its budget (`scripts/wiki-lint.sh`: 5,000 words for a project page, 3,000 for the
 `always` tier) names the lines it removes in the same proposal.
 
 **Write at final length from the first draft** (Sơn, 2026-10-08). The budget is a ceiling, not room

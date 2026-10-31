@@ -57,13 +57,14 @@ Read, in this order:
   `HANDOFF.md`, or to simon-brain's `open-loops.md` when it is platform-level.
 
 Count the words a write would add (`wc -w` on the page before, plus the proposed text): a
-`project:` page is paid by every session of the project (budget 5,000 words, `always` tier 2,500 —
+`project:` page is paid by every session of the project (budget 5,000 words, `always` tier 3,000 —
 `scripts/wiki-lint.sh`). Draft each line at its final length before counting: the shortest wording
 that keeps the rule and its why (AGENTS.md §3) — never propose a long draft to trim later.
 
 ## Step 4 — Print the table and STOP
 
-Output exactly this, then stop:
+Output exactly this, then stop. The table and every line of the report are in Vietnamese
+(Sơn, 2026-10-31); quoted wiki text stays English.
 
 ```
 ## Proposed wiki updates

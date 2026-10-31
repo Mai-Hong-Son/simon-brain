@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-30
+updated: 2026-10-31
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -156,6 +156,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   dropped its webfont for a system stack — its CSS comment says why: the factory network may
   block the font CDN — every control of ours was a different amount too wide; one button went
   125.3px → 121.4px from a one-line change (2026-09-28).
+- **Text the backend writes for a screen drifts from the design unseen** ([[engineering-rules]]
+  #8): ADR 021's result card passed its tests, which pin the wording written, not the one drawn
+  (2026-10-31). The artboard was regenerated from the code's render and compared line by line.
 - **A claim about a library is measured, not read off its config.** "`googleFont: 'Inter'` makes
   the grid fetch a second copy" went into a commit message; driving the page showed no request at
   all — the setting only declared a family nothing loads.
@@ -169,6 +172,9 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   common), found 10-09. The temporary checklist panel moves too (Flex Bending showed SOP 14/09
   until 2026-10-22). A later decision dropping a row sits beside the BA's "Hệ thống check?", never
   overwrites it: flipping it blamed the checklist for 4 "Không" rows where it has 2.
+- **Configuration and suggestions belong to one Rev**: a report filed on Rev B reads "chưa cấu
+  hình field nào" while Rev C is configured (BC-000004, 2026-10-31). Before debugging a report's
+  checks, read which Rev it chose.
 - **Render-measure our own screens without a real account**: a second Vite port, Playwright routing
   `http://localhost:<port>/api/**` to fakes (`**/api/**` also swallows the `src/api/*.ts` modules
   and the page renders blank) and an unsigned JWT — the shared-account trap below never arises.
@@ -270,21 +276,14 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   group** (Sơn: 300 pin rows scrolled too far) — items to look at first, matches last, every group
   folded at start.
 - **Deploy skew: a field the API may not send yet is `undefined`, not `null`, and an absent
-  number is not a zero** *(promotion candidate)*. A field added together with the UI that reads
-  it is missing for as long as the two deploys are apart: `run === null` let `undefined` through
-  and one cell took down the whole report list (2026-09-16); an old run's missing `failed_total`
-  printed "20/0 cặp lệch" (2026-09-18). Use `== null` / `?.`, never let one row take the others
-  with it, and shape a response so an older frontend still shows the right thing (ADR 010's
-  `summary`). To tell skew from bad data in one step, read what is actually deployed:
-  `/api/openapi.json` on the dev site listed 48 paths that day against the repo's 50. A new
-  **enum value** is worse: a frontend that indexes a table by `check_type` throws on one it does
-  not know, so a new check type ships frontend first, and display code falls back to the raw name.
-  A new per-row state reuses one every build renders (Void X-ray's "review" is stored as `manual`).
-  Renaming a field is both skews at once: an update endpoint that copies every field wipes the
-  value when one side is older — send it under both names for a release, backend first
-  (`category` → `sheet_name`, 2026-10-09). A new field saved through a form ships backend first: an
-  older API drops it silently (`extra="ignore"`), an older form on resave — nobody saves that
-  configuration between the two deploys (Biên, 2026-10-21).
+  number is not a zero** *(promotion candidate)*: `run === null` let `undefined` through and one
+  cell took down the report list (2026-09-16); a missing `failed_total` printed "20/0 cặp lệch".
+  Use `== null` / `?.`, never let one row take the others, shape a response an older frontend still
+  reads (ADR 010's `summary`), and tell skew from bad data by the dev site's `/api/openapi.json`.
+  A new enum value ships frontend first (a table indexed by `check_type` throws); a new per-row
+  state reuses one every build renders (`manual`); a renamed field goes out under both names,
+  backend first (`category` → `sheet_name`); a new form field ships backend first, since an older
+  API drops it (`extra="ignore"`).
 - **"Absent from the failures" means "agreed" only for the shape it was written for**: the
   photo dialog showed every chart and X-ray picture "khớp", a FAIL included
   (2026-10-04..06).
@@ -339,7 +338,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
 - **Prove a teammate's work survived a merge by content** *(promotion candidate)*: `git diff
   origin/main HEAD -- <their files>`, then blame every removed line. In zsh pass the list as an
   array — an unsplit `$F` matched no path and printed an empty diff that read as "identical"
-  (2026-10-12).
+  (2026-10-12); an unsplit `$T` of test paths made pytest run none (2026-10-30).
 - **Gate everything chained after `git commit` on its exit code** *(promotion candidate)*: a
   pre-commit hook rejected a commit, the chain still pushed the old branch, and `git worktree
   remove --force` deleted the uncommitted fix.
