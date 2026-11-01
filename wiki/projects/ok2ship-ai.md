@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-10-31
+updated: 2026-11-01
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
 read_when: project:ok2ship-ai
@@ -64,7 +64,7 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   instead of the revision.
 - **ADR 006 — check results**: a run row + a row per field, the field's configuration snapshotted
   on the run. `pass` / `fail` / `error` (data not there) / `manual` (not automated — never a pass);
-  `na` "Không áp dụng": a Spec field with "Bắt buộc" unticked that reads nothing (2026-10-21). Rejected: a Rev id with no snapshot (fields stay editable, so it cannot say what ran).
+  `na` "Không áp dụng": a Spec field with "Bắt buộc" unticked that reads nothing (2026-10-21) — a configuration fault (a deleted parameter, an unusable limit) stays `error` (Sơn, 2026-10-31). Rejected: a Rev id with no snapshot (fields stay editable, so it cannot say what ran).
   *Amended 2026-10-30:* a sheet the report's file does not hold is not checked (the BA).
 - **ADR 007 — photo against data**: RapidOCR on our own machines only (customer images). *Amended
   2026-10-09 (the BA, via Sơn):* a picture's numbers are read top→bottom and answer the cells
@@ -286,7 +286,8 @@ Each line is the decision; the ADR (`docs/decisions/`) holds its measurements an
   API drops it (`extra="ignore"`).
 - **"Absent from the failures" means "agreed" only for the shape it was written for**: the
   photo dialog showed every chart and X-ray picture "khớp", a FAIL included
-  (2026-10-04..06).
+  (2026-10-04..06). So does a count: "1/3 cặp không đạt" read as two passes beside an unread
+  pair; a count names what it did not judge (2026-11-01).
 - **React crashes when something else edits the DOM** *(promotion candidate)*: a browser
   translator moved a text node and the ErrorBoundary took the page (the BA, 2026-09-16/22). Opt out
   of translation (`translate="no"` + notranslate meta), make `removeChild`/`insertBefore` skip a

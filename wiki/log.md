@@ -76,3 +76,4 @@
 ## [2026-10-30] ingest | [[son]]: standard 6, trace every reader and writer before scoping a fix; [[ok2ship-ai]]: ADR 006 amended (a sheet the file lacks is not checked); a tall dialog needs a scrolling mask; cut the stale draft-snapshot lesson (ADR 020) | @claude-code
 ## [2026-10-31] ingest | [[engineering-rules]] #8: a design and its code change together; [[son]]: side worktrees never hold `main`; [[ok2ship-ai]]: config belongs to one Rev, backend text drifts from the design, zsh `$T`; Deploy skew tightened; wrap-up reports in Vietnamese | @claude-code
 ## [2026-10-31] lint | `always` tier budget 2,500 → 3,000 words (Sơn: cut nothing to fit the new rules); AGENTS.md §3, wiki-lint.sh and both skills updated; wiki-lint.sh seen to pass at 3,000 and fire at 2,500 | @claude-code
+## [2026-11-01] ingest | [[ok2ship-ai]]: ADR 006 — a configuration fault is never "Không áp dụng"; "absent from the failures" lesson extended to counts that hide an unread pair | @claude-code
