@@ -104,8 +104,10 @@ page with no reader is merged into one that has, or deleted.
 
 A converted project's lessons (AGENTS.md §0) load from its repo, in two ways:
 
-- **Needed by every session** → `@docs/lessons/<area>.md` in the repo's `CLAUDE.md`. An import inside
-  the repo needs no approval and also loads in a worktree of that repo.
+- **Needed by every session** → `@docs/lessons/<area>.md` in the repo's `CLAUDE.md`. Opened at the
+  root of the repo or of a worktree of it, this needs no approval. Opened in a subdirectory, a
+  nested repo or a worktree under the root, the import is skipped without a warning, so sessions
+  start at the root.
 - **Needed only when touching one area** → a `paths:` frontmatter on the file, plus a relative
   symlink `.claude/rules/<area>.md` → `../../docs/lessons/<area>.md`. `.gitignore` carries
   `.claude/*` and `!.claude/rules/`, so the link is committed and local settings are not.
@@ -118,8 +120,8 @@ inside a rule loads at session start, whatever the rule's `paths:`. A file outsi
 root never matches, even under `**/*.tsx`, so in a project with tiers a side worktree goes in
 `<root>/.claude/worktrees/<slug>/<tier>/` and the rule says `**/<tier>/**`. Neither vite nor
 `uvicorn --reload` reacted to a file there (their watched folders are the tiers). A flat repo has
-no such place, since its server watches the root: not measured there, so its worktrees stay outside and
-its path rules do not reach them.
+no such place, since its server watches the root: not measured there, so its worktrees stay
+outside, and a session opened at the main tree does not get path rules for them.
 
 After changing an import, prove it loads: start a fresh non-interactive session (`claude -p`) in
 the directory concerned and have it quote a line of the imported page. The session that made the

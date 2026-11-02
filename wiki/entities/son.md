@@ -31,7 +31,7 @@ Owner of this system. Every agent working with Sơn needs these facts.
   spent on a branch that did not carry the change). Say which branch `localhost` is on every time
   it changes, merge what he needs to see into one branch and check it out for him, and leave the
   tree on `main` when the work is done. Work that needs another branch goes in a `git worktree`
-  outside the tree he tests on, so his dev server never reloads under him: with tiers, in
+  outside the folders he tests on, so his dev server never reloads under him: with tiers, in
   `<root>/.claude/worktrees/<slug>/<tier>/`, where path rules still load ([[simon-platform]]). When
   that tree holds uncommitted work, do not switch it: serve the worktrees on other ports against a
   copy of the database and give him that URL (2026-10-18). Side worktrees use a detached HEAD,

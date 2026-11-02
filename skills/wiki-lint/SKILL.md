@@ -45,8 +45,7 @@ One table, severity first, each row one fix:
 ```
 
 Then: questions worth digging into, sources worth finding. Stop. Sơn picks rows by number;
-fix only those, append one `lint | full: …` line to `wiki/log.md` (only a full pass resets the
-script's ingest count; a budget change or a trim is plain `lint | …`), commit `wiki(lint): ...`, push.
+fix only those, append one `lint | full: …` line to `wiki/log.md` (AGENTS.md §2), commit `wiki(lint): ...`, push.
 
 ## Rules
 

@@ -11,8 +11,8 @@ repo's `AGENTS.md`.
 ## Procedure
 
 1. Read: the `wiki/projects/<project>.md` page (if any), HANDOFF/PROGRESS/`docs/decisions/` and
-   `docs/lessons/` in the product repo, and the milestone's git log. Before a repo is deleted this
-   retro is mandatory: what is only in the repo goes with it.
+   `docs/lessons/` in the product repo, and the milestone's git log. Before a converted project's
+   repo is deleted (AGENTS.md §0) this retro is mandatory: what is only in the repo goes with it.
 2. Identify: (a) mistakes that cost time, (b) procedures/patterns repeated ≥2 times,
    (c) decisions worth recording.
 3. Layer each lesson per AGENTS.md §3 — **name the reader first** (who needs it, at what moment):

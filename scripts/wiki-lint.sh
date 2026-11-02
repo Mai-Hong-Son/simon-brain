@@ -124,8 +124,11 @@ report "${#out[@]}" "Unresolved ⚠️ Contradiction markers" "${out[@]+"${out[@
 out=()
 while IFS= read -r l; do out+=("$l"); done < <(grep -rn -i 'promotion candidate' "$WIKI/projects" | sed "s|$WIKI/projects/||" | cut -c1-110)
 # A converted project's lessons live in its repo (AGENTS.md §0), so the tags are read there too.
+# converted_page: a project's own page (other pages may be imported by it too) carrying the block.
+converted_page() { local r; r="$(fm "$1" read_when)"; [ "$r" = "project:$(slug "$1")" ] && grep -q '<!-- adr-list:start -->' "$1"; }
 for p in $(pages); do
-  r="$(fm "$p" read_when)"; [[ "$r" == project:* ]] || continue
+  converted_page "$p" || continue
+  r="$(fm "$p" read_when)"
   d="$(project_dir "${r#project:}")"; [ -n "$d" ] && [ -d "$d/docs/lessons" ] || continue
   while IFS= read -r l; do out+=("$l"); done < <(grep -rn -i 'promotion candidate' "$d/docs/lessons" | sed "s|$d/docs/lessons/|${r#project:}: lessons/|" | cut -c1-110)
 done
@@ -133,9 +136,9 @@ report "${#out[@]}" "Promotion candidates tagged in project pages (§3: ≥2 pro
 
 # ---------------------------------------------------------------- 12. log cadence
 # Only a full pass counts ("lint | full: …"): every line tagged lint used to reset this, so a budget
-# change or a one-page trim made a wiki 18 ingests past its last health check read as 1.
-ingests=$(awk '/\] lint \| full/{n=0} /\] ingest \|/{n++} END{print n+0}' "$WIKI/log.md")
-last_lint=$(grep -o '^## \[[0-9-]*\] lint | full' "$WIKI/log.md" | tail -1 | grep -o '[0-9-]\{10\}')
+# change or a one-page trim read as a recent health check.
+ingests=$(awk '/\] lint \| full:/{n=0} /\] ingest \|/{n++} END{print n+0}' "$WIKI/log.md")
+last_lint=$(grep -o '^## \[[0-9-]*\] lint | full:' "$WIKI/log.md" | tail -1 | grep -o '[0-9-]\{10\}')
 bad_log=$(grep -c -v -E '^(## \[[0-9]{4}-[0-9]{2}-[0-9]{2}\] (ingest|query|lint) \| .* \| @[a-z-]+$|#|>|$)' "$WIKI/log.md")
 report "$ingests" "Ingests since last full lint (${last_lint:-never}; lint is due every $LINT_EVERY)"
 report "$bad_log" "log.md lines not in the fixed format"
@@ -215,18 +218,20 @@ report "${#out[@]}" "OVER BUDGET — context loaded automatically" "${out[@]+"${
 # ---------------------------------------------------------------- 15. decision lists (AGENTS.md §0: generated from the ADRs, so any difference is drift)
 out=()
 for p in $(pages); do
-  r="$(fm "$p" read_when)"; [[ "$r" == project:* ]] || continue
-  s="$(slug "$p")"; err="$(mktemp)"
-  want="$("$BRAIN/scripts/compile-project.sh" "${r#project:}" 2>"$err")"; rc=$?
-  case "$rc" in
-    3|4) rm -f "$err"; continue ;;   # not converted, or not on this machine (reported above)
-    1) while IFS= read -r l; do out+=("$s: $l"); done < "$err" ;;
-  esac
+  r="$(fm "$p" read_when)"; s="$(slug "$p")"; [ "$r" = "project:$s" ] || continue   # the project's own page
+  err="$(mktemp)"
+  want="$("$BRAIN/scripts/compile-project.sh" "$s" 2>"$err")"; rc=$?
+  [ "$rc" = 1 ] && while IFS= read -r l; do out+=("$s: $l"); done < "$err"
   rm -f "$err"
-  if ! grep -q '<!-- adr-list:start -->' "$p"; then out+=("$s: converted, but the page has no adr-list block"); continue; fi
+  [ "$rc" = 4 ] && continue   # not on this machine (reported above)
+  if ! grep -q '<!-- adr-list:start -->' "$p"; then
+    [ "$rc" = 3 ] || out+=("$s: ADRs carry Decision: lines, but the page has no adr-list block")
+    continue
+  fi
   have="$(awk '/<!-- adr-list:start -->/{f=1;next} /<!-- adr-list:end -->/{f=0} f' "$p")"
+  # A list on the page with no Decision: line left in the repo falls through and reads as page-only.
   while IFS= read -r l; do out+=("$s: $l"); done < <(
-    diff <(printf '%s\n' "$have") <(printf '%s\n' "$want") | sed -n -E 's/^< (.*)/page only: \1/p; s/^> (.*)/ADRs only: \1/p' | cut -c1-120)
+    diff <(printf '%s\n' "$have") <(printf '%s\n' "$want") | sed -n -E 's/^< (.+)/page only: \1/p; s/^> (.+)/ADRs only: \1/p' | cut -c1-120)
 done
 report "${#out[@]}" "Decision lists out of step with the repo's ADRs (regenerate: scripts/compile-project.sh)" "${out[@]+"${out[@]}"}"
 
