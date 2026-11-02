@@ -48,7 +48,8 @@ Read, in this order:
   `docs/lessons/<area>.md`, through the repo's own MR, after the same table and the same number
   from Sơn, and for every lesson ask "could another project use this?". A new or changed ADR needs
   its `Decision:` line, and the page's list is replaced with the output of
-  `~/Documents/simon-brain/scripts/compile-project.sh <name>`, never composed by hand.
+  `~/Documents/simon-brain/scripts/compile-project.sh <name>`, never composed by hand. The script
+  reads the root checkout, so an ADR still on a branch reaches the list after its merge and a pull.
 - §3, reader first: who needs this, at what moment? It must land on a page whose `read_when` is
   true (§0) — a rule for every session goes into a page marked `always`, never into a new page
   nobody loads.

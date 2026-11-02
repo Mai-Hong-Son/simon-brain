@@ -28,7 +28,8 @@ repo's `AGENTS.md`.
 4. Present a numbered list with rationale, **at most 5 items** (forces prioritization).
    STOP and wait for Sơn's per-item approval.
 5. Only after approval: write the chosen items via the ingest workflow (AGENTS.md §5.1),
-   update `index.md`, append one line to `log.md`, commit per AGENTS.md §6.
+   update `index.md`, append one line to `log.md`, commit per AGENTS.md §6. What goes to a converted
+   project's repo goes through that repo's MR; the page's list is then regenerated.
 
 ## Rules
 

@@ -105,9 +105,9 @@ page with no reader is merged into one that has, or deleted.
 A converted project's lessons (AGENTS.md §0) load from its repo, in two ways:
 
 - **Needed by every session** → `@docs/lessons/<area>.md` in the repo's `CLAUDE.md`. Opened at the
-  root of the repo or of a worktree of it, this needs no approval. Opened in a subdirectory, a
-  nested repo or a worktree under the root, the import is skipped without a warning, so sessions
-  start at the root.
+  root of a checkout, its own import needs no approval. Opened in a subdirectory, a nested repo or
+  a worktree under that root, the outer repo's import is skipped without a warning (its `CLAUDE.md`
+  text still loads), so sessions start at the root.
 - **Needed only when touching one area** → a `paths:` frontmatter on the file, plus a relative
   symlink `.claude/rules/<area>.md` → `../../docs/lessons/<area>.md`. `.gitignore` carries
   `.claude/*` and `!.claude/rules/`, so the link is committed and local settings are not.

@@ -32,9 +32,10 @@ list is the script's output, never composed by hand, and lint diffs it against t
 and people and clients (`entities/`), which outlast any one product.
 
 **A project is converted once its page carries that block.** Until then none of this applies to it:
-its page stays as it is and is never cut to fit this section, lessons still go on the page, lint
-skips it. Convert in one pass: the `Decision:` lines and the lessons into the repo through its MR
-first, then the block on the page and the lessons cut from it.
+its page stays as it is and is never cut to fit this section, lessons still go on the page, and
+lint says nothing about it unless its ADRs already carry `Decision:` lines, the sign of a conversion
+left half done. Convert in one pass: the `Decision:` lines and the lessons into the repo through its
+MR first, then the block on the page, and a lesson is cut from the page only once it is found in the repo.
 
 `agents/`, `skills/` and `scripts/` are **capability config of the platform** (see wiki `entities/simon-platform`),
 not wiki content. Don't ingest wiki content there or vice versa.
@@ -142,7 +143,7 @@ present-tense rule.
 
 ```
 ## [2026-09-07] ingest | Karpathy — LLM Wiki | @claude-code
-## [2026-09-07] lint | 3 orphans, 1 contradiction in [[pricing]] | @researcher
+## [2026-09-07] lint | full: 3 orphans, 1 contradiction in [[pricing]] | @researcher
 ```
 
 Fixed format `## [YYYY-MM-DD] <ingest|query|lint> | <topic> | @<agent>` so it stays greppable:

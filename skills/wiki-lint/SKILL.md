@@ -17,7 +17,7 @@ cd ~/Documents/simon-brain && git pull --rebase && ./scripts/wiki-lint.sh
 The script is the ground truth for: frontmatter, broken wikilinks, orphans, pages missing from
 `index.md`, hubs over 100 lines, content pages over 100 lines (context cost when @imported),
 bullets over 10 lines, §2 narrative wording, stale pages, contradiction markers, promotion
-candidates, ingests since the last lint, malformed log lines, declared readers (including
+candidates, ingests since the last full lint, malformed log lines, declared readers (including
 whether this machine ever approved a repo's external @imports — unapproved, the page is silently
 skipped), a converted project's decision list against its ADRs, context budgets (always tier ≤ 3,000 words, each project-imported page ≤ 5,000), and
 `open-loops.md` lines older than 14 days. Quote its counts; do not recount. An OVER BUDGET line

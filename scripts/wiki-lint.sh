@@ -124,8 +124,8 @@ report "${#out[@]}" "Unresolved ⚠️ Contradiction markers" "${out[@]+"${out[@
 out=()
 while IFS= read -r l; do out+=("$l"); done < <(grep -rn -i 'promotion candidate' "$WIKI/projects" | sed "s|$WIKI/projects/||" | cut -c1-110)
 # A converted project's lessons live in its repo (AGENTS.md §0), so the tags are read there too.
-# converted_page: a project's own page (other pages may be imported by it too) carrying the block.
-converted_page() { local r; r="$(fm "$1" read_when)"; [ "$r" = "project:$(slug "$1")" ] && grep -q '<!-- adr-list:start -->' "$1"; }
+# converted_page: a page a project imports, carrying the block (a client page imported too has none).
+converted_page() { [[ "$(fm "$1" read_when)" == project:* ]] && grep -q '<!-- adr-list:start -->' "$1"; }
 for p in $(pages); do
   converted_page "$p" || continue
   r="$(fm "$p" read_when)"
@@ -218,9 +218,12 @@ report "${#out[@]}" "OVER BUDGET — context loaded automatically" "${out[@]+"${
 # ---------------------------------------------------------------- 15. decision lists (AGENTS.md §0: generated from the ADRs, so any difference is drift)
 out=()
 for p in $(pages); do
-  r="$(fm "$p" read_when)"; s="$(slug "$p")"; [ "$r" = "project:$s" ] || continue   # the project's own page
+  r="$(fm "$p" read_when)"; s="$(slug "$p")"; [[ "$r" == project:* ]] || continue
+  name="${r#project:}"
+  # Pages a project merely imports (a client's) have no block and no list to answer for.
+  [ "$name" = "$s" ] || converted_page "$p" || continue
   err="$(mktemp)"
-  want="$("$BRAIN/scripts/compile-project.sh" "$s" 2>"$err")"; rc=$?
+  want="$("$BRAIN/scripts/compile-project.sh" "$name" 2>"$err")"; rc=$?
   [ "$rc" = 1 ] && while IFS= read -r l; do out+=("$s: $l"); done < "$err"
   rm -f "$err"
   [ "$rc" = 4 ] && continue   # not on this machine (reported above)
@@ -229,7 +232,11 @@ for p in $(pages); do
     continue
   fi
   have="$(awk '/<!-- adr-list:start -->/{f=1;next} /<!-- adr-list:end -->/{f=0} f' "$p")"
-  # A list on the page with no Decision: line left in the repo falls through and reads as page-only.
+  # A block over ADRs with no Decision: line: an empty list must not read as "no decisions".
+  # A list on the page with no line left in the repo falls through and reads as page-only.
+  if [ "$rc" = 3 ] && [ -z "$have" ] && compgen -G "$(project_dir "$name")/docs/decisions/[0-9]*.md" >/dev/null; then
+    out+=("$s: the page has an adr-list block, but no ADR carries a Decision: line")
+  fi
   while IFS= read -r l; do out+=("$s: $l"); done < <(
     diff <(printf '%s\n' "$have") <(printf '%s\n' "$want") | sed -n -E 's/^< (.+)/page only: \1/p; s/^> (.+)/ADRs only: \1/p' | cut -c1-120)
 done
