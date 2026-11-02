@@ -27,7 +27,7 @@ is archived with its history.
 ```
 SIMON-BRAIN = FOUNDATION (this repo — under every session, every machine, git-synced)
 ├── wiki/      distilled memory & knowledge
-├── agents/    capability pool (not a "team"; solo agent by default)
+├── agents/    capability pool, empty by default; setup.sh links what is added (solo agent by default)
 ├── skills/    packaged procedures (symlinked into ~/.claude/skills via setup.sh)
 ├── AGENTS.md  wiki operating rules
 └── setup.sh   rebuilds the foundation on a new machine

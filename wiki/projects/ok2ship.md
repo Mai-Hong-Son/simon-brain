@@ -28,7 +28,7 @@ approved. This is the overview page — details live on child pages.
 
 - [[ok2ship-ai]] — the real 🚀 product, built module by module along Desoft's WBS; what is built
   so far is in its repo. Its AI/data modules **reuse the spikes' findings, never re-derive
-  them**.
+  them**; where a spike and a product ADR disagree, the ADR wins.
 - [[ok2ship-anomaly]] — 🧪 spike for req #3 (image vs golden, one-class AI).
 - [[ok2ship-report-parser]] — 🧪 spike for reqs #1/#2/#4/#5 (reading real factory Excel reports).
   Deliberately separate from anomaly: entirely different substance (tables of numbers vs images).

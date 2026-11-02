@@ -79,3 +79,4 @@
 ## [2026-11-01] ingest | [[ok2ship-ai]]: ADR 006 — a configuration fault is never "Không áp dụng"; "absent from the failures" lesson extended to counts that hide an unread pair | @claude-code
 ## [2026-11-02] lint | full: 13 findings reported; the project repo becomes the source and the wiki is compiled from it (AGENTS.md §0), [[simon-platform]] records how lessons load from a repo and which shapes fail, [[son]] places side worktrees, wiki-lint.sh diffs decision lists and counts only full passes | @claude-code
 ## [2026-11-02] ingest | [[ok2ship-ai]] and [[native-skline-chart]] converted (AGENTS.md §0): lessons and decisions without an ADR moved to their repos, pages hold generated decision lists; [[mektec-desoft]] points at the requirements' new path | @claude-code
+## [2026-11-02] lint | rows 3, 6, 7, 9, 11, 13 of the full pass: spike vs ADR, two rules into #1, stale index and pointers | @claude-code

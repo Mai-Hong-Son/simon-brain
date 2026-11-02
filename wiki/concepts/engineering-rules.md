@@ -26,6 +26,11 @@ rule and one line of why; the measured case behind each rule is on the page or l
    **The claims you check least are the ones that support what you are proposing — check those
    first.** An anecdote that makes your own case arrives already believed. (Case: `wiki/log.md`,
    2026-10-01 — the "2 of 16" correction.)
+   **A claim about a third party is checked at its source, never from a summary** — drive the page
+   and watch the network; a library's docs, its config and a web summary of a spec sheet are not what
+   it does in your build. (Cases: [[ok2ship-ai]], [[vn30f-bot]].)
+   **A reader tuned on a set is trusted only on a set it never saw** — keep data back. (Cases:
+   [[ok2ship-ai]], [[ok2ship-anomaly]].)
    **A monitor must tell silence from health** — measure the thing (messages arriving, a clock on
    the server), never the component's word or the viewer's own count. (Cases:
    [[vn30f-bot-architecture]], [[ok2ship-ai]].)
@@ -59,9 +64,6 @@ rule and one line of why; the measured case behind each rule is on the page or l
      converges, because each is off by a different amount; find the rule that generates them. It
      often lives in the reference's shared stylesheet — diff its tokens between deliveries, and
      read its comments for the why that pixels cannot give.
-   - **Rendering does not reveal what a LIBRARY's config declares or fetches.** Drive the page and
-     watch the network before writing a claim about third-party behaviour down: a library's docs
-     and its behaviour in your build are two different sources.
    - **A design and its code change together** (Sơn, 2026-10-31): draw a case the design lacks
      before it ships, or regenerate the artboard from the render; compare the backend's screen text
      too, and hand a UI review the artboard. (Case: [[ok2ship-ai]].)

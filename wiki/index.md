@@ -2,7 +2,7 @@
 title: Index
 type: hub
 status: active
-updated: 2026-10-01
+updated: 2026-11-02
 ---
 
 # Index — simon-brain wiki
@@ -18,7 +18,7 @@ updated: 2026-10-01
 
 ## Entities
 
-- [[son]] — expertise, preferred working style, 5 standards expected of agents (survey tools, cross-signals, model the object, add nothing that was not asked, QA's screens in QA's words).
+- [[son]] — expertise, preferred working style, 6 standards expected of agents (survey tools, cross-signals, model the object, add nothing that was not asked, QA's screens in QA's words, find every reader and writer).
 - [[mektec-desoft]] — OK2SHIP's client & vendor; GitLab/Rancher/Loki infra; the BA's RBAC terminology trap.
 - [[simon-platform]] — the current foundation model: simon-brain + products/ + spikes/; the single-source-of-truth test; how a page gets read (`read_when`); why the ai-company model was dropped.
 
