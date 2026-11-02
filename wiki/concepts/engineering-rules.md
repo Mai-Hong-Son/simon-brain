@@ -2,7 +2,7 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-10-31
+updated: 2026-11-02
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
 read_when: always
@@ -46,7 +46,7 @@ rule and one line of why; the measured case behind each rule is on the page or l
 8. **UI built against a reference: verify the RENDER, not the source** — render it with
    Playwright and extract real computed values (`getComputedStyle`, `getBoundingClientRect`);
    never approximate with framework defaults. Each line below was paid for in [[ok2ship-ai]],
-   which keeps the measurements.
+   whose repo keeps the measurements.
    - **Measuring shows where you differ; it does not tell you to copy.** A mockup is a prototype
      and carries its own bugs — match its intent, not its defects, and say in the code which is
      which.

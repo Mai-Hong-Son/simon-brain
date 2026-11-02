@@ -339,7 +339,7 @@ At the end of each session (or when Sơn says "wrap up"), output exactly this ta
 | # | Page | Action | Content (1 sentence) | Quality gate |
 |---|------|--------|----------------------|--------------|
 | 1 | concepts/prompt-caching.md | create | 1h cache TTL saves ~90% input cost | ✅ still true in a month |
-| 2 | projects/ok2ship-ai.md | edit | Add rate-limit lesson + concept link | ✅ |
+| 2 | projects/example.md | edit | Add rate-limit lesson + concept link | ✅ |
 | 3 | index.md | edit | Add 1 line for the new page | ✅ |
 
 Not proposed (failed the quality gate): <short list + reasons>
