@@ -19,6 +19,8 @@ done
 
 pages() { find "$WIKI/concepts" "$WIKI/entities" "$WIKI/projects" -name '*.md' | sort; }
 slug()  { basename "$1" .md; }
+IFS=: read -ra project_roots <<< "${PROJECT_ROOTS:-$HOME/Documents/products:$HOME/Documents/spikes}"
+project_dir() { local d=""; for r in "${project_roots[@]}"; do [ -d "$r/$1" ] && d="$r/$1"; done; echo "$d"; }
 # days_since YYYY-MM-DD → whole days from that midnight to today's; fails on a date that does not
 # exist (BSD date silently rolls 2026-02-30 over to 03-02, so the round trip is checked).
 today_s=$(date -j -f '%Y-%m-%d %H:%M:%S' "$(date +%Y-%m-%d) 00:00:00" +%s)
@@ -121,13 +123,21 @@ report "${#out[@]}" "Unresolved ⚠️ Contradiction markers" "${out[@]+"${out[@
 # ---------------------------------------------------------------- 11. promotion candidates (§3)
 out=()
 while IFS= read -r l; do out+=("$l"); done < <(grep -rn -i 'promotion candidate' "$WIKI/projects" | sed "s|$WIKI/projects/||" | cut -c1-110)
+# A converted project's lessons live in its repo (AGENTS.md §0), so the tags are read there too.
+for p in $(pages); do
+  r="$(fm "$p" read_when)"; [[ "$r" == project:* ]] || continue
+  d="$(project_dir "${r#project:}")"; [ -n "$d" ] && [ -d "$d/docs/lessons" ] || continue
+  while IFS= read -r l; do out+=("$l"); done < <(grep -rn -i 'promotion candidate' "$d/docs/lessons" | sed "s|$d/docs/lessons/|${r#project:}: lessons/|" | cut -c1-110)
+done
 report "${#out[@]}" "Promotion candidates tagged in project pages (§3: ≥2 projects → concept)" "${out[@]+"${out[@]}"}"
 
 # ---------------------------------------------------------------- 12. log cadence
-ingests=$(awk '/\] lint \|/{n=0} /\] ingest \|/{n++} END{print n+0}' "$WIKI/log.md")
-last_lint=$(grep -o '^## \[[0-9-]*\] lint' "$WIKI/log.md" | tail -1 | grep -o '[0-9-]\{10\}')
+# Only a full pass counts ("lint | full: …"): every line tagged lint used to reset this, so a budget
+# change or a one-page trim made a wiki 18 ingests past its last health check read as 1.
+ingests=$(awk '/\] lint \| full/{n=0} /\] ingest \|/{n++} END{print n+0}' "$WIKI/log.md")
+last_lint=$(grep -o '^## \[[0-9-]*\] lint | full' "$WIKI/log.md" | tail -1 | grep -o '[0-9-]\{10\}')
 bad_log=$(grep -c -v -E '^(## \[[0-9]{4}-[0-9]{2}-[0-9]{2}\] (ingest|query|lint) \| .* \| @[a-z-]+$|#|>|$)' "$WIKI/log.md")
-report "$ingests" "Ingests since last lint (${last_lint:-never}; lint is due every $LINT_EVERY)"
+report "$ingests" "Ingests since last full lint (${last_lint:-never}; lint is due every $LINT_EVERY)"
 report "$bad_log" "log.md lines not in the fixed format"
 
 # ---------------------------------------------------------------- 13. readers (AGENTS.md §0: a page declares who reads it, and the declaration must be TRUE)
@@ -161,8 +171,7 @@ for p in $(pages); do
       grep -q "^@.*/$rel\$" "$GLOBAL" || out+=("$s: 'always', but config/global-rules.md has no @import of it")
       always_words=$(( always_words + $(wc -w < "$p" | tr -d ' ') )); loaded+=("$p") ;;
     project:*)
-      name="${r#project:}"; dir=""
-      for d in "$HOME/Documents/products/$name" "$HOME/Documents/spikes/$name"; do [ -d "$d" ] && dir="$d"; done
+      name="${r#project:}"; dir="$(project_dir "$name")"
       if [ -z "$dir" ]; then unverified+=("$s: project '$name' is not on this machine")
       elif ! grep -q "^@.*/$rel\$" "$dir/CLAUDE.md" 2>/dev/null; then
         out+=("$s: '$r', but $name/CLAUDE.md has no @import of it")
@@ -203,7 +212,25 @@ for p in $(pages); do
 done
 report "${#out[@]}" "OVER BUDGET — context loaded automatically" "${out[@]+"${out[@]}"}"
 
-# ---------------------------------------------------------------- 15. open loops left open
+# ---------------------------------------------------------------- 15. decision lists (AGENTS.md §0: generated from the ADRs, so any difference is drift)
+out=()
+for p in $(pages); do
+  r="$(fm "$p" read_when)"; [[ "$r" == project:* ]] || continue
+  s="$(slug "$p")"; err="$(mktemp)"
+  want="$("$BRAIN/scripts/compile-project.sh" "${r#project:}" 2>"$err")"; rc=$?
+  case "$rc" in
+    3|4) rm -f "$err"; continue ;;   # not converted, or not on this machine (reported above)
+    1) while IFS= read -r l; do out+=("$s: $l"); done < "$err" ;;
+  esac
+  rm -f "$err"
+  if ! grep -q '<!-- adr-list:start -->' "$p"; then out+=("$s: converted, but the page has no adr-list block"); continue; fi
+  have="$(awk '/<!-- adr-list:start -->/{f=1;next} /<!-- adr-list:end -->/{f=0} f' "$p")"
+  while IFS= read -r l; do out+=("$s: $l"); done < <(
+    diff <(printf '%s\n' "$have") <(printf '%s\n' "$want") | sed -n -E 's/^< (.*)/page only: \1/p; s/^> (.*)/ADRs only: \1/p' | cut -c1-120)
+done
+report "${#out[@]}" "Decision lists out of step with the repo's ADRs (regenerate: scripts/compile-project.sh)" "${out[@]+"${out[@]}"}"
+
+# ---------------------------------------------------------------- 16. open loops left open
 out=()
 if [ -f "$BRAIN/open-loops.md" ]; then
   while IFS= read -r l; do

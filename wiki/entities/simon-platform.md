@@ -2,7 +2,7 @@
 title: Simon Platform
 type: entity
 status: active
-updated: 2026-10-02
+updated: 2026-11-02
 tags: [platform, architecture, meta]
 sources: [simon-brain-migration-brief.md (2026-09-07)]
 read_when: skill:project-init
@@ -51,8 +51,8 @@ executes, or keep that project outside `~/Documents`.
 | Kind of information | Its one home |
 |---|---|
 | Agent behavior rules + pointer to the wiki | `~/.claude/CLAUDE.md` (kept thin) |
-| Decisions + rationale, lessons, cross-project synthesis | `wiki/` |
-| Current code state, build/test commands, technical conventions | the product repo |
+| Cross-project lessons and synthesis, people, clients; one compiled page per project | `wiki/` |
+| Everything about one project: ADRs, current code state, commands, conventions, lessons | the product repo (AGENTS.md §0) |
 | Work in progress, and what waits on the outside world — one product | the repo's `HANDOFF.md` |
 | What waits on the outside world — the platform itself (wiki, skills, setup) | simon-brain's `open-loops.md` |
 
@@ -102,13 +102,32 @@ not from outside it). Every line added to it is paid by each of those sessions. 
 reached through the skills that write to the wiki, which name it at the step that needs it. A
 page with no reader is merged into one that has, or deleted.
 
+A converted project's lessons (AGENTS.md §0) load from its repo, in two ways:
+
+- **Needed by every session** → `@docs/lessons/<area>.md` in the repo's `CLAUDE.md`. An import inside
+  the repo needs no approval and also loads in a worktree of that repo.
+- **Needed only when touching one area** → a `paths:` frontmatter on the file, plus a relative
+  symlink `.claude/rules/<area>.md` → `../../docs/lessons/<area>.md`. `.gitignore` carries
+  `.claude/*` and `!.claude/rules/`, so the link is committed and local settings are not.
+
+Measured 2026-11-02 with marker files, `claude -p`, Haiku, on a scratch repo: a path rule loads on
+Read and Write of a matching file, for a subagent only in that subagent, and not on Grep. So a plan
+written before any file is read does not have it: what a plan must know stays in the decision list.
+Three shapes silently fail. `paths:` on a file outside `.claude/rules/` never loads. An `@import`
+inside a rule loads at session start, whatever the rule's `paths:`. A file outside the session's
+root never matches, even under `**/*.tsx`, so in a project with tiers a side worktree goes in
+`<root>/.claude/worktrees/<slug>/<tier>/` and the rule says `**/<tier>/**`. Neither vite nor
+`uvicorn --reload` reacted to a file there (their watched folders are the tiers). A flat repo has
+no such place, since its server watches the root: not measured there, so its worktrees stay outside and
+its path rules do not reach them.
+
 After changing an import, prove it loads: start a fresh non-interactive session (`claude -p`) in
 the directory concerned and have it quote a line of the imported page. The session that made the
 change cannot see it — imports are read at session start.
 
 Rejected: "thin pointers, read on demand" for rules — it relies on the session remembering to
 read, and both measurements say it does not. Rejected: splitting a page into a rule file and a
-detail file — the detail file has no reader. Absolute imports are safe because setup.sh fixes the
+detail file that nothing loads — a path rule is different, it has a loader. Absolute imports are safe because setup.sh fixes the
 repo path at `~/Documents/simon-brain`.
 
 ## Agent principle
