@@ -2,7 +2,7 @@
 title: OK2SHIP
 type: hub
 status: active
-updated: 2026-10-01
+updated: 2026-11-02
 tags: [ok2ship, program, qa]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ai-company hub memory 08/2026]
 read_when: on-demand — which spike already proved a requirement, before starting a new AI or data module
@@ -27,8 +27,8 @@ approved. This is the overview page — details live on child pages.
 ## The pieces
 
 - [[ok2ship-ai]] — the real 🚀 product, built module by module along Desoft's WBS; what is built
-  so far is on its own page. Its AI/data modules **reuse the spikes' findings, never re-derive
-  them**.
+  so far is in its repo. Its AI/data modules **reuse the spikes' findings, never re-derive
+  them**; where a spike and a product ADR disagree, the ADR wins.
 - [[ok2ship-anomaly]] — 🧪 spike for req #3 (image vs golden, one-class AI).
 - [[ok2ship-report-parser]] — 🧪 spike for reqs #1/#2/#4/#5 (reading real factory Excel reports).
   Deliberately separate from anomaly: entirely different substance (tables of numbers vs images).

@@ -2,7 +2,7 @@
 title: Default stack
 type: concept
 status: stable
-updated: 2026-09-07
+updated: 2026-11-02
 tags: [stack, backend, frontend, mobile]
 sources: [ai-company/CLAUDE.md (standard tech stack), ~/Documents/products/native-skline-chart/docs/decisions/001-jest-over-vitest.md]
 read_when: skill:project-init
@@ -31,4 +31,4 @@ procedure lives in the `project-init` skill.
 
 - **Password hashing: `pwdlib[argon2]`, NOT passlib** — passlib is stuck on a bcrypt 4.x bug.
 - Token hashing deliberately differs from password hashing: argon2id for passwords
-  (intentionally slow), SHA-256 for tokens (fast, frequent lookups) — see [[ok2ship-ai]].
+  (intentionally slow), SHA-256 for tokens (fast, frequent lookups) — see the `CLAUDE.md` of [[ok2ship-ai]]'s repo.

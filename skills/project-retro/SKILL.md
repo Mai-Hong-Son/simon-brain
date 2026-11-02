@@ -10,23 +10,26 @@ repo's `AGENTS.md`.
 
 ## Procedure
 
-1. Read: the `wiki/projects/<project>.md` page (if any), HANDOFF/PROGRESS/`docs/decisions/` in
-   the product repo, and the milestone's git log.
+1. Read: the `wiki/projects/<project>.md` page (if any), HANDOFF/PROGRESS/`docs/decisions/` and
+   `docs/lessons/` in the product repo, and the milestone's git log. Before a converted project's
+   repo is deleted (AGENTS.md §0) this retro is mandatory: what is only in the repo goes with it.
 2. Identify: (a) mistakes that cost time, (b) procedures/patterns repeated ≥2 times,
    (c) decisions worth recording.
 3. Layer each lesson per AGENTS.md §3 — **name the reader first** (who needs it, at what moment):
    a lesson lands on a page whose `read_when` is true (§0), and a rule for every session goes into
    a page marked `always`, not into a new page nobody loads:
-   - True only for this project → propose writing to `wiki/projects/<project>.md`.
+   - True only for this project → propose writing to `wiki/projects/<project>.md` (converted
+     project, AGENTS.md §0: the repo's `docs/lessons/<area>.md`).
    - Reusable AND already seen in ≥2 projects → propose a `wiki/concepts/` page + a link from
      the project page.
-   - Only 1 project so far but looks general → write to the project page, tag it a
+   - Only 1 project so far but looks general → write it as above, tag it a
      *promotion candidate* (lint will track it).
    - A working standard Sơn expects of agents → propose updating `wiki/entities/son.md`.
 4. Present a numbered list with rationale, **at most 5 items** (forces prioritization).
    STOP and wait for Sơn's per-item approval.
 5. Only after approval: write the chosen items via the ingest workflow (AGENTS.md §5.1),
-   update `index.md`, append one line to `log.md`, commit per AGENTS.md §6.
+   update `index.md`, append one line to `log.md`, commit per AGENTS.md §6. What goes to a converted
+   project's repo goes through that repo's MR; the page's list is then regenerated.
 
 ## Rules
 

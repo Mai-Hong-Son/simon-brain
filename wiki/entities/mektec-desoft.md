@@ -2,7 +2,7 @@
 title: Mektec & Desoft
 type: entity
 status: active
-updated: 2026-10-17
+updated: 2026-11-02
 tags: [client, vendor, ok2ship]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ~/Documents/products/ok2ship-ai/docs/decisions/002, 004]
 read_when: project:ok2ship-ai
@@ -67,7 +67,7 @@ cluster, and a hand edit is erased by the next `helm upgrade`.
 The BA uses RBAC terms **inverted from industry standard**: their "role" = what the industry
 calls `permissions`; their "role group" = industry `roles`. The schema uses standard terms —
 **before any schema meeting, consult the translation table** in ok2ship-ai's
-`docs/design/user-management.md`, or the two sides will talk past each other.
+`docs/features/2026-08-19-user-management/01-requirements.md`, or the two sides will talk past each other.
 
 Requirements channel: the BA sends SRS/Excel files via Downloads; requirements can change after
 a design is locked (happened with RBAC v1→v3) — designs should keep the retreat path cheap. They

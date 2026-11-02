@@ -2,7 +2,7 @@
 title: Non-negotiable engineering rules
 type: concept
 status: stable
-updated: 2026-10-31
+updated: 2026-11-02
 tags: [engineering, rules, security]
 sources: [ai-company/CLAUDE.md (constitution v1, "Non-negotiable engineering principles")]
 read_when: always
@@ -26,6 +26,11 @@ rule and one line of why; the measured case behind each rule is on the page or l
    **The claims you check least are the ones that support what you are proposing — check those
    first.** An anecdote that makes your own case arrives already believed. (Case: `wiki/log.md`,
    2026-10-01 — the "2 of 16" correction.)
+   **A claim about a third party is checked at its source, never from a summary or a config** — a
+   behaviour by driving it and watching what it does in your build, a published fact in the issuer's
+   own document. (Cases: [[ok2ship-ai]], [[vn30f-bot]].)
+   **A reader tuned on a set is trusted only on a set it never saw** — keep data back. (Cases:
+   [[ok2ship-ai]], [[ok2ship-anomaly]].)
    **A monitor must tell silence from health** — measure the thing (messages arriving, a clock on
    the server), never the component's word or the viewer's own count. (Cases:
    [[vn30f-bot-architecture]], [[ok2ship-ai]].)
@@ -46,7 +51,7 @@ rule and one line of why; the measured case behind each rule is on the page or l
 8. **UI built against a reference: verify the RENDER, not the source** — render it with
    Playwright and extract real computed values (`getComputedStyle`, `getBoundingClientRect`);
    never approximate with framework defaults. Each line below was paid for in [[ok2ship-ai]],
-   which keeps the measurements.
+   whose repo keeps the measurements.
    - **Measuring shows where you differ; it does not tell you to copy.** A mockup is a prototype
      and carries its own bugs — match its intent, not its defects, and say in the code which is
      which.
@@ -59,9 +64,6 @@ rule and one line of why; the measured case behind each rule is on the page or l
      converges, because each is off by a different amount; find the rule that generates them. It
      often lives in the reference's shared stylesheet — diff its tokens between deliveries, and
      read its comments for the why that pixels cannot give.
-   - **Rendering does not reveal what a LIBRARY's config declares or fetches.** Drive the page and
-     watch the network before writing a claim about third-party behaviour down: a library's docs
-     and its behaviour in your build are two different sources.
    - **A design and its code change together** (Sơn, 2026-10-31): draw a case the design lacks
      before it ships, or regenerate the artboard from the render; compare the backend's screen text
      too, and hand a UI review the artboard. (Case: [[ok2ship-ai]].)
