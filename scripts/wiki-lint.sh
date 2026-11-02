@@ -125,7 +125,7 @@ out=()
 while IFS= read -r l; do out+=("$l"); done < <(grep -rn -i 'promotion candidate' "$WIKI/projects" | sed "s|$WIKI/projects/||" | cut -c1-110)
 # A converted project's lessons live in its repo (AGENTS.md §0), so the tags are read there too.
 # converted_page: a page a project imports, carrying the block (a client page imported too has none).
-converted_page() { [[ "$(fm "$1" read_when)" == project:* ]] && grep -q '<!-- adr-list:start -->' "$1"; }
+converted_page() { [[ "$(fm "$1" read_when)" == project:* ]] && grep -qx '<!-- adr-list:start -->' "$1"; }
 for p in $(pages); do
   converted_page "$p" || continue
   r="$(fm "$p" read_when)"
@@ -227,14 +227,14 @@ for p in $(pages); do
   [ "$rc" = 1 ] && while IFS= read -r l; do out+=("$s: $l"); done < "$err"
   rm -f "$err"
   [ "$rc" = 4 ] && continue   # not on this machine (reported above)
-  if ! grep -q '<!-- adr-list:start -->' "$p"; then
+  if ! grep -qx '<!-- adr-list:start -->' "$p"; then
     [ "$rc" = 3 ] || out+=("$s: ADRs carry Decision: lines, but the page has no adr-list block")
     continue
   fi
-  have="$(awk '/<!-- adr-list:start -->/{f=1;next} /<!-- adr-list:end -->/{f=0} f' "$p")"
+  have="$(awk '/^<!-- adr-list:start -->$/{f=1;next} /^<!-- adr-list:end -->$/{f=0} f' "$p")"
   # A block over ADRs with no Decision: line: an empty list must not read as "no decisions".
   # A list on the page with no line left in the repo falls through and reads as page-only.
-  if [ "$rc" = 3 ] && [ -z "$have" ] && compgen -G "$(project_dir "$name")/docs/decisions/[0-9]*.md" >/dev/null; then
+  if [ "$rc" = 3 ] && [ -z "$have" ] && ls "$(project_dir "$name")"/docs/decisions/[0-9]*.md >/dev/null 2>&1; then
     out+=("$s: the page has an adr-list block, but no ADR carries a Decision: line")
   fi
   while IFS= read -r l; do out+=("$s: $l"); done < <(
