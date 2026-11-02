@@ -26,9 +26,9 @@ rule and one line of why; the measured case behind each rule is on the page or l
    **The claims you check least are the ones that support what you are proposing — check those
    first.** An anecdote that makes your own case arrives already believed. (Case: `wiki/log.md`,
    2026-10-01 — the "2 of 16" correction.)
-   **A claim about a third party is checked at its source, never from a summary** — drive the page
-   and watch the network; a library's docs, its config and a web summary of a spec sheet are not what
-   it does in your build. (Cases: [[ok2ship-ai]], [[vn30f-bot]].)
+   **A claim about a third party is checked at its source, never from a summary or a config** — a
+   behaviour by driving it and watching what it does in your build, a published fact in the issuer's
+   own document. (Cases: [[ok2ship-ai]], [[vn30f-bot]].)
    **A reader tuned on a set is trusted only on a set it never saw** — keep data back. (Cases:
    [[ok2ship-ai]], [[ok2ship-anomaly]].)
    **A monitor must tell silence from health** — measure the thing (messages arriving, a clock on
