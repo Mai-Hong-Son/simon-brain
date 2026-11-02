@@ -2,395 +2,47 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-11-01
+updated: 2026-11-02
 tags: [ok2ship, product, fastapi, react]
-sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, HANDOFF.md, docs/PROGRESS.md, docs/decisions/001-013]
+sources: [~/Documents/products/ok2ship-ai]
 read_when: project:ok2ship-ai
 ---
 
 # ok2ship-ai — the OK2SHIP AI product
 
 Backend + web dashboard of the [[ok2ship]] program — open that hub before starting an AI or data
-module, to see which spike already proved the requirement. 🚀 Serious product: tests mandatory,
-branch per feature, review before merge. Stack matches [[default-stack]] (no deviation ADR). The
-client's cluster, GitLab and the BA's terminology trap are in [[mektec-desoft]], loaded with this
-page. **Current state + open work: `HANDOFF.md` in the repo — the wiki doesn't copy it.**
+module, to see which spike already proved the requirement. 🚀 Serious product. Stack matches
+[[default-stack]]. The client's cluster, GitLab and the BA's terminology trap are in
+[[mektec-desoft]], loaded with this page.
 
-This page is loaded into every session of the product, so each entry is the rule and its one
-measured case; the full story is in the ADR or the commit history of the repo it names.
+**Everything else is in the repo, `~/Documents/products/ok2ship-ai`:** topology and rules in
+`CLAUDE.md`, open work in `HANDOFF.md`, every doc from `docs/index.md`, and in `docs/lessons/` what
+this product taught, including the measured cases behind [[engineering-rules]].
 
-## ⚠️ Three-repo topology — read before touching git
+## Decisions
 
-One directory but **three independent git repos** (ADR 002; rationale: backend/frontend are
-client deliverables on [[mektec-desoft]]'s GitLab; planning docs are internal, on personal GitHub):
-1. Root — planning/design docs (personal GitHub); gitignores `backend/` and `frontend/` entirely.
-2. `backend/` — FastAPI (mektec GitLab).
-3. `frontend/` — React (mektec GitLab).
+The output of `scripts/compile-project.sh ok2ship-ai`, from the repo's ADRs; never composed by hand.
 
-Nothing auto-syncs between them; each is pushed separately, only when asked, and each tier deploys
-through its own pipeline — so the two are never guaranteed to be on the same version (see
-"Deploy skew" below). MR state is read with `glab mr list` (a `read_api` token is in the macOS
-keyring), never from branches left on the remote ([[approval-gates]]).
-
-## Locked decisions (detail: the repo's `docs/design/` and `docs/decisions/`)
-
-### Users and auth
-
-The User Management design (RBAC, account statuses, force-logout, hashing) is in the product's
-`CLAUDE.md`, loaded beside this page. Three decisions it does not carry:
-- No separate approver role: the uploader also reviews, and `audit_log` is the safety net.
-- Refresh tokens live in an httpOnly cookie.
-- Monitoring is **the cluster's Loki, not Sentry** (ADR 004): it already runs inside the
-  customer-data boundary, which removes the ordinary-PII problem a hosted service would bring (passwords, tokens and
-  cookies are still never logged).
-
-### Configuration and checking
-
-- **MCO/APN/EEEE Code repeat within one Model node, never across Models** — same-named Models of
-  two Projects are two Models (Sơn, 2026-10-17; EEEE the BA, 2026-10-19, migration `c4e8a2f61b9d`).
-  Held by the service under an advisory lock, since no index can state "unique outside one Model"
-  (migration `5e0b7c3a91d2`).
-Each line is the decision; the ADR (`docs/decisions/`) holds its measurements and full reasoning.
-- **ADR 016 — catalog delete and rename**: a node is soft-deleted with its subtree, and deleted or
-  re-coded only once no live report is under it; its NAME is locked while one is (the BA,
-  2026-10-18), and every refusal links the blocking reports. A retired Config keeps its codes (Sơn).
-  Golden-set A3 ignores deleted reports' runs. Deleting a row deletes its record: every parent left
-  empty goes too, up to the Project; one still holding a report or a golden set stays, and the
-  dialog names it (the BA, 2026-10-19). Rejected: hard delete; renaming under a report (it
-  keeps its path as filed, so list and catalog disagree).
-- **ADR 005 — Data Mapping storage**: fields hang off the revision's sheet; real columns for the
-  frame, JSONB per type validated by Pydantic; fields stay editable on any Rev, every change
-  audited. Rejected: fully normalised (every BA change a migration); fields on the Template
-  instead of the revision.
-- **ADR 006 — check results**: a run row + a row per field, the field's configuration snapshotted
-  on the run. `pass` / `fail` / `error` (data not there) / `manual` (not automated — never a pass);
-  `na` "Không áp dụng": a Spec field with "Bắt buộc" unticked that reads nothing (2026-10-21) — a configuration fault (a deleted parameter, an unusable limit) stays `error` (Sơn, 2026-10-31). Rejected: a Rev id with no snapshot (fields stay editable, so it cannot say what ran).
-  *Amended 2026-10-30:* a sheet the report's file does not hold is not checked (the BA).
-- **ADR 007 — photo against data**: RapidOCR on our own machines only (customer images). *Amended
-  2026-10-09 (the BA, via Sơn):* a picture's numbers are read top→bottom and answer the cells
-  top→bottom, never derived; a swap is a Fail. Measured cost: V73's "female and male" block
-  (arrows in sheet order 3-2-1-4) fails 60/120 pairs of a correct report, so the lab annotates in
-  sheet order. Rejected: any hosted OCR/VLM.
-- **ADR 008 — Spec Management**: one library of criteria; a run snapshots each criterion at its
-  start, so editing one never re-captions a finished verdict. *Amended 2026-10-09:* a parameter
-  names the SHEET it applies to (the mockup's `sheetName` since 09-24; NULL = dùng chung, offered
-  on every sheet), not one of the BA's 22 check items. Rejected: resolve on display.
-- **ADR 009 — a Template has no scope**: a report chooses its Template. *§3 withdrawn 2026-10-09
-  (the BA, by chat):* any number of Revs of a Mã tài liệu may be Active, QA picks. Accepted cost:
-  a wrong Template runs to completion with wrong verdicts, now with more Revs to pick wrong from.
-  Rejected: keep the scope and add a manual override (two mechanisms for one answer).
-- **ADR 010 — a run has a scope**: one hạng mục or the whole report; per sheet, the newest run
-  covering it answers. Rejected: latest run only (checking sheet B wiped sheet A). *Amended
-  2026-10-26:* a run can be stopped; checked fields keep the new verdicts.
-- **ADR 011 — Biểu đồ lực**: chart i against force cell i; U-max is the machine's blue dot, never
-  the curve's top (the dot hides it); scale read per chart by OCR, never assumed; a shoulder on the
-  falling slope is not a second peak (Sơn). A single-cell image anchor means "the picture starting
-  here", for every image check. Rejected: the curve's own top, a fixed 0–10 N scale, a hosted
-  chart-reading model (DePlot/MatCha). *Amended 2026-10-15: a printed peak is told by the curve
-  meeting the top line, never by its digits. Amended 2026-10-17: axis labels OCR merges into one
-  box are read one at a time.*
-- **ADR 012 — Void X-ray** *(proposed 2026-10-05)*: pins from the machine's frames, each label cut
-  out and read alone by PP-OCRv6 (`rapidocr` 3, here only); pass only when every reading
-  agrees, no automatic fail yet; the pixel-measured void is a second result item, "Đo bọt khí",
-  independent of the reading: every pin of every picture against its print (±2 points), an
-  unmeasurable pin Manual for QA's eye — so the item is Manual almost always, accepted (amended
-  2026-10-08). Rejected:
-  whole-picture OCR, PP-OCRv6 for "Ảnh với Data" (520 → 484 numbers).
-- **ADR 013 — Biểu đồ histogram**: each point's native Excel chart is judged
-  on the cells it is drawn from; a bar is "outside the curve" where the curve over its width is
-  under 1 % of its peak — fixed in code, not a setting (Sơn). "Xem biểu đồ" redraws it in SVG laid
-  out from the chart XML. Rejected: reading the picture; every bar under the curve (fails every
-  approved report).
-- Every sheet is configurable by hand; open ≠ known to the suggestion engine.
-- **A limit is inclusive**: "Max 30" passes 30, even where a callout writes "<" or ">" (Sơn: USL/LSL
-  2026-10-12, WCA 2026-10-17) — unless the report's own Judgment formula fails the boundary (Flex
-  Bending ±10 %, 2026-10-17), set by the Khoảng end's sign, ≥/> or ≤/< (ADR 014); SEM keeps 0.43 passing although column N writes `<0.43` (Sơn,
-  2026-10-21). A verdict formula with a limit of its own (SEM N35's 0.628) is compared with the
-  template as written, never asked about.
-- **ADR 017 §9 — Boxplot comparison** (the BA's rule, 2026-10-20): within one column and Config,
-  every pair of boxes, |Avg A − Avg B| / |Avg A|, A the Build first (major descending, minor
-  ascending); for two Lots of one Build, the smaller |Average| (Sơn). 20.0 % or more, as printed, is
-  Bất thường. Rejected: one Average per Build over its Lots (the factory: each Lot on its own).
-- **ADR 018 — Ảnh với % Black**: % Black recounted on each binarized SEM picture
-  (SEM 200 inside the pad, SEM 500 the whole picture), judged against the cell and a library limit.
-  Rejected: a mode of "Ảnh với Data" — it reads printed numbers, these pictures print none.
-
-## Lessons
-
-### Reading the BA's deliverables
-
-- **A mockup label is only as real as what produces it**: `D22 #1 → D25` numbers values the BA's
-  sample photos print ("1: 1.8um"); ours print none (0 of 3,080 OCR rows), so `#n` was dropped.
-  Find the source of a label before building it.
-- **The checklist decides WHAT is checked; the mockup decides only how it looks.** The mockup
-  ships a whole check type, `rowLookup`, that the governing SOP checklist marks "Không" on every
-  row it would answer. When the two disagree about scope the mockup is the one that is wrong, and
-  the ask back to the BA is to remove the drawing.
-- **Two markers in one requirements document that disagree: ask which governs before building.**
-  The checklist has red text and a "Hệ thống check?" column; following the red dropped three
-  requirements, of which one was really out. Disagreement between two signals in the same
-  document IS the signal.
-- **A sheet's requirements are the latest template's yellow callouts**, replacing its SOP rows
-  (Peel, Void X-ray, Un-mating). "The spec below" was a drawn text box, not a cell or picture:
-  read the drawing XML first. QA fills the latest layout; an older one (V73's split ACF sheets)
-  stays configured beside it, and Shell sheets share the non-Shell callouts (Sơn, 2026-10-17).
-- **The mockup is live, and ahead of any copy**: `ba-ok2ship.desoft.vn/data-mapping.html` drew the
-  force-chart check while ours was built from a stale Downloads copy. Read it first; what it lacks
-  goes on the design canvas "OK2SHIP" (claude.ai/artifact/8pt1oZdf8SazmSDdooWfjq), to the BA only
-  when Sơn says so.
-- **What a tool can do is read off its real UI, not its tables or tags** ([[engineering-rules]]
-  #8), and the error runs both ways. A check-type definition table produced four "this is
-  impossible" verdicts that filling in the real form disproved — each would have been a change
-  request for something that already ships. The BA's drawer rendered `<input>`s for Mã tài liệu /
-  Rev / ECO#, all `disabled`; reading the tags relaxed an immutability rule for a day (2026-09-26).
-  Pin a refusal with a test that SENDS the field — an absent Pydantic field still lets an unknown
-  key through unnoticed.
-- **Mockup fidelity** (origin of [[engineering-rules]] #8): five UI correction rounds all traced
-  to reading the mockup's source instead of its render — a `width:46%` that renders
-  shrink-to-fit, indigo-600 in place of the real `--ant-colorPrimary`. And its own bugs are
-  matched in intent, not copied: one mockup's column minWidths sum to 1232px inside a 1158px area
-  and clip its own row actions (2026-09-08).
-- **One model difference wears a hundred faces** ([[engineering-rules]] #8). Ant sizes
-  line-height by a single 22/14 ratio while Tailwind hard-codes one per step, so every line sat
-  1–3px off; fixed once, at the token layer (`--text-*--line-height`). And when the reference
-  dropped its webfont for a system stack — its CSS comment says why: the factory network may
-  block the font CDN — every control of ours was a different amount too wide; one button went
-  125.3px → 121.4px from a one-line change (2026-09-28).
-- **Text the backend writes for a screen drifts from the design unseen** ([[engineering-rules]]
-  #8): ADR 021's result card passed its tests, which pin the wording written, not the one drawn
-  (2026-10-31). The artboard was regenerated from the code's render and compared line by line.
-- **A claim about a library is measured, not read off its config.** "`googleFont: 'Inter'` makes
-  the grid fetch a second copy" went into a commit message; driving the page showed no request at
-  all — the setting only declared a family nothing loads.
-
-### Verification
-
-- **A suggestion rule follows the sheet's requirement source**: when a sheet moves from the SOP
-  checklist to the template's callouts, the engine's rule moves with it, and the check is
-  `suggest.for_sheet` against the hand configuration cell for cell. Three sheets were configured
-  from V69 on 2026-10-06 while the engine still proposed the SOP set (0/6, 0/6, 2/6 fields in
-  common), found 10-09. The temporary checklist panel moves too (Flex Bending showed SOP 14/09
-  until 2026-10-22). A later decision dropping a row sits beside the BA's "Hệ thống check?", never
-  overwrites it: flipping it blamed the checklist for 4 "Không" rows where it has 2.
-- **Configuration and suggestions belong to one Rev**: a report filed on Rev B reads "chưa cấu
-  hình field nào" while Rev C is configured (BC-000004, 2026-10-31). Before debugging a report's
-  checks, read which Rev it chose.
-- **Render-measure our own screens without a real account**: a second Vite port, Playwright routing
-  `http://localhost:<port>/api/**` to fakes (`**/api/**` also swallows the `src/api/*.ts` modules
-  and the page renders blank) and an unsigned JWT — the shared-account trap below never arises.
-- **A float test needs the float it claims** *(promotion candidate)*: a boundary test needs values
-  a double holds exactly (8.38969 − 8.36969 is 0.0199…, so a test meant to sit on 0.02 never touched
-  it), and a float-noise test needs one it does not (0.124 × 100 is exactly 12.4; 0.119 × 100 is
-  not). Both were found only because breaking the code left the test green.
-- **An Excel formula is checked in Excel itself** *(promotion candidate)*: openpyxl writes formulas
-  with no cached value, so a test reads only their text. Open a synthetic file through AppleScript
-  (`tell application "Microsoft Excel"`, `string value of range`); the comparison table agreed on
-  45/45 pairs, boundaries included (2026-10-20).
-- **A mutation check reverts the production change only** *(promotion candidate)*: `git stash` took
-  the new test away with the fix, so a green run "without the fix" proved nothing (2026-10-20).
-  Replace the changed line in place, run, restore.
-- **A list-order test dates its rows in the future** *(promotion candidate)*: the endpoints commit
-  and the test database lives for the whole pytest session, so earlier tests' reports and
-  Templates outrank rows dated in the past and push them off the page — green alone, red in the
-  full suite; two such tests in one session take different years (2026-10-13, twice).
-- **A build-time guard has to be watched PASSING** ([[engineering-rules]] #1): a Dockerfile check
-  ran `python -c "import cv2"` with the system interpreter, so it failed every build and had never
-  once succeeded (2026-09-17).
-- **Tests arranged to AVOID a code path do not protect it** ([[engineering-rules]] #1): every
-  test injected a DB session factory, so a missing `import SessionLocal` sat green through 564
-  tests and failed on the first real run. The default branch is the one production takes.
-- **A test that re-implements the logic it checks protects nothing** *(promotion candidate)*: a
-  helper copying the reader's intact-before-damaged order stayed green with the order reversed; the
-  test now calls the production function.
-- **A warning comment is not a control** ([[engineering-rules]] #1): `alembic/env.py` imports
-  each module's models by hand, and a module missing from that list makes autogenerate write
-  `drop_table` for its tables. Missed twice (2026-09-02, 2026-09-22), the second time with the
-  warning already in the file; a test now compares the list with the directory, and a second
-  test proves the first can fail.
-- **Deriving a mapping from the data itself is a CHECK when the winner is unanimous and the
-  runner-up is zero** (photo row order: every photo of seven fields). Record the margin and name
-  what it cannot see.
-- **A reader tuned on a set is trusted only on a set it never saw** *(promotion candidate; also
-  [[ok2ship-anomaly]])*: the X-ray reader passed 159/160 pins of the spike it was tuned on, then
-  gave 3 confident wrong verdicts on the first unseen board (V73). Keep pictures back; judge a
-  checker by two questions: does a correct cell pass, does an altered one never pass.
-- **A fixture must carry the real input's defects** *(promotion candidate)*: a chart fix green
-  on lossless PNGs put 54 of 64 real JPEG charts off-peak (blur beside dotted gridlines read as
-  ink).
-- **A status line is written when a module STARTS and nobody returns to it when the module
-  ships** *(promotion candidate)*: five design docs said "planned, not built" over code weeks in
-  production, and the handoff and a progress log that had stopped a month earlier said the same.
-  Fix with a dated "Status as of …" note; leave the design text as the record of why.
-- **Two readers of one workbook must agree on screen**: the run said "không tìm thấy ảnh" while
-  the viewer showed the photo (strict range vs nearest picture). Where they can still differ, the
-  verdict names the real reason ("spills out of the declared range"), never "not found".
-
-### Backend
-
-- **Two writers lock a tree in one order, root-first** *(promotion candidate)*: a catalog delete
-  locked Config then Build while report filing locks Build then Config, and a test reproduced
-  `DeadlockDetected` (2026-10-19). Lock every ancestor top-down before the node.
-- **A Spec parameter's "in use" count reads every place a `param_key` lives** *(promotion
-  candidate)*: zone, multi-row `pairs`, conditional rules, a field's `settings` (Ảnh với % Black) —
-  each was missed once, letting a parameter in use be deleted (third time 2026-10-21). A new pointer
-  location joins `specs.usage` with a test that sends the delete.
-- **An exception handler on a DB session rolls back before it touches anything** *(promotion
-  candidate)*: a flush that violated a FK (a field deleted under a running check, whose snapshot
-  still carried the id) left the handler committing on a failed transaction, so the crash escaped
-  and the run sat `running` for the stall detector (2026-10-09). The orphaned verdict is written
-  with a null owner, as a field deleted after its verdict ends up.
-- **A guard promoted to its own check keeps the scope of what it guarded until someone re-derives
-  it** *(promotion candidate)*: the void measurement still measured only the cell's pin (8 of 40
-  pictures) after it became "Đo bọt khí", whose question is every pin.
-- **A body that takes minutes to arrive is authenticated when it FINISHES arriving**
-  *(promotion candidate)*: FastAPI reads a whole form/file body before resolving dependencies, so
-  a 496 MB upload at 3 MB/s (158 s) outlived a 120 s token that was valid at Save, and the client
-  re-sent the file. Judge the token when the request ARRIVES (request middleware) and let the dependency
-  honour that verdict; raising the TTL only moves the threshold.
-- **Refresh-token reuse detection revokes EVERY session of the account** — the right answer to a
-  stolen token, so never share an account between automation and a person: Playwright driving
-  `admin` logged Sơn out twice in one day.
-- **"Reads as a number" means a plain decimal, never `float()` / `Number()`** — both accept
-  scientific notation (a "7E" product code becomes the threshold 7e-12) and `nan`/`inf`. One
-  regex, `^[+-]?(\d+(\.\d+)?|\.\d+)$`, shared by the API and the form.
-- **Two distributions that install the SAME files cannot be fixed by uninstalling one**
-  *(promotion candidate)*: RapidOCR requires `opencv-python` (needs libxcb, dies on a slim
-  image); the headless build ships the same `cv2`, and uninstalling the desktop one left
-  `import cv2` broken (2026-09-17). Exclude it at RESOLUTION time — `[tool.uv]
-  override-dependencies` with a marker that is never true.
-- **openpyxl `load_workbook` parses every external-link part unless `keep_links=False`**: V73's
-  574 links cost +117 MB per open and, with argon2's 64 MiB login, OOMKilled the 1 GiB pod
-  (2026-10-15). Even then the open is the cost, not the cells: 74 % of a report's 1.9 s is
-  `workbook.xml`'s 48,319 defined names, 15 % the stylesheet. Boxplot opens the parts it needs
-  itself (`boxplots.xlsx`, ADR 017 §4); check runs still pay it.
-
-### Frontend
-
-- **Hide a control only on the sample's positive answer** *(promotion candidate)*: "Cộng thêm
-  (ngày)" vanished for good when there was no sample file. No file, a failed read or an empty cell
-  all mean show (2026-10-22).
-- **A refusal names what blocks it and a way out the screen can take** *(promotion candidate)*:
-  "1 báo cáo" sent the user hunting for a report filed under a node's old name; review then caught
-  "vô hiệu hóa Build này" pointing at a control the row does not have (2026-10-18).
-- **A long result list puts what needs a person first and folds the rest under one summary row per
-  group** (Sơn: 300 pin rows scrolled too far) — items to look at first, matches last, every group
-  folded at start.
-- **Deploy skew: a field the API may not send yet is `undefined`, not `null`, and an absent
-  number is not a zero** *(promotion candidate)*: `run === null` let `undefined` through and one
-  cell took down the report list (2026-09-16); a missing `failed_total` printed "20/0 cặp lệch".
-  Use `== null` / `?.`, never let one row take the others, shape a response an older frontend still
-  reads (ADR 010's `summary`), and tell skew from bad data by the dev site's `/api/openapi.json`.
-  A new enum value ships frontend first (a table indexed by `check_type` throws); a new per-row
-  state reuses one every build renders (`manual`); a renamed field goes out under both names,
-  backend first (`category` → `sheet_name`); a new form field ships backend first, since an older
-  API drops it (`extra="ignore"`).
-- **"Absent from the failures" means "agreed" only for the shape it was written for**: the
-  photo dialog showed every chart and X-ray picture "khớp", a FAIL included
-  (2026-10-04..06). So does a count: "1/3 cặp không đạt" read as two passes beside an unread
-  pair; a count names what it did not judge (2026-11-01).
-- **React crashes when something else edits the DOM** *(promotion candidate)*: a browser
-  translator moved a text node and the ErrorBoundary took the page (the BA, 2026-09-16/22). Opt out
-  of translation (`translate="no"` + notranslate meta), make `removeChild`/`insertBefore` skip a
-  node no longer a child (facebook/react#11538), report the first suppression.
-- **A layout repeated in every route element is one React instance** *(promotion candidate)*:
-  its effects survive navigation; an `[]` one waited 10 s after Back (2026-10-27) — key it on
-  `pathname`.
-- **TS gotcha** *(promotion candidate)*: a root `tsconfig.json` of the `files:[] + references`
-  shape makes `tsc --noEmit` a silent no-op — only `tsc -b` actually catches errors.
-- **An element animated with `transform` becomes the containing block for every `fixed`
-  descendant**: a `fixed inset-0` dialog inside a zoom-in modal rendered at the panel's 448×242
-  instead of the 1440×1000 viewport (2026-09-14). An overlay opened over an overlay must be its
-  SIBLING, not its child.
-- **A mask that centres with `items-center` and does not scroll cuts a taller dialog at both ends**
-  *(promotion candidate)*: the page behind is locked, so nothing reaches them (the BA, 2026-10-28).
-  Mask `overflow-y-auto`, panel `my-auto`.
-- **Reversing one direction of an optimisation creates the symmetric bug**
-  *(promotion candidate)*: one request per zone re-downloaded every picture on any change; one request per
-  anchor fired 80 for a single field (~8 s of pure overhead). Cache per anchor AND coalesce a
-  burst into one call; before flipping a batching decision, state what the other direction costs.
-- **Unmounting a wizard step throws away uncontrolled state, and a list fetched once at open is
-  stale by the step that reads it** *(promotion candidate)*: "Quay lại" wiped the chosen scope,
-  and a Template activated in another tab could only be picked up by re-uploading 473 MB. Hide
-  the step instead of unmounting it; refetch on entering the step that consumes the list.
-- **AG Grid sorts a column by its value, with `<`** *(promotion candidate)*: a value already
-  formatted as text sorts as text, so "Rev 10" came before "Rev 9" and 13/10 before 30/09
-  (2026-10-13). Put the raw value in `valueGetter`, print it in the renderer, and give natural text
-  a `comparator`.
-
-### Running it
-
-- **An engine version is numbered at merge, not at branch** *(promotion candidate)*: `main` and a
-  branch both took 1.17.0 for different changes (2026-10-22); the branch became 1.18.0. A change
-  no verdict sees takes none.
-- **Time a speed-up where it runs, and against its prototype on the same counters** *(promotion
-  candidate)*: local MinIO with added latency promised that four threads would help; in the pod
-  8.5 of 9.7 s was CPU and four threads gained nothing. The shipped reader then fetched 3× the
-  prototype's bytes (every sheet built at open), caught only by comparing `boxplot.read`'s bytes
-  and requests with the prototype's (2026-10-21).
-- **Module docs are checked, not trusted**: each `docs/modules/` page names the commits it was
-  read against; after a pull, `docs/tools/check.py` flags stale pages — re-read and move
-  `verified` (three pages, 2026-10-29). An ADR for unmerged code merges with it.
-- **Two worktrees share the backend test database** *(promotion candidate)*: `tests/conftest.py`
-  drops and recreates `ok2ship_test` per session, so a suite started meanwhile kills the other
-  (103 `KeyError`s, 2026-10-17). Give each checkout its own: `TEST_DB_NAME=ok2ship_test_<name>`
-  (`e03ee54`; only `ok2ship_test*` names are accepted). Without it, gate the command on
-  `pgrep -f pytest` being empty. The pre-commit hook runs the suite too: `TEST_DB_NAME=… git
-  commit` (on the shared one it blocked a commit on unrelated golden-set tests, 2026-10-21).
-- **Prove a teammate's work survived a merge by content** *(promotion candidate)*: `git diff
-  origin/main HEAD -- <their files>`, then blame every removed line. In zsh pass the list as an
-  array — an unsplit `$F` matched no path and printed an empty diff that read as "identical"
-  (2026-10-12); an unsplit `$T` of test paths made pytest run none (2026-10-30).
-- **Gate everything chained after `git commit` on its exit code** *(promotion candidate)*: a
-  pre-commit hook rejected a commit, the chain still pushed the old branch, and `git worktree
-  remove --force` deleted the uncommitted fix.
-- **Judge "is this still alive" where the clock is SHARED, not in the browser tab**
-  (promoted to [[engineering-rules]] #1): the tab counted three minutes itself, so when a deploy
-  killed a run mid-way
-  (2026-09-17) every reload restarted the countdown and the rescue button stayed locked. The
-  server decides `stalled`; two thresholds in two places always drift.
-- **A merged fix is not an applied fix when CI does not touch that manifest.** The Postgres probe
-  fix merged 2026-09-16 was still writing its FATAL line on 2026-10-01, because
-  `deploy/01-postgres.yaml` is applied by hand. Seen through `mcp-grafana` against the cluster's
-  Loki — the token sees every namespace; query `ok2ship` only.
-- **VLM reading modes stay stored-but-not-honoured, by decision (2026-09-29).** `hybrid`/`ai`
-  are valid to save and the engine answers `manual`. Before any ADR: measure whether a local
-  vision model reads what OCR cannot — in 14 days of Loki `low_confidence` fired 0 times against
-  125 `count_mismatch` — and Desoft must answer whether the cluster has a GPU.
-- **An agent that mutates code works on a copy, never in a tree another agent is using**
-  *(promotion candidate)*: a claims-verifier mutated the worktree while the main session ran
-  `git stash`, which swapped a mutation out mid-run (2026-10-15).
-
-### Reading reports (Excel and photos)
-
-- **Excel stores a formula's list separator as `,` in every locale; the Vietnamese UI shows `;`**
-  *(promotion candidate)*: QA types what they see and an exact comparison fails (four Un-mating
-  summary fields, 2026-10-09). Normalise on save — outside quotes and outside `{}`, where the
-  stored form itself separates array rows with `;`.
-- **A photo check validated on originals refuses thumbnails**: the reader needs 80 px per number;
-  Shell B2B cross section pastes 154–444 px where B2B cross section pastes 1440 px, so 6 of 9
-  image fields are Manual. Ask the lab for originals (the BA agreed 2026-10-09); never lower the
-  floor.
-- **A chart in a sheet may be a native chart, not a picture**: the V73 FAI/SPC family holds 300
-  native charts and zero images. A native chart is drawn from the cells, so only the range its
-  series points at needs checking. Look for `xl/charts/` before assuming image analysis.
-- **A picture's position does not tell you which samples it describes.** Two photos anchored over
-  the same two columns printed two samples and one. Read the numbers off the pictures before
-  trusting a layout, and where that cannot be done report a gap instead of guessing.
-- **Group generated proposals the way the source document groups them, not the way the algorithm
-  does**: keying photo fields by the shape of the pairing merged two unrelated blocks that both
-  mapped 12 cells per photo; keying by the sheet's own group heading keeps them apart and names
-  them the way QA reads the report.
-- **Measure customer photos with the backend's own RapidOCR** (`backend/.venv`): it reads on the
-  machine ([[engineering-rules]] #3) and sees what production sees. Delete extracted images once read.
-  **Opening a customer picture in the assistant sends it off the machine**: ask Sơn first (granted
-  2026-10-05 for the Void X-ray work only).
-- **A picture's `to` corner less than 1 px into a cell does not cover it**: Excel rounding of a
-  picture laid on a gridline; ignoring it changed the span of 256 of V73's 2,665 pictures.
-- **Tell two picture styles apart by what the picture draws, never by what OCR read**
-  *(promotion candidate)*: a digits rule (decimals, tick lattice) let each of three review rounds
-  find a new misread that invented a reading; "the curve meets the top line" (Sơn) separated 64
-  printed from 320 dotted charts (≤ 0.30 % vs ≥ 1.22 %). Each round finding a new instance means
-  the rule sits at the wrong layer (ADR 011, 2026-10-15).
-- **RapidOCR (`rapidocr_onnxruntime`) reads a palette PNG's indices as grey, and inverts RGBA**:
-  give it RGB as Excel shows it (`palette_as_shown`); 84 of the Normal B2B report's PNGs are
-  palette.
+<!-- adr-list:start -->
+- **ADR 001** (accepted): Full RBAC with `permissions`, `roles` and two junction tables, several roles per user, in industry-standard terms; rejected: a flat `role` column on `users`.
+- **ADR 002** (accepted): Three independent repos in one directory: planning docs on personal GitHub, backend and frontend on mektec's GitLab, each pushed separately; rejected: one repo with the tiers as subdirectories.
+- **ADR 003** (superseded): Sentry SaaS for errors only, with no raw customer data leaving the process; superseded the same day by ADR 004.
+- **ADR 004** (accepted): Monitoring is the cluster's Loki, already inside the customer-data boundary; rejected: Sentry (ADR 003).
+- **ADR 005** (accepted): A field hangs off the revision's sheet, with real columns for the frame and JSONB per type validated by Pydantic, editable on any Rev with every change audited; rejected: fully normalised, fields on the Template.
+- **ADR 006** (accepted): A run row plus a row per field, the configuration snapshotted on the run; `pass`, `fail`, `error`, `manual` (never a pass) and `na` for an optional Spec field that reads nothing, a configuration fault staying `error`; a sheet the file lacks is not checked; rejected: a Rev id with no snapshot.
+- **ADR 007** (accepted): RapidOCR on our own machines; a picture's numbers, read top to bottom, answer the cells top to bottom, and a swap is a Fail; rejected: any hosted OCR or VLM.
+- **ADR 008** (accepted): One library of criteria, each snapshotted when a run starts; a parameter names the sheet it applies to, NULL meaning every sheet; rejected: resolving on display.
+- **ADR 009** (accepted): A report chooses its Template, and any number of Revs of a Mã tài liệu may be Active; rejected: keeping a scope and adding a manual override.
+- **ADR 010** (accepted): A run covers one hạng mục or the whole report, per sheet the newest run covering it answers, and a stopped run keeps the verdicts it reached; rejected: latest run only.
+- **ADR 011** (accepted): Biểu đồ lực: chart i against force cell i, U-max is the machine's blue dot, the scale is read per chart by OCR, a printed peak is told by the curve meeting the top line; rejected: the curve's own top, a fixed scale, a hosted chart-reading model.
+- **ADR 012** (accepted): Void X-ray: pins from the machine's frames, each label cut out and read alone by PP-OCRv6, a pass only when every reading agrees; "Đo bọt khí" holds every pin to its print within ±2 points, an unmeasurable pin Manual; rejected: whole-picture OCR.
+- **ADR 013** (accepted): Biểu đồ histogram: each native chart is judged on the cells it is drawn from, a bar being outside the curve where the curve over its width is under 1 % of its peak, fixed in code; rejected: reading the picture.
+- **ADR 014** (accepted): A Spec zone may hold rules instead of one criterion, the first rule whose conditions hold deciding a position, applied once or per row or column; rejected: fixed column lists per index, a fifth status for "Bỏ qua".
+- **ADR 015** (accepted): The report list loads every report and the grid filters, sorts and pages in the browser; rejected: server paging with a query parameter per filter.
+- **ADR 016** (accepted): A catalog node is soft-deleted with its subtree only once no live report is under it, its name locked while one is, every refusal linking the blockers; deleting a row also removes the parents it empties, up to the Project; rejected: hard delete, renaming under a report.
+- **ADR 017** (accepted): A Boxplot template is its own thing, pointing at no Rev or catalog node, and an export runs outside the request; within one column and Config every pair of boxes is compared, 20.0 % as printed being Bất thường; rejected: building the file inside the request, a dedicated worker, one Average per Build over its Lots.
+- **ADR 018** (accepted): Ảnh với % Black: % Black recounted on each binarized SEM picture (SEM 200 inside the pad, SEM 500 the whole picture), judged against the cell and a library limit; rejected: a mode of "Ảnh với Data".
+- **ADR 019** (accepted): Ảnh rõ nét, as reinstated: variance of the Laplacian, each photo against the median of the field's others, `manual` below a share of it set on the form, never `fail`; rejected: the withdrawn design with limits fixed in code.
+- **ADR 020** (accepted): One way to create a Mẫu báo cáo, copying configuration by sheet pairs, with only Active and Inactive; rejected: keeping Draft, a server-side `needs_review` gate.
+- **ADR 021** (accepted): A Spec pair may be judged "Theo tỉ lệ": per range, the share of filled cells holding a value, against a limit in percent; rejected: a new check type, one share over every range, a fixed denominator of 100.
+<!-- adr-list:end -->
