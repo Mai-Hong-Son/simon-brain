@@ -2,7 +2,7 @@
 title: Approval gates & adversarial review
 type: concept
 status: stable
-updated: 2026-10-28
+updated: 2026-11-03
 tags: [process, review, quality]
 sources: [ai-company/CLAUDE.md (workflow + debate mechanism), ai-company/.claude/agents (orchestrator, qa-reviewer)]
 read_when: always
@@ -36,6 +36,10 @@ project pages named.
   directions (reuse / extend / new; two if only two are sensible), main states and a one-line
   trade-off each, one recommended, on the project's design canvas (a page per module). A reference
   that arrives later wins. No plan until Sơn picks (2026-10-28).
+- **Merge on Sơn's word naming the MRs**: the agent merges them itself, guarded by the reviewed
+  head's sha, and writes the close-out (what landed, docs moved to the merge) at once, not at the
+  next session; approval inferred from anything else merges nothing (2026-11-03, [[ok2ship-ai]]'s
+  `/merge`).
 
 ## Git and PR conventions (every project)
 
