@@ -21,8 +21,10 @@ project pages named.
 - Touches logic/data, single stack → short plan → plan approval → build + tests → merge approval.
 - Large / cross-stack → full plan → plan approval → **test-case list approved before writing
   tests** → build → merge approval.
-- A rename or comment change with no logic, data or API behaviour change → short plan, however many
-  files it touches.
+- A rename or comment change across more than 2 files, any stack, with no logic, data, config or API
+  behaviour change (a docstring's text in the OpenAPI does not count) → short plan → plan approval →
+  suite green → `/code-review` high → merge approval; a test-case list would have nothing to list.
+  Fitting this line is not torn.
 - Torn between two levels → **size up**.
 
 ## Human gates — never skipped
