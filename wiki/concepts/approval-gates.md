@@ -21,6 +21,8 @@ project pages named.
 - Touches logic/data, single stack → short plan → plan approval → build + tests → merge approval.
 - Large / cross-stack → full plan → plan approval → **test-case list approved before writing
   tests** → build → merge approval.
+- A rename or comment change with no logic, data or API behaviour change → short plan, however many
+  files it touches.
 - Torn between two levels → **size up**.
 
 ## Human gates — never skipped
