@@ -45,4 +45,5 @@ The output of `scripts/compile-project.sh ok2ship-ai`, from the repo's ADRs; nev
 - **ADR 019** (accepted): Ảnh rõ nét, as reinstated: variance of the Laplacian, each photo against the median of the field's others, `manual` below a share of it set on the form, never `fail`; it replaces the first design, withdrawn, whose limits were fixed in code.
 - **ADR 020** (accepted): One way to create a Mẫu báo cáo, copying configuration by sheet pairs, with only Active and Inactive; rejected: keeping Draft, a server-side `needs_review` gate.
 - **ADR 021** (accepted): A Spec pair may be judged "Theo tỉ lệ": per range, the share of filled cells holding a value, against a limit in percent; rejected: a new check type, one share over every range, a fixed denominator of 100.
+- **ADR 022** (accepted): Read the account's status on every request and revoke its refresh tokens when it is deactivated, deleted, locked by wrong passwords or returned to Create; roles and permissions stay in the token; rejected: a shorter access token alone, Redis, a new "signed out" error code.
 <!-- adr-list:end -->
