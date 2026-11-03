@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-11-02
+updated: 2026-11-03
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai]
 read_when: project:ok2ship-ai
@@ -12,7 +12,7 @@ read_when: project:ok2ship-ai
 
 Backend + web dashboard of the [[ok2ship]] program — open that hub before starting an AI or data
 module, to see which spike already proved the requirement. 🚀 Serious product. Stack matches
-[[default-stack]]. The client's cluster, GitLab and the BA's terminology trap are in
+[[default-stack]]. The client's cluster, GitLab and how the BA's requirements move are in
 [[mektec-desoft]], loaded with this page.
 
 **Everything else is in the repo, `~/Documents/products/ok2ship-ai`:** topology and rules in

@@ -81,3 +81,4 @@
 ## [2026-11-02] ingest | [[ok2ship-ai]] and [[native-skline-chart]] converted (AGENTS.md §0): lessons and decisions without an ADR moved to their repos, pages hold generated decision lists; [[mektec-desoft]] points at the requirements' new path | @claude-code
 ## [2026-11-02] lint | rows 3, 6, 7, 9, 11, 13 of the full pass: spike vs ADR, two rules into #1, stale index and pointers | @claude-code
 ## [2026-11-03] ingest | [[ok2ship-ai]]: decision list regenerated for ADR 022 | @claude-code
+## [2026-11-03] ingest | [[mektec-desoft]]: the BA's inverted RBAC words moved out, they concern one ok2ship-ai module and live in its repo (`CLAUDE.md`, `docs/glossary.md`) | @claude-code
