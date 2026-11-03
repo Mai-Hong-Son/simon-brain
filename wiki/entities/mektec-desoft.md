@@ -60,7 +60,8 @@ cluster, and a hand edit is erased by the next `helm upgrade`.
   used/available, which `kubectl top` does not.
 - **GitLab merge requests are created by push options, and a push-option value must be ONE line**
   — git refuses a value with a newline, and a retry without the description creates the MR with no
-  body; the local `glab` token is `read_api` only, so a description cannot be added afterwards.
+  body. The local `glab` token has `api` scope (checked 2026-11-03), so a description can be
+  added afterwards (`glab mr update`) and an MR merged (ok2ship-ai's `/merge`).
 
 ## Working with the BA
 
