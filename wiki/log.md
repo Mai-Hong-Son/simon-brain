@@ -84,3 +84,4 @@
 ## [2026-11-03] ingest | [[mektec-desoft]]: the BA's inverted RBAC words moved out, they concern one ok2ship-ai module and live in its repo (`CLAUDE.md`, `docs/glossary.md`) | @claude-code
 ## [2026-11-03] ingest | [[mektec-desoft]]: the local glab token has api scope, MRs can be edited and merged | @claude-code
 ## [2026-11-03] ingest | [[approval-gates]]: merge on Sơn's word naming the MRs, close-out at once | @claude-code
+## [2026-11-03] ingest | [[approval-gates]]: a rename or comment change touching no outside name takes a short plan | @claude-code
