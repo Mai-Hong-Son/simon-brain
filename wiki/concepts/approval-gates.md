@@ -18,13 +18,13 @@ project pages named.
 
 - ≤2 files, no logic/data change → lightweight: confirm scope → fix → report. Never use this
   lane to smuggle a logic change past review.
-- Touches logic/data, single stack → short plan → plan approval → build + tests → merge approval.
+- Touches logic/data/config, single stack → short plan → plan approval → build + tests → merge approval.
 - Large / cross-stack → full plan → plan approval → **test-case list approved before writing
   tests** → build → merge approval.
-- A rename or comment change across more than 2 files, any stack, with no logic, data, config or API
-  behaviour change (a docstring's text in the OpenAPI does not count) → short plan → plan approval →
-  suite green → `/code-review` high → merge approval; a test-case list would have nothing to list.
-  Fitting this line is not torn.
+- A rename or comment change across more than 2 files, any stack, that changes no logic and no name
+  outside the code (a DB column, an API field, an env var stay out; a docstring's text in the OpenAPI
+  does not count) → short plan → plan approval → suite green → `/code-review` high → merge approval;
+  a test-case list would have nothing to list. Fitting this line is not torn.
 - Torn between two levels → **size up**.
 
 ## Human gates — never skipped
@@ -56,7 +56,7 @@ project pages named.
 
 ## Every PR gets a review before Sơn sees it — from a context that has not seen the code
 
-Not optional and not sized away: a ≤2-file PR gets `/code-review` at low effort, a logic or data
+Not optional and not sized away: a ≤2-file PR gets `/code-review` at low effort, a logic, data or config
 PR at high. The cycle: open the PR → run `/code-review` (or a fresh agent given the PR's stated
 scope; never self-review in the same session) → fix confirmed defects and push → write the outcome
 into the PR description (`Review: N findings · M fixed · K dismissed (why)`) → only then report
