@@ -16,7 +16,7 @@ project pages named.
 
 ## Size the process by SIZE, not ambition
 
-- ≤2 files, no logic/data change → lightweight: confirm scope → fix → report. Never use this
+- ≤2 files, no logic/data/config change → lightweight: confirm scope → fix → report. Never use this
   lane to smuggle a logic change past review.
 - Touches logic/data/config, single stack → short plan → plan approval → build + tests → merge approval.
 - Large / cross-stack → full plan → plan approval → **test-case list approved before writing
