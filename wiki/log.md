@@ -85,3 +85,4 @@
 ## [2026-11-03] ingest | [[mektec-desoft]]: the local glab token has api scope, MRs can be edited and merged | @claude-code
 ## [2026-11-03] ingest | [[approval-gates]]: merge on Sơn's word naming the MRs, close-out at once | @claude-code
 ## [2026-11-03] ingest | [[approval-gates]]: a rename or comment change touching no outside name takes a short plan | @claude-code
+## [2026-11-05] ingest | [[ok2ship-ai]] ADR 023 in the decision list; [[mektec-desoft]]: a stale kubeconfig token | @claude-code

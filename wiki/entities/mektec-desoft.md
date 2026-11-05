@@ -2,7 +2,7 @@
 title: Mektec & Desoft
 type: entity
 status: active
-updated: 2026-11-03
+updated: 2026-11-05
 tags: [client, vendor, ok2ship]
 sources: [~/Documents/products/ok2ship-ai/CLAUDE.md, ~/Documents/products/ok2ship-ai/docs/decisions/002, 004]
 read_when: project:ok2ship-ai
@@ -46,6 +46,8 @@ cluster, and a hand edit is erased by the next `helm upgrade`.
   `certificate-authority-data` line and kubectl trusts the system store, which has Let's Encrypt —
   nothing is skipped, and CI is unaffected (it uses its own ServiceAccount kubeconfig). Every new
   developer who downloads the file will hit this (measured 2026-10-01).
+- `the server has asked for the client to provide credentials` means the kubeconfig's token is stale: a file from
+  2026-10-01 was refused on 2026-11-05, a fresh download worked.
 - Postgres is reachable only through the cluster: `kubectl -n ok2ship port-forward
   ok2ship-postgres-0 5434:5432`, credentials in the `ok2ship-postgres` Secret — read-only in the
   client, since that account is the app's own superuser and a hand edit leaves no `audit_log`.

@@ -2,7 +2,7 @@
 title: ok2ship-ai
 type: project
 status: active
-updated: 2026-11-03
+updated: 2026-11-05
 tags: [ok2ship, product, fastapi, react]
 sources: [~/Documents/products/ok2ship-ai]
 read_when: project:ok2ship-ai
@@ -46,4 +46,5 @@ The output of `scripts/compile-project.sh ok2ship-ai`, from the repo's ADRs; nev
 - **ADR 020** (accepted): One way to create a Mẫu báo cáo, copying configuration by sheet pairs, with only Active and Inactive; rejected: keeping Draft, a server-side `needs_review` gate.
 - **ADR 021** (accepted): A Spec pair may be judged "Theo tỉ lệ": per range, the share of filled cells holding a value, against a limit in percent; rejected: a new check type, one share over every range, a fixed denominator of 100.
 - **ADR 022** (accepted): Read the account's status on every request and revoke its refresh tokens when it is deactivated, deleted, locked by wrong passwords or returned to Create; roles and permissions stay in the token; rejected: a shorter access token alone, Redis, a new "signed out" error code.
+- **ADR 023** (accepted): A report's step, result dot and approval gate are computed from points on the server (`reports/status.py`), each result storing its counts in four integer columns; approval only at "Chờ phê duyệt"; hand verification only where the machine could not conclude, never on a fault of the configuration or the system; rejected: summing `actual.rows` on each read, stubbed OCR for the count, recounting open reports on a field save, inferring a fault from the note.
 <!-- adr-list:end -->
